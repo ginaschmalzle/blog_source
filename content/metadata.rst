@@ -3,7 +3,7 @@ Gina Schmalzle's Post
 
 :date: 2014-03-11 13:40
 :tags: blog,pelican
-:category: first_blog
+:category: Home
 :slug: GeodesyGina_post
 :author: Gina Schmalzle
 :summary: Test blog 
