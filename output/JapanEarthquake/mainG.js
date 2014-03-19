@@ -41,7 +41,7 @@ var loadMap = function () {
 var reDraw = function (data,path) {
 
 	//width = window.innerWidth;
-	width = (window.innerWidth)/2;
+	width = (window.innerWidth)/3;
 	height = window.innerHeight;
 	canvas = document.getElementById("myCanvas");
 
@@ -290,7 +290,7 @@ var addPoint2 = function (color,d,minute,m) {
 var plotMagvTime = function(data){
 	// Draw Mag v Time plot
 	//console.log("Hello World");
-	var plotw = 800;
+	var plotw = 600;
 	var ploth = 300;
 
 
@@ -343,7 +343,7 @@ var plotMagvTime = function(data){
 var plotDepthvTime = function(data){
 	// Draw Mag v Time plot
 	//console.log("Hello World");
-	var plotw = 800;
+	var plotw = 600;
 	var ploth = 300;
 
 	var svg2 = d3.select("#mySVG2")
