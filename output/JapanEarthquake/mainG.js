@@ -56,6 +56,7 @@ var reDraw = function (data,path) {
 	drawBackground();
 	drawCountryLines(data.countries, path);
 
+
 };
 
 var drawBackground = function() {
@@ -172,7 +173,7 @@ var updateEarthquakes = function(data){
 
 	var colorScale = d3.scale.linear();
 	colorScale.domain([0,50]);
-	colorScale.range([100,0]); // green to red (deepest)
+	colorScale.range([0,100]); // green to red (deepest)
 	colorScale.clamp(true);
 	
 	var magScale = d3.scale.log();
@@ -203,13 +204,13 @@ var updateEarthquakes = function(data){
 var updateEarthquakesTable = function(data){
 
 	var colorScale = d3.scale.linear();
-	colorScale.domain([0,50]);
+	colorScale.domain([50,0]);
 	colorScale.range([100,0]); // green to red (deepest)
 	colorScale.clamp(true);
 	
 	var colorScale2 = d3.scale.linear();
-	colorScale2.domain([0,1440]);
-	colorScale2.range([0,100]); // green to red (deepest)
+	colorScale2.domain([1440,0]);
+	colorScale2.range([100,0]); // green to red (deepest)
 	colorScale2.clamp(true);
 
 
@@ -228,7 +229,7 @@ var updateEarthquakesTable = function(data){
 		var color2 = d3.hsl(hueValue2,1,0.5);
 
 		addPoint(color,m,minute);
-		addPoint2(color2,d,minute,m);
+		addPoint2(color,d,minute,m);
 	}
 
 
@@ -265,7 +266,7 @@ var RemovePoint2 = function (minute) {
 	var circles = $("#mySVG2>circle");
 		for(var i = 0; i < circles.length; i++){
 			console.log(circles[i].getAttribute("cx"));
-			if (circles[i].getAttribute("cx") > x2scale(hour))
+			if (circles[i].getAttribute("cx") > xscale(hour))
 				circles[i].parentNode.removeChild(circles[i]);
 		}
 
@@ -273,14 +274,14 @@ var RemovePoint2 = function (minute) {
 
 var addPoint2 = function (color,d,minute,m) {
 
-	console.log(minute, minute/60,d);
+	//console.log(minute, minute/60,d);
 	var svg2 = d3.select("#mySVG2");
 
 		//svg.save();
 		svg2.append("circle")
 			//.attr("cx", x2scale(minute/60))
-			.attr("cx", x2scale(m))
-			.attr("cy", y2scale(parseFloat(d)))
+			.attr("cx", x2scale(minute/60))
+			.attr("cy", y2scale(parseFloat(m)))
 			.attr("fill", color)
 			.attr("r",5);
 		
@@ -355,9 +356,8 @@ var plotDepthvTime = function(data){
 	//for(var i = 0; i < data.length; i++ ){
 
 
-		x2scale = d3.scale.linear().domain([10,3]).range([left_pad,plotw-top_pad]);
-		y2scale = d3.scale.linear().domain([100,3]).range([top_pad, ploth-top_pad*2]);
-		
+                x2scale = d3.scale.linear().domain([5,10]).range([left_pad,plotw-top_pad]);
+                y2scale = d3.scale.linear().domain([8,4]).range([top_pad, ploth-top_pad*2]);	
 
 		console.log(x2scale);
 
@@ -370,8 +370,8 @@ var plotDepthvTime = function(data){
     		.attr("x", plotw/1.8 )
     		.attr("y", ploth - top_pad+15 )
     		.style("text-anchor","middle")
-			//.text("Time referenced to UTC, March 11, 2011 (hours of day)");
-			.text("Magnitude");
+		.text("Time referenced to UTC, March 11, 2011 (hours of day)");
+			//.text("Magnitude");
 		svg2.append("g")
 			.attr("class", "x axis")
 			.attr("transform", "translate(0, "+(ploth-2*top_pad)+")")
@@ -383,8 +383,8 @@ var plotDepthvTime = function(data){
 			.attr("x",-left_pad*1.2)
 			.attr("dy", "1em")
 			.style("text-anchor","middle")
-			.text("Depth (km)");
-
+		//	.text("Depth (km)");
+			.text("Magnitude");
 		svg2.append("g")
 			.attr("class", "y axis")
 			.attr("transform", "translate("+(left_pad)+",0)")
@@ -449,9 +449,32 @@ var drawEarthquakes = function(){
 }
 
 
+
+var colorBar = function() {
+	c.font="18px Georgia";
+	c.fillText("Depth (km)",20,15);
+	c.fillText("0",45,30);
+	var barheight = 200;
+	c.fillText("25",45,20+(barheight/2));
+	c.fillText("50",45,20+barheight);
+
+	var my_gradient=c.createLinearGradient(0,0,0,200);
+	var maxHue = 100;
+	var minHue = 0;
+	for(var i = 0; i < 10; i++){
+		var step = i/10;
+		var thisHue = maxHue*step;
+		my_gradient.addColorStop(step,"hsl("+thisHue+",100%,50%)");
+		}
+		c.fillStyle=my_gradient;
+		c.fillRect(20,20,25,barheight);
+}
+
 var initMap = function(data){
 
 	reDraw(data);
+	colorBar();
+
 
 	minMag = d3.min(data.earthquakes, function(d){
 		return d.properties.Magnitude;
@@ -559,6 +582,7 @@ var animate = function(c,projection,path,data){
 
 		drawBackground();
 		drawCountryLines(data.countries,path);
+		colorBar();
 		updateEarthquakes(filterData(data.earthquakes,minute));
 		updateEarthquakesTable(filterData(data.earthquakes,minute));
 		drawEarthquakes();

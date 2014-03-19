@@ -1,4 +1,0 @@
-vectorprojector
-===============
-
-Vector Projector
