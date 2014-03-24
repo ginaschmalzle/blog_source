@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 
 AUTHOR = u'Gina Schmalzle'
 SITENAME = u'Gina Schmalzle'
-SITEURL = 'http://ginaschmalzle.github.io'
+SITEURL = 'http://geodesygina.com'
 
 REVERSE_CATEGORY_ORDER = True
 TIMEZONE = 'America/New_York'
