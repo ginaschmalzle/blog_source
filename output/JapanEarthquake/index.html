@@ -12,16 +12,30 @@
 		<link rel="stylesheet" href="style.css"></style>
 	</head>
 	<body>
-		<a href="readme.html">README</a>
+
+		
+
+		<table>
+			<tr id="table">
+				<td><a href="readme.html">README</a></td>
+				<td><input id='r1' type = "radio" name = "plotit" value = "magVTime" checked  style="margin-left:10px" > </td>
+				<td><p style="margin-left:10px">Magnitude vs. Time</td>
+				<td><input id='r2' type = "radio" name = "plotit" value = "DVDist"  style="margin-left:10px"> </td>
+				<td><p style="margin-left:10px" >Depth vs. Profile Length with a width of </td>
+				<td><input id='prof_width' type = "text" name = "width" value = "50"  style="margin-left:10px"> </td>
+				<td><p style="margin-left:10px" >km </td>
+			</tr>
+		</table>
+		
 		<div id="top">
 
 		</div>
 
 		<canvas id="myCanvas">
 		</canvas>
-		<div>
-		<svg id="mySVG"></svg>
-		<svg id="mySVG2"></svg>
+		<div id="SVGcontainer">
+			<svg id="mySVG"></svg>
+			<svg id="mySVG2"></svg>
 		</div>
 
 		<div id="bottom">
