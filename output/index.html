@@ -37,44 +37,234 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="./VectorProj.html">Projecting GPS velocity vectors onto a profile</a></h1>
+                    <h1 class="entry-title"><a href="./Fibo.html"><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></a></h1>
 <footer class="post-info">
-        <span>Wed 19 March 2014</span>
-<span>| tags: <a href="./tag/gps.html">GPS</a><a href="./tag/vector-projection.html">vector projection</a></span>
-</footer><!-- /.post-info --><div class="section" id="global-positioning-systems">
-<h2><strong>Global Positioning Systems</strong></h2>
-<p><strong>Global Positioning Systems</strong> (<strong>GPS</strong>) are used to measure the three dimensional position of a point over time. High precision GPS are used to measure tectonic plate motion by measuring the position of a permanently installed geodetic monument over time.  The GPS instruments are either permanently installed over the monument and continuously recording its position over time, or the GPS monuments are perodically measured. With either method, three dimensional position estimates are made over time.</p>
-<p>This is an image of a high precision GPS antenna, whose image I took from the UNAVCO website:</p>
-<img alt="UNAVCO GPS antenna" class="align-right" src="http://facility.unavco.org/project_support/engineer-equip/images/1ASHM_north_stripped2.jpg" style="width: 200.0px; height: 200.0px;" />
-<p>And this is an example of the GPS site BEMT position 3D time series taken from UNAVCO:</p>
-<img alt="UNAVCO GPS antenna" class="align-right" src="http://cws.unavco.org:8080/cws/modules/GPStimeseriesCA/versions/version2011may/BEMT_2011.png" style="width: 400.0px; height: 400.0px;" />
-<p>Blue dots are daily position estimates in the north (top), east (middle) and vertical (bottom) components.  This site experienced an offset due to an earthquake in 2010.  For more information on how GPS works, please visit:  <a class="reference external" href="http://www.unavco.org/edu_outreach/teachers/teachers.html">http://www.unavco.org/edu_outreach/teachers/teachers.html</a></p>
-</div>
-<div class="section" id="gps-velocities">
-<h2><strong>GPS Velocities</strong></h2>
-<p>The rate at which a geodetic monument moves can be estimated by taking the slope of the time series for each component.  Take for example the time series shown above.  This is going to be a rough estimate, but between 2004 and 2010, the monument north component position moved from -15 mm to +15 mm, totalling 30 mm of displacement over 6 yrs, indicating that it is moving at 5 mm/yr in the north position.</p>
-<img alt="North Component" class="align-right" src="/images/NGPS.png" style="width: 200.0px; height: 200.0px;" />
-<p>Using the same logic, the east component moved ~-50 mm over about 6 years, giving the east component a rate of 8.3 mm/yr to the west.</p>
-<img alt="East Component" class="align-right" src="/images/EGPS.png" style="width: 200.0px; height: 200.0px;" />
-<p>The Magnitude and direction of the horizontal GPS velocity vector can now be calculated:</p>
-<img alt="Horizontal Components" class="align-right" src="/images/ENGPS.png" style="width: 400.0px; height: 400.0px;" />
-</div>
-<div class="section" id="vector-projection">
-<h2><strong>Vector Projection</strong></h2>
-<p>In map view small variations in GPS velocities may be difficult to see, hence it is sometimes useful to plot GPS velocities along a profile. The profile line can follow a fault line, and, if it does, one can calculate the fault parallel and perpendicular components of motion.  Fault parallel motion will give you an idea of lateral motion across the fault (as in strike-slip fault systems), and fault perpendicular motion will tell you if the two sides of the fault are separating or converging.  In this section, we will talk about deriving the profile parallel and perpendicular components of the GPS vectors using <strong>vector projection</strong>.</p>
-<img alt="Horizontal Components" class="align-right" src="/images/vector_projection.png" style="width: 400.0px; height: 200.0px;" />
-<p>Here the fault perpendicular velocity is: R perp= R*sin(t)
-and the fault parallel velocity is: R par= R*cos(t)</p>
-</div>
-<div class="section" id="the-vector-projector">
-<h2><strong>The Vector Projector</strong></h2>
-<p><strong>Stuart Sandine</strong>, <strong>Andrea Fey</strong> and <strong>Thomas Ballinger</strong> and I created a web app called <strong>The Vector Projector</strong> that calculates the magnitude, transect parallel and transect perpendicular components of GPS velocities along a profile.  In this app, you are given the option of several GPS velocity fields, calculated with respect to stable North America.  For now you can choose your profile width and you can filter what data you would like to use by their uncertainties (i.e., uncertainties that are more than the value specified are not used).  This beta version does not plot uncertainties, which we plan to change in the future.  Give it a try! <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Go to the Vector Projector</a>.</p>
+        <span>Thu 10 April 2014</span>
+<span>| tags: <a href="./tag/fibonacci.html">Fibonacci</a><a href="./tag/python.html">python</a><a href="./tag/iterative.html">iterative</a><a href="./tag/recursion.html">recursion</a></span>
+</footer><!-- /.post-info --><div class="section" id="iteration-vs-recursion-in-python">
+<h2><strong>Iteration vs. Recursion in Python</strong></h2>
+<p>For the past week at Hacker School, I took a step back from making a cool and awesome projects like the <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Vector Projector</a>  or the <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Japan Earthquake</a> projects and looked at some good, old-fashioned computer science concepts. Much of what I did was repetive; I found a really simple problem, solved it using some method, and then tried solving it again using a variety of other methods.  One project I worked on was programming the  n'th <strong>Fibonacci</strong> number using <strong>python</strong>. In this blog I will describe <strong>iterative</strong> and <strong>recursive</strong> methods for solving this problem in Python.</p>
+<p>What are <strong>Fibonacci</strong> numbers (or series or sequence)?  From <a class="reference external" href="http://en.wikipedia.org/wiki/Fibonacci_number">the Fibonacci Wiki Page</a>, the Fibonacci sequence is defined to start at either 0 or 1, and the next number in the sequence is one.  Each subsequent number in the sequence is simply the sum of the prior two.  Hence the Fibonacci sequence looks like:</p>
+<pre class="literal-block">
+1, 1, 2, 3, 5, 8, 13, 21, 34, 55,...
+</pre>
+<p>or:</p>
+<pre class="literal-block">
+0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55,...
+</pre>
+<p>It is mathmatically defined as:</p>
+<pre class="literal-block">
+F(n) = F(n-1) + F(n-2)
+</pre>
+<p>My first approach was an <strong>iterative</strong> method -- basically, hardwire the case for F(0) and F(1), and then iteratively add the the values for larger values of n:</p>
+<pre class="literal-block">
+def F_iter(n):
+      if (n == 0):
+              return 0
+      elif (n == 1):
+              return 1
+      elif (n &gt;1 ):
+              fn = 0
+              fn1 = 1
+              fn2 = 2
+              for i in range(3, n):
+                      fn = fn1+fn2
+                      fn1 = fn2
+                      fn2 = fn
+              return fn
+      else:
+              return -1
+</pre>
+<p>OK, great, this works just fine...  Now, let's try writing this recursively.  You may ask, what is recursion in computer science? -- I certainly did about a week ago.  <strong>Recursion</strong>, according to <a class="reference external" href="http://en.wikipedia.org/wiki/Recursion_(computer_science)">the Recursion Wiki page</a> is a method where the solution to a problem depends on solutions to smaller instances of the same problem. Computer programs support recursion by allowing a function to call itself (Woa! -- this concept blew my mind).</p>
+<p>A <strong>recursive</strong> solution to find the nth <strong>Fibonacci</strong> number is:</p>
+<pre class="literal-block">
+def F(n):
+     if (n == 0):
+             return 0
+     elif (n == 1):
+             return 1
+     elif (n &gt; 1):
+             return (F(n-1) + F(n-2))
+     else:
+             return -1
+</pre>
+<p>Notice that the recursive approach still defines the F(0) and F(1) cases.  For cases where n &gt; 1, however, the function calls itself.  Let's take a look at what is happening here. Suppose we call F(4). F(4) will forgo the n = 0 and n = 1 cases and go the the n &gt; 1 case where it calls the function twice with F(3) and F(2).  F(3) and F(2) then each subsequently call the function again -- F(3) calls F(2) and F(1), and F(2) calls F(1) and F(0), as shown in the tree structure below (<strong>Figure 1</strong>).  The F(1) and F(0) cases are the final, terminating cases in the tree and return the value of 1 or 0, respectively. So, just as Wikipedia said, the recursive case breaks down the problem to smaller instances, and it does that by allowing the user to define a function that calls itself:</p>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style type="text/css">
+  
+	.node {
+    cursor: pointer;
+  }
+
+  .overlay{
+      background-color:white;
+  }
+   
+  .node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+  }
+   
+  .node text {
+    font-size:10px; 
+    font-family:sans-serif;
+  }
+   
+  .link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 10px;
+  }
+
+  .templink {
+    fill: none;
+    stroke: red;
+    stroke-width: 3px;
+  }
+
+  .ghostCircle.show{
+      display:block;
+  }
+
+  .ghostCircle, .activeDrag .ghostCircle{
+       display: none;
+  }
+
+</style>
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="dndTree.js"></script>
+<body>
+    <div id="tree-container"></div>
+</body>
+</html>
+<p><em>Figure 1. Tree structure demonstrating the recursion flow for a case where n = 4.  Figure made using</em> <a class="reference external" href="http://d3js.org/">D3.js</a>.</p>
+<p>Fantastic!  Now we have both the iterative and recursive styles of this code, and we can now see how recursive coding works.  Playing around with these codes, however, I noticed that the run time on the recursive case was MUCH slower than the iterative case for large n.  I included a timer (time.time()) to measured how quickly each run is estimated for a range of n.  What I got is a figure that looks like this:</p>
+
+<html><head><title>mpld3 plot</title></head><body>
+
+<style>
+
+</style>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="/mpld3.v0.2git.min.js"></script>
+<div id="fig91044974148646267950353"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+function create_fig91044974148646267950353(){
+  
+  mpld3.draw_figure("fig91044974148646267950353", {"width": 640.0, "axes": [{"xlim": [0.0, 0.035000000000000003], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "n", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [-0.050655241935483875, 0.5], "rotation": -90.0, "id": "9104497489616"}], "zoomable": true, "images": [], "xdomain": [0.0, 0.035000000000000003], "ylim": [0.0, 25.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"grid": {"gridOn": false}, "position": "bottom", "nticks": 9, "tickvalues": null, "tickformat": null}, {"grid": {"gridOn": false}, "position": "left", "nticks": 6, "tickvalues": null, "tickformat": null}], "lines": [{"color": "#FF0000", "yindex": 1, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 10, "data": "data01", "id": "9104548429520"}, {"color": "#0000FF", "yindex": 1, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 2, "linewidth": 10, "data": "data01", "id": "9104548589584"}], "markers": [], "id": "9104497469584", "ydomain": [0.0, 25.0], "collections": [], "xscale": "linear", "bbox": [0.125, 0.53636363636363638, 0.77500000000000002, 0.36363636363636365]}, {"xlim": [0.0, 0.035000000000000003], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "Time(seconds)", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [0.5, -0.13177083333333334], "rotation": -0.0, "id": "9104548443216"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Fibonacci Value", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [-0.10282258064516128, 0.5], "rotation": -90.0, "id": "9104548467664"}], "zoomable": true, "images": [], "xdomain": [0.0, 0.035000000000000003], "ylim": [0.0, 50000.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"grid": {"gridOn": false}, "position": "bottom", "nticks": 9, "tickvalues": null, "tickformat": null}, {"grid": {"gridOn": false}, "position": "left", "nticks": 6, "tickvalues": null, "tickformat": null}], "lines": [{"color": "#FF0000", "yindex": 3, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 10, "data": "data01", "id": "9104548588944"}, {"color": "#0000FF", "yindex": 4, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 2, "linewidth": 10, "data": "data01", "id": "9104548591312"}], "markers": [], "id": "9104548430160", "ydomain": [0.0, 50000.0], "collections": [], "xscale": "linear", "bbox": [0.125, 0.099999999999999978, 0.77500000000000002, 0.36363636363636365]}], "data": {"data01": [[9.5367431640625e-07, 0.0, 9.5367431640625e-07, 0.0, 0.0], [0.0, 1.0, 9.5367431640625e-07, 1.0, 1.0], [9.5367431640625e-07, 2.0, 1.9073486328125e-06, 1.0, 0.0], [9.5367431640625e-07, 3.0, 9.5367431640625e-07, 2.0, 0.0], [2.1457672119140625e-06, 4.0, 2.1457672119140625e-06, 3.0, 3.0], [3.0994415283203125e-06, 5.0, 9.5367431640625e-07, 5.0, 5.0], [5.0067901611328125e-06, 6.0, 1.9073486328125e-06, 8.0, 8.0], [9.059906005859375e-06, 7.0, 1.9073486328125e-06, 13.0, 13.0], [1.5020370483398438e-05, 8.0, 2.1457672119140625e-06, 21.0, 21.0], [2.288818359375e-05, 9.0, 2.1457672119140625e-06, 34.0, 34.0], [3.790855407714844e-05, 10.0, 1.9073486328125e-06, 55.0, 55.0], [6.198883056640625e-05, 11.0, 2.1457672119140625e-06, 89.0, 89.0], [9.894371032714844e-05, 12.0, 2.86102294921875e-06, 144.0, 144.0], [0.00015997886657714844, 13.0, 3.0994415283203125e-06, 233.0, 233.0], [0.0002570152282714844, 14.0, 2.86102294921875e-06, 377.0, 377.0], [0.00041413307189941406, 15.0, 3.0994415283203125e-06, 610.0, 610.0], [0.0006690025329589844, 16.0, 2.86102294921875e-06, 987.0, 987.0], [0.0010819435119628906, 17.0, 2.86102294921875e-06, 1597.0, 1597.0], [0.001809835433959961, 18.0, 3.0994415283203125e-06, 2584.0, 2584.0], [0.0029108524322509766, 19.0, 2.1457672119140625e-06, 4181.0, 4181.0], [0.004680156707763672, 20.0, 2.86102294921875e-06, 6765.0, 6765.0], [0.008035898208618164, 21.0, 2.86102294921875e-06, 10946.0, 10946.0], [0.012122869491577148, 22.0, 4.0531158447265625e-06, 17711.0, 17711.0], [0.01978015899658203, 23.0, 3.0994415283203125e-06, 28657.0, 28657.0], [0.03191089630126953, 24.0, 2.86102294921875e-06, 46368.0, 46368.0]]}, "id": "9104497414864", "toolbar": ["reset", "move"], "height": 480.0});
+}
+
+if(typeof(mpld3) !== "undefined"){
+   // already loaded: just create the figure
+   create_fig91044974148646267950353();
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "/d3"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("/mpld3.v0.2git.min.js", create_fig91044974148646267950353);
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("http://d3js.org/d3.v3.min.js", function(){
+        mpld3_load_lib("/mpld3.v0.2git.min.js", create_fig91044974148646267950353);})
+}
+</script></body></html>
+<p><em>Figure 2. Run times for calculating a range of n (0-25) using the iterative (blue) and recursive (red) approaches. Figure made with</em> <a class="reference external" href="http://mpld3.github.io/">mpld3</a>.</p>
+<p>Where the red line represents recursive times and the blue iterative times. For small values of n the two methods are relatively the same, but for large values of n the time really starts to lengthen for the recursive case!  So, why is this?  Let's take another look at <strong>Figure 1</strong>.  The tree structure shows that the F(4) and F(3) cases are only calculated once, but each subsequent case is calculated multiple times!  For example, the F(1) case is calculated 3 times!  Hence, the recursive method calculates the same thing multiple times, wasting valuable run time.</p>
+<p>So why use recursion? Well, the recursive code is a lot easier to read. For the n &gt; 1 case, the mathematical equation is explicitly written out, whereas in the iterative case the programer has to step through the script to understand what is going on.  But the obvious gorilla in the room is that recursion in python is REALLY slow.  <strong>Memoization</strong> (pronounced like Elmer Fud trying to say memorization) is a technique used to deal with this problem.  Memoization and memorization are kind of synonomous in this case -- we want to make the program 'memorize' the result from previous runs. These memorized runs will be used for subsequent, repeated calls.   We do this by assigning the value to a hash table.  This involves a simple modification of the code:</p>
+<pre class="literal-block">
+mem = {}
+def F_mem(n):
+     if (n == 0):
+             return 0
+     elif (n == 1):
+             return 1
+     elif (n &gt; 1):
+             if n not in memo:
+                     memo[n] = (F_mem(n-1) + F_mem(n-2))
+
+             return memo[n]
+     else:
+             return -1
+</pre>
+<p>Now, let's run our timer again, but this time use the memoized recursion:</p>
+
+<html><head><title>mpld3 plot</title></head><body>
+
+<style>
+
+</style>
+
+<div id="fig72644029038885532319697"></div>
+<script>
+function mpld3_load_lib(url, callback){
+  var s = document.createElement('script');
+  s.src = url;
+  s.async = true;
+  s.onreadystatechange = s.onload = callback;
+  s.onerror = function(){console.warn("failed to load library " + url);};
+  document.getElementsByTagName("head")[0].appendChild(s);
+}
+
+function create_fig72644029038885532319697(){
+  
+  mpld3.draw_figure("fig72644029038885532319697", {"width": 640.0, "axes": [{"xlim": [0.0, 2.4999999999999998e-05], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "n", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [-0.067792338709677422, 0.5], "rotation": -90.0, "id": "7264402978640"}], "zoomable": true, "images": [], "xdomain": [0.0, 2.4999999999999998e-05], "ylim": [0.0, 200.0], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"grid": {"gridOn": false}, "position": "bottom", "nticks": 6, "tickvalues": null, "tickformat": null}, {"grid": {"gridOn": false}, "position": "left", "nticks": 5, "tickvalues": null, "tickformat": null}], "lines": [{"color": "#FF0000", "yindex": 1, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 10, "data": "data01", "id": "7264453795664"}, {"color": "#0000FF", "yindex": 1, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 2, "linewidth": 10, "data": "data01", "id": "7264453963920"}], "markers": [], "id": "7264402954512", "ydomain": [0.0, 200.0], "collections": [], "xscale": "linear", "bbox": [0.125, 0.53636363636363638, 0.77500000000000002, 0.36363636363636365]}, {"xlim": [0.0, 2.4999999999999998e-05], "yscale": "linear", "axesbg": "#FFFFFF", "texts": [{"v_baseline": "hanging", "h_anchor": "middle", "color": "#000000", "text": "Time(seconds)", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [0.5, -0.13177083333333334], "rotation": -0.0, "id": "7264453809360"}, {"v_baseline": "auto", "h_anchor": "middle", "color": "#000000", "text": "Fibonacci Value", "coordinates": "axes", "zorder": 3, "alpha": 1, "fontsize": 12.0, "position": [-0.10434167786738351, 0.5], "rotation": -90.0, "id": "7264453837904"}], "zoomable": true, "images": [], "xdomain": [0.0, 2.4999999999999998e-05], "ylim": [0.0, 1.8000000000000001e+41], "paths": [], "sharey": [], "sharex": [], "axesbgalpha": null, "axes": [{"grid": {"gridOn": false}, "position": "bottom", "nticks": 6, "tickvalues": null, "tickformat": null}, {"grid": {"gridOn": false}, "position": "left", "nticks": 10, "tickvalues": null, "tickformat": null}], "lines": [{"color": "#FF0000", "yindex": 3, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 0, "linewidth": 10, "data": "data01", "id": "7264453963280"}, {"color": "#0000FF", "yindex": 4, "coordinates": "data", "dasharray": "10,0", "zorder": 2, "alpha": 1, "xindex": 2, "linewidth": 10, "data": "data01", "id": "7264453965648"}], "markers": [], "id": "7264453796304", "ydomain": [0.0, 1.8000000000000001e+41], "collections": [], "xscale": "linear", "bbox": [0.125, 0.099999999999999978, 0.77500000000000002, 0.36363636363636365]}], "data": {"data01": [[1.1920928955078125e-06, 0.0, 1.1920928955078125e-06, 0.0, 0.0], [9.5367431640625e-07, 1.0, 0.0, 1.0, 1.0], [1.1920928955078125e-06, 2.0, 2.1457672119140625e-06, 1.0, 0.0], [9.5367431640625e-07, 3.0, 9.5367431640625e-07, 2.0, 0.0], [9.5367431640625e-07, 4.0, 9.5367431640625e-07, 3.0, 3.0], [1.9073486328125e-06, 5.0, 2.1457672119140625e-06, 5.0, 5.0], [2.1457672119140625e-06, 6.0, 1.9073486328125e-06, 8.0, 8.0], [1.9073486328125e-06, 7.0, 1.1920928955078125e-06, 13.0, 13.0], [1.9073486328125e-06, 8.0, 1.9073486328125e-06, 21.0, 21.0], [1.9073486328125e-06, 9.0, 2.1457672119140625e-06, 34.0, 34.0], [9.5367431640625e-07, 10.0, 1.9073486328125e-06, 55.0, 55.0], [2.1457672119140625e-06, 11.0, 2.1457672119140625e-06, 89.0, 89.0], [1.9073486328125e-06, 12.0, 1.9073486328125e-06, 144.0, 144.0], [9.5367431640625e-07, 13.0, 1.9073486328125e-06, 233.0, 233.0], [1.1920928955078125e-06, 14.0, 2.1457672119140625e-06, 377.0, 377.0], [9.5367431640625e-07, 15.0, 1.9073486328125e-06, 610.0, 610.0], [9.5367431640625e-07, 16.0, 3.0994415283203125e-06, 987.0, 987.0], [9.5367431640625e-07, 17.0, 3.0994415283203125e-06, 1597.0, 1597.0], [9.5367431640625e-07, 18.0, 2.86102294921875e-06, 2584.0, 2584.0], [9.5367431640625e-07, 19.0, 6.198883056640625e-06, 4181.0, 4181.0], [9.5367431640625e-07, 20.0, 2.86102294921875e-06, 6765.0, 6765.0], [2.1457672119140625e-06, 21.0, 2.86102294921875e-06, 10946.0, 10946.0], [1.9073486328125e-06, 22.0, 3.0994415283203125e-06, 17711.0, 17711.0], [1.9073486328125e-06, 23.0, 3.0994415283203125e-06, 28657.0, 28657.0], [9.5367431640625e-07, 24.0, 3.814697265625e-06, 46368.0, 46368.0], [9.5367431640625e-07, 25.0, 3.0994415283203125e-06, 75025.0, 75025.0], [9.5367431640625e-07, 26.0, 4.0531158447265625e-06, 121393.0, 121393.0], [9.5367431640625e-07, 27.0, 4.0531158447265625e-06, 196418.0, 196418.0], [1.1920928955078125e-06, 28.0, 4.0531158447265625e-06, 317811.0, 317811.0], [9.5367431640625e-07, 29.0, 4.0531158447265625e-06, 514229.0, 514229.0], [9.5367431640625e-07, 30.0, 4.0531158447265625e-06, 832040.0, 832040.0], [1.1920928955078125e-06, 31.0, 4.0531158447265625e-06, 1346269.0, 1346269.0], [9.5367431640625e-07, 32.0, 3.814697265625e-06, 2178309.0, 2178309.0], [9.5367431640625e-07, 33.0, 4.0531158447265625e-06, 3524578.0, 3524578.0], [2.1457672119140625e-06, 34.0, 4.0531158447265625e-06, 5702887.0, 5702887.0], [1.9073486328125e-06, 35.0, 5.0067901611328125e-06, 9227465.0, 9227465.0], [2.1457672119140625e-06, 36.0, 5.0067901611328125e-06, 14930352.0, 14930352.0], [1.9073486328125e-06, 37.0, 3.814697265625e-06, 24157817.0, 24157817.0], [2.1457672119140625e-06, 38.0, 3.814697265625e-06, 39088169.0, 39088169.0], [1.9073486328125e-06, 39.0, 4.76837158203125e-06, 63245986.0, 63245986.0], [9.5367431640625e-07, 40.0, 5.0067901611328125e-06, 102334155.0, 102334155.0], [2.1457672119140625e-06, 41.0, 5.0067901611328125e-06, 165580141.0, 165580141.0], [1.9073486328125e-06, 42.0, 5.0067901611328125e-06, 267914296.0, 267914296.0], [9.5367431640625e-07, 43.0, 5.0067901611328125e-06, 433494437.0, 433494437.0], [9.5367431640625e-07, 44.0, 5.9604644775390625e-06, 701408733.0, 701408733.0], [9.5367431640625e-07, 45.0, 5.9604644775390625e-06, 1134903170.0, 1134903170.0], [9.5367431640625e-07, 46.0, 5.9604644775390625e-06, 1836311903.0, 1836311903.0], [1.9073486328125e-06, 47.0, 5.9604644775390625e-06, 2971215073.0, 2971215073.0], [1.9073486328125e-06, 48.0, 5.9604644775390625e-06, 4807526976.0, 4807526976.0], [2.1457672119140625e-06, 49.0, 5.9604644775390625e-06, 7778742049.0, 7778742049.0], [9.5367431640625e-07, 50.0, 5.0067901611328125e-06, 12586269025.0, 12586269025.0], [9.5367431640625e-07, 51.0, 5.9604644775390625e-06, 20365011074.0, 20365011074.0], [9.5367431640625e-07, 52.0, 5.9604644775390625e-06, 32951280099.0, 32951280099.0], [9.5367431640625e-07, 53.0, 5.9604644775390625e-06, 53316291173.0, 53316291173.0], [1.1920928955078125e-06, 54.0, 6.198883056640625e-06, 86267571272.0, 86267571272.0], [9.5367431640625e-07, 55.0, 5.9604644775390625e-06, 139583862445.0, 139583862445.0], [9.5367431640625e-07, 56.0, 6.9141387939453125e-06, 225851433717.0, 225851433717.0], [9.5367431640625e-07, 57.0, 7.152557373046875e-06, 365435296162.0, 365435296162.0], [9.5367431640625e-07, 58.0, 6.9141387939453125e-06, 591286729879.0, 591286729879.0], [2.1457672119140625e-06, 59.0, 6.9141387939453125e-06, 956722026041.0, 956722026041.0], [1.9073486328125e-06, 60.0, 6.9141387939453125e-06, 1548008755920.0, 1548008755920.0], [9.5367431640625e-07, 61.0, 7.152557373046875e-06, 2504730781961.0, 2504730781961.0], [9.5367431640625e-07, 62.0, 6.9141387939453125e-06, 4052739537881.0, 4052739537881.0], [9.5367431640625e-07, 63.0, 6.198883056640625e-06, 6557470319842.0, 6557470319842.0], [9.5367431640625e-07, 64.0, 6.9141387939453125e-06, 10610209857723.0, 10610209857723.0], [9.5367431640625e-07, 65.0, 7.152557373046875e-06, 17167680177565.0, 17167680177565.0], [9.5367431640625e-07, 66.0, 6.9141387939453125e-06, 27777890035288.0, 27777890035288.0], [2.1457672119140625e-06, 67.0, 7.152557373046875e-06, 44945570212853.0, 44945570212853.0], [1.9073486328125e-06, 68.0, 6.9141387939453125e-06, 72723460248141.0, 72723460248141.0], [1.9073486328125e-06, 69.0, 7.152557373046875e-06, 117669030460994.0, 117669030460994.0], [2.1457672119140625e-06, 70.0, 6.9141387939453125e-06, 190392490709135.0, 190392490709135.0], [9.5367431640625e-07, 71.0, 7.152557373046875e-06, 308061521170129.0, 308061521170129.0], [9.5367431640625e-07, 72.0, 8.106231689453125e-06, 498454011879264.0, 498454011879264.0], [9.5367431640625e-07, 73.0, 7.867813110351562e-06, 806515533049393.0, 806515533049393.0], [9.5367431640625e-07, 74.0, 8.106231689453125e-06, 1304969544928657.0, 1304969544928657.0], [9.5367431640625e-07, 75.0, 8.106231689453125e-06, 2111485077978050.0, 2111485077978050.0], [9.5367431640625e-07, 76.0, 7.867813110351562e-06, 3416454622906707.0, 3416454622906707.0], [1.1920928955078125e-06, 77.0, 8.106231689453125e-06, 5527939700884757.0, 5527939700884757.0], [9.5367431640625e-07, 78.0, 8.106231689453125e-06, 8944394323791464.0, 8944394323791464.0], [1.9073486328125e-06, 79.0, 8.821487426757812e-06, 1.447233402467622e+16, 1.447233402467622e+16], [9.5367431640625e-07, 80.0, 9.059906005859375e-06, 2.3416728348467684e+16, 2.3416728348467684e+16], [9.5367431640625e-07, 81.0, 9.059906005859375e-06, 3.78890623731439e+16, 3.78890623731439e+16], [1.9073486328125e-06, 82.0, 9.059906005859375e-06, 6.130579072161159e+16, 6.130579072161159e+16], [2.1457672119140625e-06, 83.0, 7.867813110351562e-06, 9.91948530947555e+16, 9.91948530947555e+16], [9.5367431640625e-07, 84.0, 8.821487426757812e-06, 1.605006438163671e+17, 1.605006438163671e+17], [9.5367431640625e-07, 85.0, 9.059906005859375e-06, 2.596954969111226e+17, 2.596954969111226e+17], [9.5367431640625e-07, 86.0, 1.0013580322265625e-05, 4.2019614072748966e+17, 4.2019614072748966e+17], [3.0994415283203125e-06, 87.0, 9.059906005859375e-06, 6.798916376386122e+17, 6.798916376386122e+17], [9.5367431640625e-07, 88.0, 9.059906005859375e-06, 1.1000877783661019e+18, 1.1000877783661019e+18], [9.5367431640625e-07, 89.0, 1.0013580322265625e-05, 1.7799794160047142e+18, 1.7799794160047142e+18], [9.5367431640625e-07, 90.0, 1.0013580322265625e-05, 2.880067194370816e+18, 2.880067194370816e+18], [9.5367431640625e-07, 91.0, 1.0013580322265625e-05, 4.66004661037553e+18, 4.66004661037553e+18], [2.1457672119140625e-06, 92.0, 1.0013580322265625e-05, 7.540113804746346e+18, 7.540113804746346e+18], [9.5367431640625e-07, 93.0, 1.0967254638671875e-05, 1.2200160415121877e+19, 1.2200160415121877e+19], [9.5367431640625e-07, 94.0, 1.0013580322265625e-05, 1.974027421986822e+19, 1.974027421986822e+19], [1.9073486328125e-06, 95.0, 1.0013580322265625e-05, 3.19404346349901e+19, 3.19404346349901e+19], [1.9073486328125e-06, 96.0, 9.775161743164062e-06, 5.168070885485833e+19, 5.168070885485833e+19], [2.1457672119140625e-06, 97.0, 1.0013580322265625e-05, 8.362114348984843e+19, 8.362114348984843e+19], [9.5367431640625e-07, 98.0, 1.0013580322265625e-05, 1.3530185234470674e+20, 1.3530185234470674e+20], [9.5367431640625e-07, 99.0, 1.0013580322265625e-05, 2.1892299583455517e+20, 2.1892299583455517e+20], [1.1920928955078125e-06, 100.0, 1.0967254638671875e-05, 3.542248481792619e+20, 3.542248481792619e+20], [9.5367431640625e-07, 101.0, 1.0967254638671875e-05, 5.731478440138171e+20, 5.731478440138171e+20], [9.5367431640625e-07, 102.0, 1.0967254638671875e-05, 9.27372692193079e+20, 9.27372692193079e+20], [9.5367431640625e-07, 103.0, 1.1920928955078125e-05, 1.500520536206896e+21, 1.500520536206896e+21], [9.5367431640625e-07, 104.0, 1.0967254638671875e-05, 2.427893228399975e+21, 2.427893228399975e+21], [1.1920928955078125e-06, 105.0, 1.0967254638671875e-05, 3.928413764606871e+21, 3.928413764606871e+21], [9.5367431640625e-07, 106.0, 1.1920928955078125e-05, 6.356306993006847e+21, 6.356306993006847e+21], [1.9073486328125e-06, 107.0, 1.2159347534179688e-05, 1.0284720757613718e+22, 1.0284720757613718e+22], [2.1457672119140625e-06, 108.0, 1.1920928955078125e-05, 1.6641027750620564e+22, 1.6641027750620564e+22], [9.5367431640625e-07, 109.0, 1.1920928955078125e-05, 2.692574850823428e+22, 2.692574850823428e+22], [2.1457672119140625e-06, 110.0, 1.1920928955078125e-05, 4.356677625885484e+22, 4.356677625885484e+22], [9.5367431640625e-07, 111.0, 1.1920928955078125e-05, 7.049252476708912e+22, 7.049252476708912e+22], [9.5367431640625e-07, 112.0, 1.3113021850585938e-05, 1.1405930102594397e+23, 1.1405930102594397e+23], [1.1920928955078125e-06, 113.0, 1.2874603271484375e-05, 1.8455182579303308e+23, 1.8455182579303308e+23], [9.5367431640625e-07, 114.0, 1.3113021850585938e-05, 2.9861112681897705e+23, 2.9861112681897705e+23], [9.5367431640625e-07, 115.0, 1.2159347534179688e-05, 4.831629526120102e+23, 4.831629526120102e+23], [1.1920928955078125e-06, 116.0, 1.2874603271484375e-05, 7.817740794309872e+23, 7.817740794309872e+23], [9.5367431640625e-07, 117.0, 1.3113021850585938e-05, 1.2649370320429975e+24, 1.2649370320429975e+24], [9.5367431640625e-07, 118.0, 1.2874603271484375e-05, 2.0467111114739846e+24, 2.0467111114739846e+24], [9.5367431640625e-07, 119.0, 1.2874603271484375e-05, 3.311648143516982e+24, 3.311648143516982e+24], [9.5367431640625e-07, 120.0, 1.4066696166992188e-05, 5.358359254990966e+24, 5.358359254990966e+24], [2.1457672119140625e-06, 121.0, 1.4066696166992188e-05, 8.670007398507949e+24, 8.670007398507949e+24], [1.9073486328125e-06, 122.0, 1.3828277587890625e-05, 1.4028366653498915e+25, 1.4028366653498915e+25], [2.1457672119140625e-06, 123.0, 1.4066696166992188e-05, 2.2698374052006864e+25, 2.2698374052006864e+25], [9.5367431640625e-07, 124.0, 1.4066696166992188e-05, 3.672674070550578e+25, 3.672674070550578e+25], [9.5367431640625e-07, 125.0, 1.4066696166992188e-05, 5.9425114757512645e+25, 5.9425114757512645e+25], [1.1920928955078125e-06, 126.0, 1.4066696166992188e-05, 9.615185546301842e+25, 9.615185546301842e+25], [9.5367431640625e-07, 127.0, 1.4066696166992188e-05, 1.5557697022053105e+26, 1.5557697022053105e+26], [2.1457672119140625e-06, 128.0, 1.4066696166992188e-05, 2.517288256835495e+26, 2.517288256835495e+26], [9.5367431640625e-07, 129.0, 1.5020370483398438e-05, 4.073057959040806e+26, 4.073057959040806e+26], [2.1457672119140625e-06, 130.0, 1.5020370483398438e-05, 6.590346215876301e+26, 6.590346215876301e+26], [9.5367431640625e-07, 131.0, 1.4066696166992188e-05, 1.0663404174917106e+27, 1.0663404174917106e+27], [9.5367431640625e-07, 132.0, 1.5020370483398438e-05, 1.7253750390793406e+27, 1.7253750390793406e+27], [9.5367431640625e-07, 133.0, 1.5020370483398438e-05, 2.7917154565710513e+27, 2.7917154565710513e+27], [9.5367431640625e-07, 134.0, 1.5974044799804688e-05, 4.517090495650392e+27, 4.517090495650392e+27], [9.5367431640625e-07, 135.0, 1.5974044799804688e-05, 7.308805952221443e+27, 7.308805952221443e+27], [1.1920928955078125e-06, 136.0, 1.5974044799804688e-05, 1.1825896447871835e+28, 1.1825896447871835e+28], [1.9073486328125e-06, 137.0, 1.5974044799804688e-05, 1.9134702400093278e+28, 1.9134702400093278e+28], [1.9073486328125e-06, 138.0, 1.5020370483398438e-05, 3.0960598847965113e+28, 3.0960598847965113e+28], [2.1457672119140625e-06, 139.0, 1.5974044799804688e-05, 5.009530124805839e+28, 5.009530124805839e+28], [1.9073486328125e-06, 140.0, 1.6927719116210938e-05, 8.105590009602351e+28, 8.105590009602351e+28], [2.1457672119140625e-06, 141.0, 1.5974044799804688e-05, 1.3115120134408189e+29, 1.3115120134408189e+29], [1.9073486328125e-06, 142.0, 1.5974044799804688e-05, 2.122071014401054e+29, 2.122071014401054e+29], [1.9073486328125e-06, 143.0, 1.5974044799804688e-05, 3.433583027841873e+29, 3.433583027841873e+29], [1.1920928955078125e-06, 144.0, 1.5974044799804688e-05, 5.555654042242927e+29, 5.555654042242927e+29], [1.9073486328125e-06, 145.0, 1.6927719116210938e-05, 8.9892370700848e+29, 8.9892370700848e+29], [9.5367431640625e-07, 146.0, 1.71661376953125e-05, 1.4544891112327727e+30, 1.4544891112327727e+30], [9.5367431640625e-07, 147.0, 1.6927719116210938e-05, 2.3534128182412526e+30, 2.3534128182412526e+30], [9.5367431640625e-07, 148.0, 1.71661376953125e-05, 3.8079019294740253e+30, 3.8079019294740253e+30], [9.5367431640625e-07, 149.0, 1.6927719116210938e-05, 6.161314747715278e+30, 6.161314747715278e+30], [1.9073486328125e-06, 150.0, 1.71661376953125e-05, 9.969216677189303e+30, 9.969216677189303e+30], [9.5367431640625e-07, 151.0, 1.6927719116210938e-05, 1.613053142490458e+31, 1.613053142490458e+31], [1.1920928955078125e-06, 152.0, 1.71661376953125e-05, 2.6099748102093883e+31, 2.6099748102093883e+31], [9.5367431640625e-07, 153.0, 1.7881393432617188e-05, 4.223027952699846e+31, 4.223027952699846e+31], [9.5367431640625e-07, 154.0, 1.811981201171875e-05, 6.833002762909235e+31, 6.833002762909235e+31], [9.5367431640625e-07, 155.0, 1.7881393432617188e-05, 1.1056030715609081e+32, 1.1056030715609081e+32], [9.5367431640625e-07, 156.0, 1.811981201171875e-05, 1.7889033478518318e+32, 1.7889033478518318e+32], [1.1920928955078125e-06, 157.0, 1.811981201171875e-05, 2.89450641941274e+32, 2.89450641941274e+32], [9.5367431640625e-07, 158.0, 1.7881393432617188e-05, 4.683409767264571e+32, 4.683409767264571e+32], [9.5367431640625e-07, 159.0, 1.8835067749023438e-05, 7.577916186677312e+32, 7.577916186677312e+32], [9.5367431640625e-07, 160.0, 1.9073486328125e-05, 1.2261325953941882e+33, 1.2261325953941882e+33], [9.5367431640625e-07, 161.0, 1.9073486328125e-05, 1.9839242140619194e+33, 1.9839242140619194e+33], [1.1920928955078125e-06, 162.0, 1.8835067749023438e-05, 3.2100568094561075e+33, 3.2100568094561075e+33], [9.5367431640625e-07, 163.0, 2.002716064453125e-05, 5.193981023518027e+33, 5.193981023518027e+33], [9.5367431640625e-07, 164.0, 2.002716064453125e-05, 8.404037832974135e+33, 8.404037832974135e+33], [9.5367431640625e-07, 165.0, 2.002716064453125e-05, 1.3598018856492163e+34, 1.3598018856492163e+34], [9.5367431640625e-07, 166.0, 2.002716064453125e-05, 2.2002056689466297e+34, 2.2002056689466297e+34], [9.5367431640625e-07, 167.0, 1.9073486328125e-05, 3.5600075545958458e+34, 3.5600075545958458e+34], [2.1457672119140625e-06, 168.0, 1.9073486328125e-05, 5.760213223542476e+34, 5.760213223542476e+34], [9.5367431640625e-07, 169.0, 2.002716064453125e-05, 9.32022077813832e+34, 9.32022077813832e+34], [2.1457672119140625e-06, 170.0, 2.002716064453125e-05, 1.5080434001680798e+35, 1.5080434001680798e+35], [1.9073486328125e-06, 171.0, 2.09808349609375e-05, 2.440065477981912e+35, 2.440065477981912e+35], [1.9073486328125e-06, 172.0, 2.002716064453125e-05, 3.948108878149992e+35, 3.948108878149992e+35], [2.1457672119140625e-06, 173.0, 2.002716064453125e-05, 6.3881743561319036e+35, 6.3881743561319036e+35], [1.9073486328125e-06, 174.0, 2.09808349609375e-05, 1.0336283234281895e+36, 1.0336283234281895e+36], [2.1457672119140625e-06, 175.0, 2.002716064453125e-05, 1.67244575904138e+36, 1.67244575904138e+36], [1.9073486328125e-06, 176.0, 2.09808349609375e-05, 2.7060740824695694e+36, 2.7060740824695694e+36], [2.1457672119140625e-06, 177.0, 2.09808349609375e-05, 4.3785198415109494e+36, 4.3785198415109494e+36], [1.9073486328125e-06, 178.0, 2.193450927734375e-05, 7.084593923980518e+36, 7.084593923980518e+36], [1.9073486328125e-06, 179.0, 2.09808349609375e-05, 1.1463113765491467e+37, 1.1463113765491467e+37], [2.1457672119140625e-06, 180.0, 2.193450927734375e-05, 1.8547707689471987e+37, 1.8547707689471987e+37], [1.9073486328125e-06, 181.0, 2.193450927734375e-05, 3.0010821454963454e+37, 3.0010821454963454e+37], [2.1457672119140625e-06, 182.0, 2.193450927734375e-05, 4.855852914443544e+37, 4.855852914443544e+37], [1.9073486328125e-06, 183.0, 2.2172927856445312e-05, 7.856935059939889e+37, 7.856935059939889e+37], [1.9073486328125e-06, 184.0, 2.193450927734375e-05, 1.2712787974383434e+38, 1.2712787974383434e+38], [2.1457672119140625e-06, 185.0, 2.2172927856445312e-05, 2.0569723034323324e+38, 2.0569723034323324e+38], [1.9073486328125e-06, 186.0, 2.288818359375e-05, 3.3282511008706755e+38, 3.3282511008706755e+38], [1.9073486328125e-06, 187.0, 2.3126602172851562e-05, 5.385223404303008e+38, 5.385223404303008e+38], [2.1457672119140625e-06, 188.0, 2.288818359375e-05, 8.713474505173684e+38, 8.713474505173684e+38], [9.5367431640625e-07, 189.0, 2.2172927856445312e-05, 1.409869790947669e+39, 1.409869790947669e+39], [9.5367431640625e-07, 190.0, 2.288818359375e-05, 2.2812172414650375e+39, 2.2812172414650375e+39], [9.5367431640625e-07, 191.0, 2.4080276489257812e-05, 3.691087032412707e+39, 3.691087032412707e+39], [9.5367431640625e-07, 192.0, 2.4080276489257812e-05, 5.972304273877745e+39, 5.972304273877745e+39], [1.1920928955078125e-06, 193.0, 2.4080276489257812e-05, 9.66339130629045e+39, 9.66339130629045e+39], [9.5367431640625e-07, 194.0, 2.288818359375e-05, 1.5635695580168194e+40, 1.5635695580168194e+40], [9.5367431640625e-07, 195.0, 2.4080276489257812e-05, 2.5299086886458645e+40, 2.5299086886458645e+40], [9.5367431640625e-07, 196.0, 2.4080276489257812e-05, 4.093478246662684e+40, 4.093478246662684e+40], [9.5367431640625e-07, 197.0, 2.384185791015625e-05, 6.623386935308548e+40, 6.623386935308548e+40], [1.1920928955078125e-06, 198.0, 2.384185791015625e-05, 1.0716865181971233e+41, 1.0716865181971233e+41], [9.5367431640625e-07, 199.0, 2.384185791015625e-05, 1.734025211727978e+41, 1.734025211727978e+41]]}, "id": "7264402903888", "toolbar": ["reset", "move"], "height": 480.0});
+}
+
+if(typeof(mpld3) !== "undefined"){
+   // already loaded: just create the figure
+   create_fig72644029038885532319697();
+}else if(typeof define === "function" && define.amd){
+   // require.js is available: use it to load d3/mpld3
+   require.config({paths: {d3: "/d3"}});
+   require(["d3"], function(d3){
+      window.d3 = d3;
+      mpld3_load_lib("/mpld3.js", create_fig72644029038885532319697);
+    });
+}else{
+    // require.js not available: dynamically load d3 & mpld3
+    mpld3_load_lib("/d3.js", function(){
+        mpld3_load_lib("/mpld3.js", create_fig72644029038885532319697);})
+}
+</script></body></html>
+<p><em>Figure 3. Run times for calculating a range of n (0-200) using the iterative (blue) and memoized recursive (red) approaches. Figure made with</em> <a class="reference external" href="http://mpld3.github.io/">mpld3</a>.</p>
+<p>Woa!  As <a class="reference external" href="http://maryrosecook.com/">Mary Rose Cook</a> would say, &quot;Now we're cookin' with gas.&quot;  Run times for the recursive method are now out-pacing the iterative method!  So, by memoizing your recursive function you can get your code to run REALLY fast!  A down side to this, however, is that you are going to take up memory by storing information in your hash table.</p>
+<p>Hope you liked my blog!  'Till next time!</p>
 </div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other articles</h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="./Fibo.html" rel="bookmark"
+                           title="Permalink to Iteration and Recursion in Python"><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Thu 10 April 2014</span>
+<span>| tags: <a href="./tag/fibonacci.html">Fibonacci</a><a href="./tag/python.html">python</a><a href="./tag/iterative.html">iterative</a><a href="./tag/recursion.html">recursion</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Iteration vs. Recursion in Python</strong></p>
+
+                <a class="readmore" href="./Fibo.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -89,22 +279,6 @@ and the fault parallel velocity is: R par= R*cos(t)</p>
 </footer><!-- /.post-info -->                <p class="first last"><strong>GPS velocity projection</strong></p>
 
                 <a class="readmore" href="./VectorProj.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="./MyBio.html" rel="bookmark"
-                           title="Permalink to About Me">About Me</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Thu 13 March 2014</span>
-<span>| tags: <a href="./tag/gina.html">Gina</a><a href="./tag/schmalzle.html">Schmalzle</a><a href="./tag/bos-techonologies.html">BOS Techonologies</a><a href="./tag/hacker-school.html">Hacker School</a></span>
-</footer><!-- /.post-info -->                <p class="first last">Gina's Bio</p>
-
-                <a class="readmore" href="./MyBio.html">read more</a>
                 </div><!-- /.entry-content -->
             </article></li>
 
