@@ -1,0 +1,45 @@
+{
+	"name": "F(4)",
+	"children": [{
+		"name": "F(2)",
+		"children": [{
+			"name": "F(1)",
+			"children": [{
+				"name": "1"
+				}]
+			 },{
+
+			"name": "F(0)",
+			"children": [{
+				"name": "0"
+				}]
+			}]
+
+		},{
+		"name": "F(3)",
+		"children": [{
+			"name": "F(1)",
+			"children": [{
+				"name": "1"
+			}]
+			},{
+			"name": "F(2)",
+			"children": [{
+				"name": "F(1)",
+				"children": [{
+					"name": "1"
+					}]
+			 	},{
+
+				"name": "F(0)",
+				"children": [{
+					"name": "0"
+				}]
+			}]
+		}]
+	}]
+}
+
+
+
+
