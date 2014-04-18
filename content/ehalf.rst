@@ -1,7 +1,7 @@
 **Elastic half space model of a vertical strike slip fault**
 ################################################################
 
-:date: 2014-04-15 14:56
+:date: 2014-04-18 14:56
 :tags: Strike Slip Faults, Fortran, GMT, Python
 :category: Home
 :slug: ehalf
