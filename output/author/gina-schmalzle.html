@@ -37,265 +37,168 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="../GMT.html"><strong>Mapping and Plotting data with General Mapping Tools (GMT)</strong></a></h1>
+                    <h1 class="entry-title"><a href="../ehalf.html"><strong>Elastic half space model of a vertical strike slip fault</strong></a></h1>
 <footer class="post-info">
-        <span>Mon 14 April 2014</span>
-<span>| tags: <a href="../tag/general-mapping-tools.html">General Mapping Tools</a><a href="../tag/gmt.html">GMT</a><a href="../tag/etopo1.html">ETOPO1</a><a href="../tag/shell-script.html">shell script</a></span>
-</footer><!-- /.post-info --><div class="section" id="general-mapping-tools">
-<h2><strong>General Mapping Tools</strong></h2>
-<p>Before my time here at <strong>Hacker School</strong> I put together a short, hands on course on how to use <a class="reference external" href="http://gmt.soest.hawaii.edu/">General Mapping Tools (GMT)</a>.  <strong>GMT</strong> is a very powerful <strong>mapping</strong> and <strong>data visualization</strong> package. This class was based around using <strong>GMT</strong> 4.  <strong>GMT</strong> 5 has slightly different syntax and functionality and will not work with the scripts presented here.  I intend to update the scripts to <strong>GMT</strong> 5 in the near future.</p>
-<p>The class was taught at the University of Washington Earth in the Department of Earth and Space Science, so it has an earth science theme -- <strong>earthquakes</strong>!  Here, students learn how to make a map with layers that include <strong>mapping</strong> <strong>topography</strong> and <strong>earthquake locations</strong>.  A subset of data is extracted from a profile line (red line in map below) so that <strong>earthquake</strong> depths can be plotted as a function of distance.   The end goal of the class is to produce the following map and transect:</p>
-<img alt="Cascadia_earthquakes" class="align-right" src="images/cascadia_seis.jpg" style="width: 800.0px; height: 1100.0px;" />
-<p><em>Figure 1. Map of the Cascadia subduction zone in northwestern United states overlain with ETOPO1 topography model (relief map), and earthquake locations from the ANSS catalog (circles) colored according to earthquake depth.  Red line marks profile line from which data are extracted and plotted the depth vs. longitude graph below the map.</em></p>
-<p>All files are contained in my <a class="reference external" href="https://github.com/ginaschmalzle/GMT_DataViz">Github repo</a> except for the ETOPO1 topography model dataset.  Unfortunately, this is a gigantic file that I could not push to the github repo without errors.  The grd file can be downloaded on the original website, however, at <a class="reference external" href="http://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/bedrock/grid_registered/netcdf/ETOPO1_Bed_g_gmt4.grd.gz">http://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/bedrock/grid_registered/netcdf/ETOPO1_Bed_g_gmt4.grd.gz</a>.</p>
-<p>The file that made the above figure (cascadia_seis.com) is also in the repo, but I am also including a very verbose version below that goes through and explains each step, including some basics of <strong>bash scripting</strong>:</p>
+        <span>Tue 15 April 2014</span>
+<span>| tags: <a href="../tag/strike-slip-faults.html">Strike Slip Faults</a><a href="../tag/fortran.html">Fortran</a><a href="../tag/gmt.html">GMT</a><a href="../tag/python.html">Python</a></span>
+</footer><!-- /.post-info --><div class="section" id="id1">
+<h2><strong>Elastic Half Space Model of a Vertical Strike Slip Fault</strong></h2>
+<p>In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an &quot;S&quot;.  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced.</p>
+<img alt="deforming_plates" class="align-center" src="images/elastichs.jpg" style="width: 170.0px; height: 250.0px;" />
+<p><em>Figure 1. Deformation of tectonic plates between major earthquakes. D is the locking depth (the depth at which the fault is stuck). Figure modified from http://geologycafe.com/california/pp1515/chapter7.html</em></p>
+<p>A simple model of this movement for vertical strike slip faults in a homogenous elastic half space [Weertman and Weertman, 1964; Savage and Burford, 1973] can be described as:</p>
 <pre class="literal-block">
-#!/bin/bash
-# This file is for the first class on data visualization with GMT
-# Written by Gina Schmalzle
-# This code is a bash shell script (http://en.wikipedia.org/wiki/Bash_(Unix_shell)) that calls GMT files.
-# awk is used to manipulate data files (http://en.wikipedia.org/wiki/AWK).
-
-# A unix shell is a &quot;command line interpreter&quot; that allows definition of variables,
-# and execution of commands that could be done via the command line.  A nice shell script
-# will make it easier to change variables, and easier to implement several lines of code.
-# Shell scripts are commonly used with GMT programs.
-
-# Most if not all of the commands in this document have associated 'man' (manual) pages.  To access them type:
-
-# man whatever_your_command_is
-
-# If you cannot access your man pages through your command prompt, an alternative would be to type man command in
-# google.
-
-# To make this file executable, you will have to change the mode of the file (ie, read, write and/or execute)
-# In your directory you will need to type:
-
-# chmod u+x ./cascadia_seis.com
-
-# The '#' marks to the left indicates a comment.  Anything written after them is not read when the file is executed.
-
-# This file will create a map of Cascadia that includes a grid of topography data from ETOPO1 (ETOPO1_Bed_g_gmt4.grd) and
-# seismicity data.  These data will be applied in &quot;layers&quot;, very similar to how GIS packages have layers.  The layers may be
-# turned off or on by commenting/uncommenting lines.
-
-# The grd file is already in gmt format.  Generating and using grids is another class in itself, but here I will introduce
-# you to using GMT formated grid files.
-
-# Also included on the map are earthquakes locations color coded by depth from the ANSS catalog for 2000 to 2012 (anss_eq_2000_2012.dat)
-
-
-#MAKE A MAP!
-
-# Define the names of the input and output files
-out=cascadia_seis.ps                           # This will be the name of your map generated by this file
-seis_data=anss_eq_2000_2012.dat                        # ANSS earthquake catalog
-topo=./ETOPO1_Bed_g_gmt4.grd                   # ETOPO1 topography grid
-
-# Define map characteristics
-# Define your area
-north=50
-south=40
-east=-118
-west=-132
-
-# Define your map boundary annotation
-# Here we define tick marks every 2 degrees and we print the degree on the West and South sides of the plot
-# and keep the ticks (but don't label) on the east and north sides
-tick='-B2/2WSen'
-
-# Define Map Projection
-# Here we define a Mercator Projection of size = 15
-proj='-JM15'
-
-#Start with GMT commands with embedded definitions....
-# Help with any of these commands can be obtained by looking at the 'man' files.  Simply type at the command line: man gmt_command
-# If the man files are not properly installed you can also type in man gmt_command (e.g., man psbasemap) in google and it will come up.
-
-#This line sets up the 'basemap' meaning  here you will define the region, boundary annotations and projections.
-#You can accomplish this also with other commands (including psxy, pscoast, etc...), but it is good many times to start with psbasemap.
-
-psbasemap -R$west/$east/$south/$north $proj $tick -P -Y12 -K &gt; $out
-
-# This is your first line of GMT Code!!! Whoo-hoo!  In long hand this line would look like this:
-#
-# psbasemap -R-132/-118/40/50 -JM15 -P -Y12 -K &gt; cascadia_seis.ps
-
-# What the options mean:
-# psbasemap = plots postscript basemaps
-# -R -- defines the area of your map (note that we defined north, south, east and west above and they are inserted into the -R option.
-# The Projection (-JM) and tick marks (-B) were defined above.
-# Note that when you call a defined variable, you must include a '$' before the variable name
-# -P Sets the figure to &quot;Portrait&quot; mode.  No -P is landscape.
-# -Y Orients the figure vertically (-X orients it horizontally).
-# -K means that there will be more 'stuff' appended to the postscript file.
-# '&gt;' means that the command output, which would normally print to screen will be directed into your new file (cascadia_seis.ps, shown here as $out)
-# In addition it means that it believes cascadia_seis.ps is a new file.  If it is not, it will erase all existing info in the file and re-write it with
-# the new information.
-
-
-#plot grid
-# We would like the topography to be the map background, so it needs to be the first layer.  Hence, we get started with a hard part...
-
-# Helpful hint...
-#
-# use grdinfo  your_grd_file.grd
-# to find info about your grid file, such as the min and max values
-#
-# You will need to make some color palettes.  These are files that tell what colors certain properties are displayed.
-# For example, your ETOPO grid has a latitude, longitude and a elevation, and you want to color code the topography
-# by elevation.  The following lines will tell you how to do that...
-
-# First, Make a color palatte
-# Typing:  makecpt
-# at the command line will give you information on pre-existing color schemes
-# This will make a color pallete of typical, pre-defined topography colors:
-
-makecpt -Crelief -T-8000/8000/500 -Z &gt; topo.cpt
-
-#makecpt = makes GMT color palette tables
-#-C tells GMT what pre-defined color palette to use
-#-T defines the range and increment
-#-Z states that the colors will change continuously (rather than discretely)
-#topo.cpt is a new file containing your color pallete information that will be used later.
-
-
-#This next line is not necessary, but may be used to make the image appear sharper.
-#grdgradient helps to illuminate ridges in the topography from a specified angle.
-#grdgradient $topo -A135 -Ne0.8 -Gshadow.grd
-
-#grdgradient=Makes illumination shadow
-#-A is the angle from which the light is shown
-#-N normalizes the shadow according to equations stated in man grdgradient
-#-G lists the name of your output grid
-
-
-# Overlay the grid onto your map
-# Here you are adding the grid as a layer to your postscript file
-
-# This command includes a shadow grid file:
-# grdimage $topo -R -J -O -K -Ctopo.cpt -Ishadow.grd  &gt;&gt; $out
-
-# This command omits the shadow file:
-grdimage $topo -R -J -O -K -Ctopo.cpt   &gt;&gt; $out
-
-#grdimage = creates an image from a 2D netcdf grid file
-#-R = Sets the region.  Notice here I don't have to state the min and max values again.
-#-J = Sets the projection.  Again the type and size don't have to be restated.
-#-O = Overlay. The output for this line is being appended to a previous postscript code
-# i.e., you are adding another layer
-#-K = You will be appending another layer
-#-C = You will be using the color pallete topo.cpt
-
-# Now, back to the easy stuff..
-# Add coastlines
-
-pscoast -R -J -O -K -W2 -Df -Na -Ia -Lf-130.8/46/10/200+lkm &gt;&gt; $out
-
-#pscoast = adds coastlines
-#-W = Sets the line width and color.  Default color = black = 0 and does not have to be explicitly stated.
-#-Df = What is the resolution of the coasline dataset?  f = fine
-#-Na = Draws politcal boundaries, a = draw all the boundaries, see man pscoast for more options
-#-Ia = Draw Rivers, a = draw all rivers, see man pscoast for more options
-#-Lf = Draw a fancy map scale, f = fancy, centered on -130.8, 46 degrees. +200 = length, +lkm = kilometers
-
-
-# Add seismic locations and color code them by depth
-# Make color palette
-# Ahh, another color pallete...
-# This time, let's make it rainbow colored and call is seis.cpt
-
-makecpt -Crainbow -T0/50/10 -Z &gt; seis.cpt
-
-# Columns 4, 3 and 5 of the data file are the longitude, latitude and depth, respectively.  This is the order
-# your data need to be in for psxy (see man file)
-
-awk '{print($4,$3,$5)}' $seis_data | psxy -R -J -O -K  -W.1 -Sc.1 -Cseis.cpt -H15 &gt;&gt; $out
-
-# psxy = Plot 2D lines, polygons and symbols on a map.  Fun fact -- psxyz plots in 3D.
-# -W.1 = Draws the black outline of the circles.
-# -Sc.1 = Defines the shape and size; c = circle, size = 0.1
-# -H = Header.  The first 15 lines of the file contain header information and will not be read.
-# -C = defines the color palette to be used for the depth.  We could also make all the circles one color.
-# In this case, remove the -C option and use -G instead.  -G defines the color of the circle in either white-black
-# or red/green/blue format.  Example colors:  -G0 (black); -G255 (White); -G255/0/0 (Red)
-# GMT has made this a little easier.  You could also say -Gblack or -Gred, but there are a limited amount of colors
-# you could do that with.
-
-
-# Add a scale
-psscale -D0/3.2/6/1 -B10:Depth:/:km: -Cseis.cpt -O -K &gt;&gt; $out
-
-# pscale = Adds a scale to go with your color palette
-# -D = set the position of the scale
-# -B = set and annotate the scale tick marks and lables.
-# -C = specify your color palette
-
-
-
-# Now, let's take a subset of seismic data and project them onto a line....
-#First, let's view the transect line
-
-#Plot transect line
-psxy center.dat -R -J -O -K -W1 -Sc.3 -G255/0/0 &gt;&gt; $out
-psxy center.dat -R -J -O -K -W5/255/0/0 &gt;&gt; $out
-
-# You should know the options by now ;-)
-
-#This ends the map making part of this exercize, now we move onto making a scatter plot from the seismic data.
-
-
-
-# PROJECT DATA
-# Here we use the GMT code project to take all the data within a certain region and project them onto a line
-
-awk '{print($4,$3,$5)}' $seis_data | project -C-124/47 -A90 -W-.2/.2 -L0/4 -H15 &gt; projection.dat
-
-# project = projects data onto a transect
-# Note that the options are different for this command
-# -C = defines the center of your transect
-# -A = azimuth of transect (CW from N)
-# -W = Width of the transect in degrees
-# -L = length of transect in degrees
-# -H = Header declaration
-# projection.dat = new file with the original data and the projected locations
-
-
-
-
-# MAKE SCATTER PLOT
-#We want the scatter plot to be on the same page as the map, but just below it, so we need to redefine our
-#region, projection and tick marks...
-
-east=-120
-west=-124
-dmin=0
-dmax=50
-
-proj=-JX15/-5
-tick=-B1:Longitude:/10:Depth:WSen
-
-
-awk '{print($6,$3)}' projection.dat | psxy -R$west/$east/$dmin/$dmax $proj $tick -W1 -Sc.2 -G200 -O -K -Y-8 -P &gt;&gt; $out
-
-
-# Columns 6 and 3 are the projected longitude and the Depth, repectively
-# -Y = Shift the new plot down 8 units.  You can designate if you want to shift in centimeters (c), inches (i),
-# meters (m), or pixels (p).  Otherwise it shifts by whatever is in your gmtdefaults.
-
-# Last, but not least, image your map!
-# Common postscript viewers:  gs, gv, ggv, open, gimp
-# What, you don't like postscript files?  That's ok, uncomment this line:
-# ps2pdf $out
-
-open $out
+V(x) = (vo/pi)arctan(x/D)
 </pre>
+<p>where V(x) is the velocity of points estimated along a perpendicular profile across the fault, v is the far field velocity, x is the distance from the fault, and D is the dislocation depth.</p>
+<p>High precision GPS can be used to observe the deformation around fault systems.  The velocity, position and uncertainty estimates can be compared directly to the model to estimate the goodness of fit of the model.  The chi2 statistic is give by:</p>
+<pre class="literal-block">
+chi2 = SUM ((dataR -vel)/(sig))**2
+</pre>
+<p>where chi2 = chi2 statistic, dataR = GPS estimated rate for a position aling the profile, vel = model calculated velocity, and sig = GPS velocity uncertainty.  SUM is the sum of all chi2 for each GPS datum.</p>
+<p>The reduced chi2 is also calculated and is given by:</p>
+<pre class="literal-block">
+reduced chi2 = chi2 / (N-v-1)
+</pre>
+<p>where N = number of data, v = number of variable parameters (in this case 2, R and d).  An ideal reduced chi2 should equal 1.</p>
+<p>In this blog, I use high precision GPS velocities from Schmalzle et al, [2006], and compare them to the model described above. I use the chi2 statistic and the reduced chi2 to determine the goodness of fit of the model to the data.  My <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">githup repo</a> has versions of how to do this in <strong>Fortran</strong> with visualization using <strong>General Mapping Tools (GMT)</strong>, and how to do it in <strong>Python</strong>.  This blog will cover only the techniques used in the Python version of the code.</p>
+<p>I have a few external files that are read in the code and are also available in the my <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">githup repo</a>.  The file param.py holds the values of the far field velocity and locking depth for a given model run and looks like this:</p>
+<pre class="literal-block">
+xmin=-150.
+xmax=150.
+int=1.
+Vo=34.
+d=15.
+dmin=1.
+dmax=100.
+Vmin=0.
+Vmax=100.
+</pre>
+<p>The file data.py contains the GPS data in the form of x (in km), Rate (in mm/yr) and uncertainty (in mm/yr) and looks like this:</p>
+<pre class="literal-block">
+-92.60814 15.0918 -3.561012106
+-90.65163 15.4416 -3.592941176
+-92.60814 15.1681 -1.42072184
+-71.08653 14.3386 -1.661513002
+-69.13002 16.4146 -1.773867193
+-47.60841 10.1976 -1.511861585
+-60.65181 14.0536 -1.95124564
+-70.43436 14.4541 -2.901815856
+-2.282595 0.82942 -1.622786425
+-27.39114 8.70825 -1.672086072
+0.65217 0.18103 -1.550890689
+7.499955 -6.89121 -1.799743676
+19.5651 -11.9668 -1.632284566
+-17.60859 4.82287 -1.62481939
+12.39123 -8.5554 -1.223772558
+33.91284 -15.2699 -1.190422007
+65.86917 -15.6106 -1.351439143
+122.60796 -15.6614 -6.776253439
+3.26085 -5.95536 -1.524006894
+2.60868 -2.39876 -1.179208687
+6.5217 -5.81965 -1.62421975
+-13.0434 5.08107 -1.23548631
+</pre>
+<p>Now for the coding! First, import the following modules:</p>
+<pre class="literal-block">
+import numpy as np
+import math
+import matplotlib.pyplot as plt
+</pre>
+<p>and import the param.py file:</p>
+<pre class="literal-block">
+import param
+</pre>
+<p>I collect the information from the param file and computed the surface velocities like this:</p>
+<pre class="literal-block">
+f = open('vel.txt','w')
+listx = []
+listVel = []
+x=param.xmin
+while (x &lt;= param.xmax):
+    Vel=-((param.Vo/np.pi)*math.atan(x/param.d))
+    print &gt;&gt; f, x, Vel
+    listx.append(x)
+    listVel.append(Vel)
+    x = x + param.int
+</pre>
+<p>This calculates the predicted velocity for a defined increment along a profile of a strike slip fault.
+I keep the x's and calculated velocities in lists that will be used later in the program for plotting purposes.</p>
+<p>Now let's open the GPS file and read its contents:</p>
+<pre class="literal-block">
+g=np.loadtxt('data.py')
+gx = g[:,0]
+gVel = g[:,1]
+gsig = g[:,2]
+</pre>
+<p>Now calculate the expected velocity or at each GPS position:</p>
+<pre class="literal-block">
+VelC = -((param.Vo / np.pi) * np.arctan ([ gx/param.d ]))
+</pre>
+<p>and calculate the chi2 and reduced chi2</p>
+<pre class="literal-block">
+chi = ((gVel - VelC)/ (gsig))**2
+chi2 = sum(chi.T)
+redchi = chi2/(len(gVel)-3)
+</pre>
+<p>Now you have the model fit to the data for a modeled fault rate and locking depth!  The model fit to the data looks like <em>Figure 2</em>.</p>
+<img alt="gridsearch" class="align-right" src="images/lineGPS.png" style="width: 800.0px; height: 700.0px;" />
+<p><em>Figure 2.  Modeled velocities across a vertical strike slip fault (solid lines) compared to GPS velocities (triangles) with velocity uncertainty error bars. Both gridsearch estimated and inversion estimated low misfit rates are shown for a locking depth of 15km.  The reduced chi2 is given.</em></p>
+<p>But suppose you want to know which combination of modeled fault rate and locking depth give you the best fit to the data.   One way you can do this is by running a whole suite of models that include different combinations of fault rate and locking depth values.  This is called a gridsearch approach, and is perhaps the simplest (although most time consuming) method.  The param.py files contains user input values for a range of modeled parameters.  Grabbing those values we can then perform a while loop to loop through those ranges:</p>
+<pre class="literal-block">
+dmin=param.dmin
+dmax=param.dmax
+Vmin=param.Vmin
+Vmax=param.Vmax
+
+d=param.dmin
+gridredchi = np.array([V, d, chi])
+grc = []
+c = open('chi.py','w')
+
+while (d &lt;= dmax):
+ V=param.Vmin
+ while (V &lt;=  Vmax):
+   gridVelC = -((V / np.pi) * np.arctan ([ gx/d ]))
+   gridchi = ((gVel - gridVelC)/ (gsig))**2
+   gridchisum = np.matrix.item(sum(gridchi.T))
+   gridrchi= gridchisum/(len(gVel)-3)
+   newrow =  [ V, d, gridrchi ]
+   gridredchi = np.vstack([gridredchi, newrow])
+   print &gt;&gt; c, V, d, gridrchi
+   plt.scatter(V,d, c=gridrchi, marker='s',lw=0,  s=40, vmin=0, vmax=10)
+   V = V + param.int
+ d = d + param.int
+</pre>
+<p>By performing the gridsearch, you can contour the estimated chi2 value with the defined model rate and locking depth as shown in <em>Figure 3</em>.</p>
+<img alt="gridsearch" class="align-right" src="images/gridsearch.png" style="width: 800.0px; height: 700.0px;" />
+<p><em>Figure 3. Contour plot of the chi2 statistic (colors, cooler colors indicate lower misfit) given modeled values of fault rate and locking depth.  The white star marks the low misfit model.</em></p>
+<p>Performing a gridsearch can take a long time, but it has the advantage that it is a straightforward method to estimate the low misfit model.  By imaging our chi2 distribution, like in <em>Figure 3</em> we can also easily see if there are other minima that could provide an alternative model that fits the data just as well for our given parameter ranges.  The down side, however, is that this method is really slow, especially for more complicated models that require longer computation times.</p>
+<p>An alternative method is to linearly invert the data with a little bit of matrix algebra. A great book that clearly describes this technique is:</p>
+<p>Aster, R., Borchers, B., Thurber, C., Parameter Estimation and Inverse Problems, 301 pp, Elsevier Academic Press, 2004.</p>
+<p>I highly recommend this book for further reading on this subject.  I am not going to go over these concepts in this blog, but these methods are used in the scripts in my <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">github repo</a>.  I use a linear inverse approach which is only valid for linear parameters, hence I can use it to estimate the best fitting rate, but not the locking depth.  Using this method, the model is run for a locking depth of 15 km to find the best fit model in <em>Figure 2</em>.</p>
 </div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other articles</h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="../ehalf.html" rel="bookmark"
+                           title="Permalink to Elastic half space model of a vertical strike slip fault"><strong>Elastic half space model of a vertical strike slip fault</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Tue 15 April 2014</span>
+<span>| tags: <a href="../tag/strike-slip-faults.html">Strike Slip Faults</a><a href="../tag/fortran.html">Fortran</a><a href="../tag/gmt.html">GMT</a><a href="../tag/python.html">Python</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Data Visualization with GMT</strong></p>
+
+                <a class="readmore" href="../ehalf.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49087945-1', 'geodesygina.com');
+  ga('send', 'pageview');
+
+</script>
+        <meta charset="utf-8" />
+        <title>Gina Schmalzle - functional programming</title>
+        <link rel="stylesheet" href="../theme/css/main.css" />
+        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Atom Feed" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="../">Gina Schmalzle </a></h1>
+                <nav><ul>
+                    <li  >  <a href="/category/home.html">Home</a></li> 
+                    <li  >  <a href="/category/bio.html">Bio</a></li> 
+                    <li  >  <a href="/category/pubs.html">Pubs</a></li> 
+                    <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
+                    <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="../python-closures-and-free-variables.html">Test</a></h1>
+<footer class="post-info">
+        <span>Thu 10 April 2014</span>
+<span>| tags: <a href="../tag/python.html">python</a><a href="../tag/python-internals.html">python internals</a><a href="../tag/functional-programming.html">functional programming</a><a href="../tag/closures.html">closures</a></span>
+</footer><!-- /.post-info --><p>Today, friends, we will continue to dissect functional programming concepts in Python. We're going to try to figure out what the hell is going on in this chunk of code:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nx">def</span> <span class="nx">make_contains_function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span><span class="o">:</span>
+<span class="p">...</span>     <span class="nx">def</span> <span class="nx">contains</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="o">:</span>
+<span class="p">...</span>             <span class="k">return</span> <span class="nx">x</span> <span class="k">in</span> <span class="nx">s</span>
+<span class="p">...</span>     <span class="k">return</span> <span class="nx">contains</span>
+<span class="p">...</span>
+</pre></div>
+
+
+<p>What happens when we pass <code>make_contains_function</code> a string?</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nx">make_contains_function</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="kd">function</span> <span class="nx">contains</span> <span class="nx">at</span> <span class="mh">0x10a1e2cf8</span><span class="o">&gt;</span>
+</pre></div>
+
+
+<p>We get a function! Whoa. A function that returns a function. Cool. Let's assign this returned function a name and try to use it:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nx">contains_a</span> <span class="o">=</span> <span class="nx">make_contains_function</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">contains_a</span>
+<span class="o">&lt;</span><span class="kd">function</span> <span class="nx">contains</span> <span class="nx">at</span> <span class="mh">0x10a1e2c80</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">contains_a</span><span class="p">(</span><span class="s1">&#39;cat&#39;</span><span class="p">)</span> 
+<span class="nx">True</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nx">contains_a</span><span class="p">(</span><span class="s1">&#39;bro&#39;</span><span class="p">)</span>
+<span class="nx">False</span>
+</pre></div>
+
+
+<p>We can create a function called <code>contains_a</code> by calling the <code>make_contains_function</code> and passing the string <code>'a'</code> as a parameter. Then, when we pass <code>contains_a</code> a string, the function returns a boolean representing whether <code>'a'</code> is in the string or not.</p>
+<p>Let's look at the original code again and try to understand what it does and why it works:</p>
+<div class="highlight"><pre><span class="o">&gt;&gt;&gt;</span> <span class="nx">def</span> <span class="nx">make_contains_function</span><span class="p">(</span><span class="nx">x</span><span class="p">)</span><span class="o">:</span>
+<span class="p">...</span>     <span class="nx">def</span> <span class="nx">contains</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span><span class="o">:</span>
+<span class="p">...</span>             <span class="k">return</span> <span class="nx">x</span> <span class="k">in</span> <span class="nx">s</span>
+<span class="p">...</span>     <span class="k">return</span> <span class="nx">contains</span>
+<span class="p">...</span>
+</pre></div>                </article>
+<p class="paginator">
+    Page 1 / 1
+</p>
+            </aside><!-- /#featured -->
+            </ol><!-- /#posts-list -->
+            </section><!-- /#content -->
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="http://bostechnologies.com">BOS Technologies</a></li>
+                            <li><a href="http://hackerschool.com">Hacker School</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="https://twitter.com/GinaSchmalzle">Twitter</a></li>
+                            <li><a href="https://www.facebook.com/gschmalzle">Facebook</a></li>
+                            <li><a href="http://www.linkedin.com/pub/gina-schmalzle/13/8a/234">LinkedIn</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

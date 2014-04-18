@@ -1,0 +1,59 @@
+{
+	"name": "window.onload",
+	"children": [{
+		"name": "loadData",
+		"children": [{
+			"name":"isReady",
+			"children": [{
+				"name":"initMap",
+				"children": [{
+					"name":"reDraw",
+					"children": [{
+						"name":"drawBackground"},{
+						"name":"drawCountryLines"
+						}]
+					},{
+					"name":"colorBar"},{
+					"name":"drawGraph",
+					"children": [{
+						"name":"cleanGraph"},{
+						"name":"plotGraphAxes"
+						}]
+					},{
+					"name":"creatRadioButtons",
+					"children": [{
+						"name":"drawGraph",
+						"children": [{
+							"name":"cleanGraph"},{
+							"name":"plotGraphAxes"
+						}]
+						}]
+
+					},{
+					"name":"setSlider",
+					"children": [{
+						"name":"removePoint"
+						}]
+					},{
+					"name":"setButton"},{
+					"name":"animate",
+					"children": [{
+							"name":"drawBackground"},{
+							"name":"drawCountryLines"},{
+							"name":"colorBar"},{
+							"name":"updataTime"},{
+							"name":"handlePlayhead"},{
+							"name":"updateEarthquakes"},{
+							"name":"drawEarthquakes"},{
+							"name":"updateEarthquakesTable"
+						}]
+
+
+					}]
+
+			}]
+		}]
+	}]
+
+
+}
