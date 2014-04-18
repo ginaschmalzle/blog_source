@@ -37,152 +37,39 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="../ehalf.html"><strong>Elastic half space model of a vertical strike slip fault</strong></a></h1>
+                    <h1 class="entry-title"><a href="../japan_eq.html"><strong>Movie of March 11, 2011 Japan Earthquake and its aftershocks</strong></a></h1>
 <footer class="post-info">
         <span>Fri 18 April 2014</span>
-<span>| tags: <a href="../tag/strike-slip-faults.html">Strike Slip Faults</a><a href="../tag/fortran.html">Fortran</a><a href="../tag/gmt.html">GMT</a><a href="../tag/python.html">Python</a></span>
-</footer><!-- /.post-info --><div class="section" id="id1">
-<h2><strong>Elastic Half Space Model of a Vertical Strike Slip Fault</strong></h2>
-<p>In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an &quot;S&quot;.  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced.</p>
-<img alt="deforming_plates" class="align-center" src="images/elastichs.jpg" style="width: 170.0px; height: 250.0px;" />
-<p><em>Figure 1. Deformation of tectonic plates between major earthquakes. D is the locking depth (the depth at which the fault is stuck). Figure modified from http://geologycafe.com/california/pp1515/chapter7.html</em></p>
-<p>A simple model of this movement for vertical strike slip faults in a homogenous elastic half space [Weertman and Weertman, 1964; Savage and Burford, 1973] can be described as:</p>
-<pre class="literal-block">
-V(x) = (vo/pi)arctan(x/D)
-</pre>
-<p>where V(x) is the velocity of points estimated along a perpendicular profile across the fault, v is the far field velocity, x is the distance from the fault, and D is the dislocation depth.</p>
-<p>High precision GPS can be used to observe the deformation around fault systems.  The velocity, position and uncertainty estimates can be compared directly to the model to estimate the goodness of fit of the model.  The chi2 statistic is give by:</p>
-<pre class="literal-block">
-chi2 = SUM ((dataR -vel)/(sig))**2
-</pre>
-<p>where chi2 = chi2 statistic, dataR = GPS estimated rate for a position aling the profile, vel = model calculated velocity, and sig = GPS velocity uncertainty.  SUM is the sum of all chi2 for each GPS datum.</p>
-<p>The reduced chi2 is also calculated and is given by:</p>
-<pre class="literal-block">
-reduced chi2 = chi2 / (N-v-1)
-</pre>
-<p>where N = number of data, v = number of variable parameters (in this case 2, R and d).  An ideal reduced chi2 should equal 1.</p>
-<p>In this blog, I use high precision GPS velocities from Schmalzle et al, [2006], and compare them to the model described above. I use the chi2 statistic and the reduced chi2 to determine the goodness of fit of the model to the data.  My <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">githup repo</a> has versions of how to do this in <strong>Fortran</strong> with visualization using <strong>General Mapping Tools (GMT)</strong>, and how to do it in <strong>Python</strong>.  This blog will cover only the techniques used in the Python version of the code.</p>
-<p>I have a few external files that are read in the code and are also available in the my <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">githup repo</a>.  The file param.py holds the values of the far field velocity and locking depth for a given model run and looks like this:</p>
-<pre class="literal-block">
-xmin=-150.
-xmax=150.
-int=1.
-Vo=34.
-d=15.
-dmin=1.
-dmax=100.
-Vmin=0.
-Vmax=100.
-</pre>
-<p>The file data.py contains the GPS data in the form of x (in km), Rate (in mm/yr) and uncertainty (in mm/yr) and looks like this:</p>
-<pre class="literal-block">
--92.60814 15.0918 -3.561012106
--90.65163 15.4416 -3.592941176
--92.60814 15.1681 -1.42072184
--71.08653 14.3386 -1.661513002
--69.13002 16.4146 -1.773867193
--47.60841 10.1976 -1.511861585
--60.65181 14.0536 -1.95124564
--70.43436 14.4541 -2.901815856
--2.282595 0.82942 -1.622786425
--27.39114 8.70825 -1.672086072
-0.65217 0.18103 -1.550890689
-7.499955 -6.89121 -1.799743676
-19.5651 -11.9668 -1.632284566
--17.60859 4.82287 -1.62481939
-12.39123 -8.5554 -1.223772558
-33.91284 -15.2699 -1.190422007
-65.86917 -15.6106 -1.351439143
-122.60796 -15.6614 -6.776253439
-3.26085 -5.95536 -1.524006894
-2.60868 -2.39876 -1.179208687
-6.5217 -5.81965 -1.62421975
--13.0434 5.08107 -1.23548631
-</pre>
-<p>Now for the coding! First, import the following modules:</p>
-<pre class="literal-block">
-import numpy as np
-import math
-import matplotlib.pyplot as plt
-</pre>
-<p>and import the param.py file:</p>
-<pre class="literal-block">
-import param
-</pre>
-<p>I collect the information from the param file and computed the surface velocities like this:</p>
-<pre class="literal-block">
-f = open('vel.txt','w')
-listx = []
-listVel = []
-x=param.xmin
-while (x &lt;= param.xmax):
-    Vel=-((param.Vo/np.pi)*math.atan(x/param.d))
-    print &gt;&gt; f, x, Vel
-    listx.append(x)
-    listVel.append(Vel)
-    x = x + param.int
-</pre>
-<p>This calculates the predicted velocity for a defined increment along a profile of a strike slip fault.
-I keep the x's and calculated velocities in lists that will be used later in the program for plotting purposes.</p>
-<p>Now let's open the GPS file and read its contents:</p>
-<pre class="literal-block">
-g=np.loadtxt('data.py')
-gx = g[:,0]
-gVel = g[:,1]
-gsig = g[:,2]
-</pre>
-<p>Now calculate the expected velocity or at each GPS position:</p>
-<pre class="literal-block">
-VelC = -((param.Vo / np.pi) * np.arctan ([ gx/param.d ]))
-</pre>
-<p>and calculate the chi2 and reduced chi2</p>
-<pre class="literal-block">
-chi = ((gVel - VelC)/ (gsig))**2
-chi2 = sum(chi.T)
-redchi = chi2/(len(gVel)-3)
-</pre>
-<p>Now you have the model fit to the data for a modeled fault rate and locking depth!  The model fit to the data looks like <em>Figure 2</em>.</p>
-<img alt="gridsearch" class="align-right" src="images/lineGPS.png" style="width: 800.0px; height: 700.0px;" />
-<p><em>Figure 2.  Modeled velocities across a vertical strike slip fault (solid lines) compared to GPS velocities (triangles) with velocity uncertainty error bars. Both gridsearch estimated and inversion estimated low misfit rates are shown for a locking depth of 15km.  The reduced chi2 is given.</em></p>
-<p>But suppose you want to know which combination of modeled fault rate and locking depth give you the best fit to the data.   One way you can do this is by running a whole suite of models that include different combinations of fault rate and locking depth values.  This is called a gridsearch approach, and is perhaps the simplest (although most time consuming) method.  The param.py files contains user input values for a range of modeled parameters.  Grabbing those values we can then perform a while loop to loop through those ranges:</p>
-<pre class="literal-block">
-dmin=param.dmin
-dmax=param.dmax
-Vmin=param.Vmin
-Vmax=param.Vmax
-
-d=param.dmin
-gridredchi = np.array([V, d, chi])
-grc = []
-c = open('chi.py','w')
-
-while (d &lt;= dmax):
- V=param.Vmin
- while (V &lt;=  Vmax):
-   gridVelC = -((V / np.pi) * np.arctan ([ gx/d ]))
-   gridchi = ((gVel - gridVelC)/ (gsig))**2
-   gridchisum = np.matrix.item(sum(gridchi.T))
-   gridrchi= gridchisum/(len(gVel)-3)
-   newrow =  [ V, d, gridrchi ]
-   gridredchi = np.vstack([gridredchi, newrow])
-   print &gt;&gt; c, V, d, gridrchi
-   plt.scatter(V,d, c=gridrchi, marker='s',lw=0,  s=40, vmin=0, vmax=10)
-   V = V + param.int
- d = d + param.int
-</pre>
-<p>By performing the gridsearch, you can contour the estimated chi2 value with the defined model rate and locking depth as shown in <em>Figure 3</em>.</p>
-<img alt="gridsearch" class="align-right" src="images/gridsearch.png" style="width: 800.0px; height: 700.0px;" />
-<p><em>Figure 3. Contour plot of the chi2 statistic (colors, cooler colors indicate lower misfit) given modeled values of fault rate and locking depth.  The white star marks the low misfit model.</em></p>
-<p>Performing a gridsearch can take a long time, but it has the advantage that it is a straightforward method to estimate the low misfit model.  By imaging our chi2 distribution, like in <em>Figure 3</em> we can also easily see if there are other minima that could provide an alternative model that fits the data just as well for our given parameter ranges.  The down side, however, is that this method is really slow, especially for more complicated models that require longer computation times.</p>
-<p>An alternative method is to linearly invert the data with a little bit of matrix algebra. A great book that clearly describes this technique is:</p>
-<p>Aster, R., Borchers, B., Thurber, C., Parameter Estimation and Inverse Problems, 301 pp, Elsevier Academic Press, 2004.</p>
-<p>I highly recommend this book for further reading on this subject.  I am not going to go over these concepts in this blog, but these methods are used in the scripts in my <a class="reference external" href="https://github.com/ginaschmalzle/elastichalfspace">github repo</a>.  I use a linear inverse approach which is only valid for linear parameters, hence I can use it to estimate the best fitting rate, but not the locking depth.  Using this method, the model is run for a locking depth of 15 km to find the best fit model in <em>Figure 2</em>.</p>
+<span>| tags: <a href="../tag/tohoku-earthquake.html">Tohoku Earthquake</a><a href="../tag/japan.html">Japan</a><a href="../tag/earthquake-magnitudes.html">Earthquake Magnitudes</a><a href="../tag/javascript.html">JavaScript</a><a href="../tag/d3.html">D3</a></span>
+</footer><!-- /.post-info --><div class="section" id="movie-of-the-2011-japan-earthquake-and-its-aftershocks">
+<h2><strong>Movie of the 2011 Japan earthquake and its aftershocks</strong></h2>
+<p>On March 11, 2011 a magnitude 9 earthquake occurred off the coast of Japan, generating a massive tsunami that caused major damage to infrastructure and loss of life.  The magnitude 9 earthquake was followed by thousands of smaller earthquakes known as aftershocks in the hours after the earthquake. The magnitude of aftershocks is known to decreases exponentially after the main shock and can be seen in the data set, as shown in <em>Figure 1</em>.</p>
+<img alt="deforming_plates" class="align-center" src="images/Japan_eq.png" style="width: 750.0px; height: 500.0px;" />
+<p><em>Figure 1. Screen shot of the</em> <a class="reference external" href="http://geodesygina.com/JapanEarthquake/index.html">earthquake movie</a> <em>. The map on the left plots earthquakes at the end of March 11, 2011.  Circles are sized by magnitude and colored by depth in kilometers.  The plots on the right show the earthquake magnitudes plotted over time, colored by depth.  The top figure spans the entire day, where as the lower figure shows a zoomed-in view of the 5th through the 10th hour of the day.</em></p>
+<p>Interestingly, the earthquake magnitudes fluctuate over time.  <a class="reference external" href="http://www.nature.com/srep/2013/130717/srep02218/full/srep02218.html">Omi et al. [2013]</a> note this behavior and model it in their paper &quot;Forecasting large aftershocks within one day after the main shock&quot;.</p>
+<p>Using earthquake data provided by the <a class="reference external" href="http://quake.geo.berkeley.edu/anss/catalog-search.html">ANSS database</a>, Ville Juutilainen, Gayane Petrosyan, Sean Mathew Lawrence and I worked on the <a class="reference external" href="http://geodesygina.com/JapanEarthquake/index.html">Japan Earthquake Movie</a>.  It allows the user to choose the plot they want to see while the movie plays.  The first default is the plot shown above that displays Magnitude vs. Time.  The other shows Depth vs. Profile Length. The Depth vs. Profile length option allows the user to select two points to define a profile.  Points within a certain distance defined by the user are plotted on the map and on the plot.  The user must select two points to see the plot. The code is written in Javascript, taking advantage of the D3 framework.  You can access the code in my <a class="reference external" href="https://github.com/ginaschmalzle/tohoku_eq">github repo</a>. The code has been tested for Chrome, but has yet to be tested for other browsers.</p>
 </div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1>Other articles</h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="../japan_eq.html" rel="bookmark"
+                           title="Permalink to Movie of March 11, 2011 Japan Earthquake and its aftershocks"><strong>Movie of March 11, 2011 Japan Earthquake and its aftershocks</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Fri 18 April 2014</span>
+<span>| tags: <a href="../tag/tohoku-earthquake.html">Tohoku Earthquake</a><a href="../tag/japan.html">Japan</a><a href="../tag/earthquake-magnitudes.html">Earthquake Magnitudes</a><a href="../tag/javascript.html">JavaScript</a><a href="../tag/d3.html">D3</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Movie of the 2011 Japan earthquake and its aftershocks</strong></p>
+
+                <a class="readmore" href="../japan_eq.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
