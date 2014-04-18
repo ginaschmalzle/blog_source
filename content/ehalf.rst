@@ -7,7 +7,7 @@
 :slug: ehalf
 :author: **Gina Schmalzle**
 :page-order: 1
-:summary: **Data Visualization with GMT**
+:summary: **Elastic Half Space modeling of a vertical Strike Slip Fault**
 
 **Elastic Half Space Model of a Vertical Strike Slip Fault**
 ==============================================================
