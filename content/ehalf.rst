@@ -14,7 +14,7 @@
 
 In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an "S".  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced. 
 
-.. image:: images/elastichs.jpg
+.. image:: /images/elastichs.jpg
    :height: 250
    :width: 170
    :scale: 100
@@ -127,7 +127,7 @@ and calculate the chi2 and reduced chi2 ::
 
 Now you have the model fit to the data for a modeled fault rate and locking depth!  The model fit to the data looks like *Figure 2*.
 
-.. image:: images/lineGPS.png
+.. image:: /images/lineGPS.png
    :height: 700
    :width: 800
    :scale: 100
@@ -165,7 +165,7 @@ But suppose you want to know which combination of modeled fault rate and locking
 
 By performing the gridsearch, you can contour the estimated chi2 value with the defined model rate and locking depth as shown in *Figure 3*.
 
-.. image:: images/gridsearch.png
+.. image:: /images/gridsearch.png
    :height: 700
    :width: 800
    :scale: 100

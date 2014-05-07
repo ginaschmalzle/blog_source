@@ -48,7 +48,7 @@
 </footer><!-- /.post-info -->      <div class="section" id="id1">
 <h2><strong>Elastic Half Space Model of a Vertical Strike Slip Fault</strong></h2>
 <p>In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an &quot;S&quot;.  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced.</p>
-<img alt="deforming_plates" class="align-center" src="images/elastichs.jpg" style="width: 170.0px; height: 250.0px;" />
+<img alt="deforming_plates" class="align-center" src="/images/elastichs.jpg" style="width: 170.0px; height: 250.0px;" />
 <p><em>Figure 1. Deformation of tectonic plates between major earthquakes. D is the locking depth (the depth at which the fault is stuck). Figure modified from http://geologycafe.com/california/pp1515/chapter7.html</em></p>
 <p>A simple model of this movement for vertical strike slip faults in a homogenous elastic half space [Weertman and Weertman, 1964; Savage and Burford, 1973] can be described as:</p>
 <pre class="literal-block">
@@ -146,7 +146,7 @@ chi2 = sum(chi.T)
 redchi = chi2/(len(gVel)-3)
 </pre>
 <p>Now you have the model fit to the data for a modeled fault rate and locking depth!  The model fit to the data looks like <em>Figure 2</em>.</p>
-<img alt="gridsearch" class="align-right" src="images/lineGPS.png" style="width: 800.0px; height: 700.0px;" />
+<img alt="gridsearch" class="align-right" src="/images/lineGPS.png" style="width: 800.0px; height: 700.0px;" />
 <p><em>Figure 2.  Modeled velocities across a vertical strike slip fault (solid lines) compared to GPS velocities (triangles) with velocity uncertainty error bars. Both gridsearch estimated and inversion estimated low misfit rates are shown for a locking depth of 15km.  The reduced chi2 is given.</em></p>
 <p>But suppose you want to know which combination of modeled fault rate and locking depth give you the best fit to the data.   One way you can do this is by running a whole suite of models that include different combinations of fault rate and locking depth values.  This is called a gridsearch approach, and is perhaps the simplest (although most time consuming) method.  The param.py files contains user input values for a range of modeled parameters.  Grabbing those values we can then perform a while loop to loop through those ranges:</p>
 <pre class="literal-block">
@@ -175,7 +175,7 @@ while (d &lt;= dmax):
  d = d + param.int
 </pre>
 <p>By performing the gridsearch, you can contour the estimated chi2 value with the defined model rate and locking depth as shown in <em>Figure 3</em>.</p>
-<img alt="gridsearch" class="align-right" src="images/gridsearch.png" style="width: 800.0px; height: 700.0px;" />
+<img alt="gridsearch" class="align-right" src="/images/gridsearch.png" style="width: 800.0px; height: 700.0px;" />
 <p><em>Figure 3. Contour plot of the chi2 statistic (colors, cooler colors indicate lower misfit) given modeled values of fault rate and locking depth.  The white star marks the low misfit model.</em></p>
 <p>Performing a gridsearch can take a long time, but it has the advantage that it is a straightforward method to estimate the low misfit model.  By imaging our chi2 distribution, like in <em>Figure 3</em> we can also easily see if there are other minima that could provide an alternative model that fits the data just as well for our given parameter ranges.  The down side, however, is that this method is really slow, especially for more complicated models that require longer computation times.</p>
 <p>An alternative method is to linearly invert the data with a little bit of matrix algebra. A great book that clearly describes this technique is:</p>

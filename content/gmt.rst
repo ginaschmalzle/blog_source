@@ -16,7 +16,7 @@ Before my time here at **Hacker School** I put together a short, hands on course
 
 The class was taught at the University of Washington Earth in the Department of Earth and Space Science, so it has an earth science theme -- **earthquakes**!  Here, students learn how to make a map with layers that include **mapping** **topography** and **earthquake locations**.  A subset of data is extracted from a profile line (red line in map below) so that **earthquake** depths can be plotted as a function of distance.   The end goal of the class is to produce the following map and transect:
 
-.. image:: images/cascadia_seis.jpg
+.. image:: /images/cascadia_seis.jpg
    :height: 1100
    :width: 800
    :scale: 100
