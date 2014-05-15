@@ -58,19 +58,19 @@ function newdata() {
 	var value = document.getElementById('json_select').value;
 	
     if (value === "PANGA") {
-        url = '/data/panga_snarf_comb_hvel.json';
+        url = '/vectorprojector/data/panga_snarf_comb_hvel.json';
 	}
     else if (value === "NGS") {
-        url = '/data/ngs_velocity.json';
+        url = '/vectorprojector/data/ngs_velocity.json';
     }
     else if (value === "Landers") {
-        url = '/data/landers_agnew_2002.json';
+        url = '/vectorprojector/data/landers_agnew_2002.json';
     }
     else if (value === "McCaffrey") {
-        url = '/data/mccaffrey_etal_2013.json';
+        url = '/vectorprojector/data/mccaffrey_etal_2013.json';
     }
     else {	
-        url = '/data/pbo_velocity_snarf.json';
+        url = '/vectorprojector/data/pbo_velocity_snarf.json';
     }
 	
 	$.getJSON(url, function (data) {
