@@ -1,4 +1,4 @@
-**Why the Central Cascadia Subduction Zone is Creepy**
+**Why the Cascadia Subduction Zone is Creepy**
 ################################################################
 
 :date: 2014-05-01 14:56
@@ -12,7 +12,7 @@
 **Cascadia subduction zone creep**
 ==============================================================
 
-On April 29, 2014, I presented a talk for `Data Rave, NYC <http://www.meetup.com/Data-Rave/events/177359692/>`_ at EBay. My collaborators on this project are `Rob McCaffrey <http://web.pdx.edu/~pdx07343/>`_ at `Portland State University <http://www.pdx.edu/>`_ and `Ken Creager <http://www.ess.washington.edu/dwp/people/profile.php?name=creager--ken>`_ at the `University of Washington <http://www.washington.edu/>`_.  This blog covers the talk, and the original slides can be found in my `github repo <https://github.com/ginaschmalzle/Cascadia>`_. The paper for which the talk and this blog are based is found `here <http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract>`_.  
+On April 29, 2014, I presented a talk for `Data Rave, NYC <http://www.meetup.com/Data-Rave/events/177359692/>`_ at EBay. My collaborators on this project are `Rob McCaffrey <http://web.pdx.edu/~pdx07343/>`_ at `Portland State University <http://www.pdx.edu/>`_ and `Ken Creager <http://www.ess.washington.edu/dwp/people/profile.php?name=creager--ken>`_ at the `University of Washington <http://www.washington.edu/>`_.  This blog covers the talk, and the original slides can be found in my `github repo <https://github.com/ginaschmalzle/Cascadia>`_. The paper for which the talk and this blog are based is found `here <http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract>`_.  Like what you are reading?  Check out my follow-up blog on `slow slip and tremor <http://geodesygina.com/SSEs.html>`_! 
 
 A key question that geophysicists try to answer is “How much are tectonic plates “stuck” together?"  The answer to this question has major implications on seismic hazard since it is thought that the more plates are stuck, the larger the earthquake will be.  This blog will discuss how much the North American plate is stuck (or not stuck) to the Explorer, Juan de Fuca and Gorda plates within the Cascadia subduction zone, which resides in the Pacific Northwest corner of the United States. 
 
@@ -228,7 +228,9 @@ So, here is the recap of this work:
 
 For a deeper discussion of the observations and hypotheses presented in this blog, please read `Schmalzle et al., 2014 <http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract>`_.
 
-Thanks for reading!
+Thanks for reading!  
+
+Like what you read?  Check out my follow-up blog on `periodic slow slip and tremor <http://geodesygina.com/SSEs.html>`_! 
 
 Acknowledgments:
 This work was funded by the National Science Foundation (NSF) Postdoctoral Fellowship Program, award 0847985 (Schmalzle), NSF award EAR-1062251 (McCaffrey), and USGS National Earthquake Hazards Reduction Program, Award G12AP20033 (Schmalzle and Creager).  Some of the figures I made myself using General Mapping Tools (GMT), but some figures I took from random places on the web.  For any of those images I say where the figure was taken.  Many thanks to Reed Burgette and an anonymous reviewer for their thoughtful comments and suggestions that greatly improved this research. Thanks to Rick Blakeley for providing  gravity data. Craig H. Faunce, Bruce Nelson, Steve Malone, Justin Sweet, David Schmidt, Aaron Wech, Tom Pratt, Brian Atwater, Sarah Minson, Lorraine Wolf, and Aimee Schmalzle provided useful comments and insight. Thanks to PBO and PANGA for providing access to GPS data products. Special thanks to David Branner, Ruby Childs and Nick Collins for organizing `Data Rave <http://www.meetup.com/Data-Rave/events/177359692/>`_ and inviting me to give a talk.

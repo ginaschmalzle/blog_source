@@ -21,13 +21,15 @@ TRANSLATION_FEED_ATOM = None
 LINKS =  (('Pelican', 'http://getpelican.com/'),
           ('Python.org', 'http://python.org/'),
           ('Jinja2', 'http://jinja.pocoo.org/'),
+          ('Hacker School', 'http://hackerschool.com'),
           ('BOS Technologies', 'http://bostechnologies.com'),
-          ('Hacker School', 'http://hackerschool.com'),)
+	  ('Batu Osmanoglu', 'http://osmanoglu.org/'),)
 
 # Social widget
 SOCIAL = (('Twitter', 'https://twitter.com/GinaSchmalzle'),
           ('Facebook', 'https://www.facebook.com/gschmalzle'),
-          ('LinkedIn', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),)
+          ('LinkedIn', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),
+	  ('github', 'https://github.com/ginaschmalzle'),)
 
 DEFAULT_PAGINATION = 10
 
