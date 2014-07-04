@@ -1,5 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-05-23T14:56:00-04:00</updated><entry><title>The Cascadia Subduction Zone gets Creepier and Creepier...</title><link href="http://geodesygina.com/SSEs.html" rel="alternate"></link><updated>2014-05-23T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-05-23:SSEs.html</id><summary type="html">&lt;div class="section" id="cascadia-subduction-zone-creep"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-04T14:56:00-04:00</updated><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</title><link href="http://geodesygina.com/make_db.html" rel="alternate"></link><updated>2014-07-04T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-04:make_db.html</id><summary type="html">&lt;p&gt;Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, a fabulous &lt;strong&gt;python&lt;/strong&gt; coder who dabbles in creating and using &lt;strong&gt;SQLite&lt;/strong&gt; databases, and knows a thing or two about the &lt;a class="reference external" href="https://brannerchinese.com/"&gt;Chinese Language&lt;/a&gt;, and I are working on &lt;a class="reference external" href="https://github.com/WeatherStudy/weather_study"&gt;The Weather Project&lt;/a&gt; where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from &lt;a class="reference external" href="http://openweathermap.org/"&gt;Open Weather Map&lt;/a&gt;, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on &lt;strong&gt;creating a Database with SQLite3&lt;/strong&gt;.  The next blogs will cover &lt;strong&gt;Populating an SQLite Database with Data using Python&lt;/strong&gt; and &lt;strong&gt;Retrieving data from an SQLite Database using Python&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class="section" id="part-1-creating-a-database-with-sqlite3"&gt;
+&lt;h2&gt;&lt;strong&gt;Part 1: Creating a Database with SQLite3&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;SQLite&lt;/strong&gt; is a compact and self contained relational database management system. We decided to use &lt;strong&gt;SQLite3&lt;/strong&gt; (Mac OS X's version of SQLite) because&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;It is included on the Mac OS X operating system (/usr/bin/sqlite3)&lt;/li&gt;
+&lt;li&gt;It does not require a server and no need for an administrator&lt;/li&gt;
+&lt;li&gt;It does not include any configuration files&lt;/li&gt;
+&lt;li&gt;No action is required after a system crash&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Certainly, there are issues with &lt;strong&gt;SQLite&lt;/strong&gt;, but for our humble little project &lt;strong&gt;SQLite&lt;/strong&gt; provides all the functionality we wanted. If you are running Mac OSX you can use SQLite3.  Be sure that /usr/bin/ is in your path (it already should be there).  You can check to see if you have it by typing:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+which sqlite3
+&lt;/pre&gt;
+&lt;p&gt;Let's get started.  First, a few things about sqlite3. You can enter the sqlite3 &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop"&gt;repl&lt;/a&gt; by simply typing sqlite3 at the command line.  Or, you can type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+sqlite3 mydatabase.db
+&lt;/pre&gt;
+&lt;p&gt;to ensure your creations/populations/extractions are all for the database mydatabase.db (or whatever you want it named).  If you make a sqlite3 script that is applied to mydatabase.db called myscript.sql, you can run it at the command line by typing:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+sqlite3 mydatabase.db &amp;lt; myscript.sql.
+&lt;/pre&gt;
+&lt;p&gt;Our &lt;strong&gt;SQLite&lt;/strong&gt; database that we named &lt;em&gt;weather_data_OWM.db&lt;/em&gt; is set up with multiple tables.  Information within those tables are related, and is referred to as a &lt;em&gt;relational database&lt;/em&gt;.  As previously mentioned, a relational database is setup so that there is some common information between tables that helps link them.  Our database tables are linked by city id.  The city id is simply a unique number assigned to each location that has a weather forecast.  In one table we keep the properties of each location, such as the latitude, longitude, city name, etc.  In the other, we assign the forecasts to each city id.  Let's take a closer look at how this works.&lt;/p&gt;
+&lt;p&gt;The first thing we did was create a TABLE called &lt;em&gt;locations&lt;/em&gt; which contains the id, name, latitude, longtiude and country:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+DROP TABLE IF EXISTS locations;
+CREATE TABLE locations (
+   id TEXT PRIMARY KEY UNIQUE,
+   name TEXT,
+   lat NUMBER,
+   lon NUMBER,
+   country TEXT
+);
+&lt;/pre&gt;
+&lt;p&gt;Eeeek! The &amp;quot;DROP TABLE&amp;quot; part of this code is a little scary -- here we are saying if there is already a table in our database called &lt;em&gt;locations&lt;/em&gt; then remove it!  The table &lt;em&gt;locations&lt;/em&gt; will be completely removed and can not be recovered.  You may ask, &lt;em&gt;why would you want to do that???&lt;/em&gt; Well, this code is simply meant to provide the bones for our database.  The only reason we are running this script is to make a database from scratch, and if one exists, it should be removed.  It is also recommended because you don't want to confuse the current data with other data sets if a table called &lt;em&gt;locations&lt;/em&gt; exists.  So &lt;strong&gt;BE CAREFUL&lt;/strong&gt; with this command.&lt;/p&gt;
+&lt;p&gt;The next command lines create the table with columns that are defined as containing a certain type of field.  The columns that we have are id, name, lat, lon and country and are either TEXT (strings) or NUMBERS (floats).  The id column is special because it also contains PRIMARY KEY command.  The PRIMARY KEY command ensures that all rows in that column are uniquely identifiable.  To be extra certain of this (but may be a little redundant), we also included UNIQUE, which ensures that all values in the column are different.&lt;/p&gt;
+&lt;p&gt;How can we tell if the table was made properly?  If you entered the commands above in the repl, then type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+SELECT * FROM sqlite_master WHERE type='table';
+&lt;/pre&gt;
+&lt;p&gt;What should print out is information on your new table, including its structure:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+table|locations|locations|2|CREATE TABLE locations (
+id TEXT PRIMARY KEY UNIQUE,
+name TEXT,
+lat NUMBER,
+lon NUMBER,
+country TEXT
+)
+&lt;/pre&gt;
+&lt;p&gt;The line &amp;quot;table|locations|locations|2|CREATE TABLE locations&amp;quot; is simply output that states: &lt;em&gt;type|name|table name|root page #|sql command used to generate the table&lt;/em&gt;. Then the table column names are printed.&lt;/p&gt;
+&lt;p&gt;Very good!  Now we have a table that will contain some characteristics of each city. Now let's make a second TABLE that includes the weather forecasts and will be related to the first one by the city code. We are collecting forecasts for up to 14 days before a &lt;em&gt;target_date&lt;/em&gt; which we define as the day being forecasted.  We want to know the forecasts for rain and snow, as well as the minimum and maximum temperatures for the &lt;em&gt;target_date&lt;/em&gt;.  As before, we first need to DROP any existing tables, then we create the table:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+DROP TABLE IF EXISTS owm_values;
+CREATE TABLE owm_values (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   location_id TEXT,
+   target_date INTEGER,
+   maxt_0 NUMBER,
+   mint_0 NUMBER,
+   rain_0 NUMBER,
+   snow_0 NUMBER,
+   maxt_1 NUMBER,
+   mint_1 NUMBER,
+   rain_1 NUMBER,
+   snow_1 NUMBER,
+   maxt_2 NUMBER,
+   mint_2 NUMBER,
+   rain_2 NUMBER,
+   snow_2 NUMBER,
+   maxt_3 NUMBER,
+   mint_3 NUMBER,
+   rain_3 NUMBER,
+   snow_3 NUMBER,
+   maxt_4 NUMBER,
+   mint_4 NUMBER,
+   rain_4 NUMBER,
+   snow_4 NUMBER,
+   maxt_5 NUMBER,
+   mint_5 NUMBER,
+   rain_5 NUMBER,
+   snow_5 NUMBER,
+   maxt_6 NUMBER,
+   mint_6 NUMBER,
+   rain_6 NUMBER,
+   snow_6 NUMBER,
+   maxt_7 NUMBER,
+   mint_7 NUMBER,
+   rain_7 NUMBER,
+   snow_7 NUMBER,
+   maxt_8 NUMBER,
+   mint_8 NUMBER,
+   rain_8 NUMBER,
+   snow_8 NUMBER,
+   maxt_9 NUMBER,
+   mint_9 NUMBER,
+   rain_9 NUMBER,
+   snow_9 NUMBER,
+   maxt_10 NUMBER,
+   mint_10 NUMBER,
+   rain_10 NUMBER,
+   snow_10 NUMBER,
+   maxt_11 NUMBER,
+   mint_11 NUMBER,
+   rain_11 NUMBER,
+   snow_11 NUMBER,
+   maxt_12 NUMBER,
+   mint_12 NUMBER,
+   rain_12 NUMBER,
+   snow_12 NUMBER,
+   maxt_13 NUMBER,
+   mint_13 NUMBER,
+   rain_13 NUMBER,
+   snow_13 NUMBER,
+   maxt_14 NUMBER,
+   mint_14 NUMBER,
+   rain_14 NUMBER,
+   snow_14 NUMBER,
+   UNIQUE (location_id, target_date),
+   FOREIGN KEY (location_id) REFERENCES locations(id)
+   );
+&lt;/pre&gt;
+&lt;p&gt;In this table, each forecast is given its own, unique id (called id).  In addition, it contains a location_id, which will refer to &lt;em&gt;id&lt;/em&gt; in our first TABLE, &lt;em&gt;locations&lt;/em&gt;.  These values 'link' the two tables, creating a relational database. The FOREIGN KEY statement defines this relationship, stating that the location_id of the TABLE &lt;em&gt;owm_values&lt;/em&gt; is REFERENCED to the id of TABLE &lt;em&gt;locations&lt;/em&gt;. We also created columns in our TABLE that will store forecasts from the day of (*_0) to 14 days out (*_14).  UNIQUE ensures that both the location_id and the target_date are unique in this table (i.e., every city will have its own unique id, and every city will have forecasts for unique target dates).&lt;/p&gt;
+&lt;p&gt;Now if you type into the repl:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+SELECT * FROM sqlite_master WHERE type='table';
+&lt;/pre&gt;
+&lt;p&gt;Two tables should print out -- the first one being the &lt;em&gt;locations&lt;/em&gt; table, the second your brand new &lt;em&gt;owm_values&lt;/em&gt; table.&lt;/p&gt;
+&lt;p&gt;Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Stay tuned for  &lt;strong&gt;Part 2 Populating an SQLite Database using Python&lt;/strong&gt;, coming soon...&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="SQLite"></category><category term="relational database"></category></entry><entry><title>The Cascadia Subduction Zone gets Creepier and Creepier...</title><link href="http://geodesygina.com/SSEs.html" rel="alternate"></link><updated>2014-05-23T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-05-23:SSEs.html</id><summary type="html">&lt;div class="section" id="cascadia-subduction-zone-creep"&gt;
 &lt;h2&gt;&lt;strong&gt;Cascadia subduction zone creep&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;This blog is a continuation of the original &lt;a class="reference external" href="http://geodesygina.com/Cascadia.html"&gt;'Why the Cascadia Subduction Zone is Creepy'&lt;/a&gt; blog posted a few weeks ago, and many of the terms used in this post are defined there. My collaborators on this project are &lt;a class="reference external" href="http://web.pdx.edu/~pdx07343/"&gt;Rob McCaffrey&lt;/a&gt; at &lt;a class="reference external" href="http://www.pdx.edu/"&gt;Portland State University&lt;/a&gt; and &lt;a class="reference external" href="http://www.ess.washington.edu/dwp/people/profile.php?name=creager--ken"&gt;Ken Creager&lt;/a&gt; at the &lt;a class="reference external" href="http://www.washington.edu/"&gt;University of Washington&lt;/a&gt;. The paper this blog is based on is found &lt;a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The Cascadia subduction zone is not just creepy, but it is creepy on many different levels (&lt;em&gt;Figure 1&lt;/em&gt;).&lt;/p&gt;
@@ -766,7 +899,14 @@ and the fault parallel velocity is: R par= R*cos(t)&lt;/p&gt;
 &lt;h2&gt;&lt;strong&gt;The Vector Projector&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Stuart Sandine&lt;/strong&gt;, &lt;strong&gt;Andrea Fey&lt;/strong&gt; and &lt;strong&gt;Thomas Ballinger&lt;/strong&gt; and I created a web app called &lt;strong&gt;The Vector Projector&lt;/strong&gt; that calculates the magnitude, transect parallel and transect perpendicular components of GPS velocities along a profile.  In this app, you are given the option of several GPS velocity fields, calculated with respect to stable North America.  For now you can choose your profile width and you can filter what data you would like to use by their uncertainties (i.e., uncertainties that are more than the value specified are not used).  This beta version does not plot uncertainties, which we plan to change in the future.  Give it a try! &lt;a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html"&gt;Go to the Vector Projector&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="GPS"></category><category term="vector projection"></category></entry><entry><title>Setting up Custom Domain Names with Github Pages</title><link href="http://geodesygina.com/GeodesyGina.html" rel="alternate"></link><updated>2014-03-11T13:40:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-11:GeodesyGina.html</id><summary type="html">&lt;p&gt;Hello World!&lt;/p&gt;
+</summary><category term="GPS"></category><category term="vector projection"></category></entry><entry><title>About Me</title><link href="http://geodesygina.com/MyBio.html" rel="alternate"></link><updated>2014-03-13T12:40:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-13:MyBio.html</id><summary type="html">&lt;img alt="Gina Schmalzle" class="align-right" src="/images/Gina.jpg" style="width: 200.0px; height: 200.0px;" /&gt;
+&lt;div class="section" id="hello-i-m-gina"&gt;
+&lt;h2&gt;Hello! I'm Gina.&lt;/h2&gt;
+&lt;p&gt;I am a geodesist who recieved her PhD at the &lt;a class="reference external" href="http://www.rsmas.miami.edu/"&gt;University of Miami Rosenstiel School of Marine and Atmospheric Sciences&lt;/a&gt; in Miami FL.  Since then I have been a postdoctoral scholar and research scientist at the &lt;a class="reference external" href="http://www.washington.edu/"&gt;University of Washington&lt;/a&gt; in Seattle, WA, and along with Scott Baker and Batuhan Osmanoglu, started a geodetic services company called &lt;a class="reference external" href="http://bostechnologies.com/"&gt;BOS Technologies LLC&lt;/a&gt;. We specialize in high precision Global Positioning Systems (GPS) and Interferometric Synthetic Aperture Radar (InSAR). I am currently an Assistant Scientist at the &lt;a class="reference external" href="http://www.miami.edu/"&gt;University of Miami&lt;/a&gt; working remotely from Seattle, WA. I have an extensive background studying the tectonics of the west coast of the United States.  I started my geophysics career studying the San Andreas fault, and I am currently studying the &lt;a class="reference external" href="http://geodesygina.com/Cascadia.html"&gt;Cascadia Subduction Zone&lt;/a&gt; and Southern California.&lt;/p&gt;
+&lt;p&gt;I love data.  I love visualizing and analyzing it, and just getting my hands dirty with it.  Recently I have been working on developing interactive websites for geophysical datasets.  Many geophysical datasets are publicly available, but it is difficult for the general public to use and play with these data. Presented on this website are two interactive websites that I built with a little help from my friends at &lt;a class="reference external" href="www.hackerschool.com"&gt;Hacker School, NYC&lt;/a&gt;.  The &lt;a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html"&gt;Vector Projector&lt;/a&gt; is a nifty little tool we made that visualizes high precision GPS velocity fields that measure how much tectonic plates move over time.  The &lt;a class="reference external" href="http://geodesygina.com/JapanEarthquake/index.html"&gt;Japan Earthquake Movie&lt;/a&gt; is an animation showing the locations of the main shock and aftershocks of the 2011 Japan earthquake, that simultaneously plots with charts of magnitude versus time.&lt;/p&gt;
+&lt;p&gt;Thanks for reading my website!  I'd love to hear your thoughts, so &lt;a class="reference external" href="mailto:ginaschmalzle&amp;#64;gmail.com"&gt;keep in touch&lt;/a&gt;!&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="Gina"></category><category term="Schmalzle"></category><category term="BOS Techonologies"></category><category term="Hacker School"></category><category term="University of Miami"></category></entry><entry><title>Setting up Custom Domain Names with Github Pages</title><link href="http://geodesygina.com/GeodesyGina.html" rel="alternate"></link><updated>2014-03-11T13:40:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-11:GeodesyGina.html</id><summary type="html">&lt;p&gt;Hello World!&lt;/p&gt;
 &lt;p&gt;This is my first blog post generated by pelican and hosted by &lt;strong&gt;github&lt;/strong&gt; with my snazzy new domain name &lt;strong&gt;geodesygina.com&lt;/strong&gt;!  That is pronounced:
 GEE-ODD-ESS-Y-GEE-NA.  Ha! I'm such a geek.&lt;/p&gt;
 &lt;p&gt;Anyway, thanks to Amy Hanlon who posted directions on how to set up a blog with &lt;strong&gt;Pelican&lt;/strong&gt; at &lt;a class="reference external" href="http://mathamy.com/"&gt;http://mathamy.com/&lt;/a&gt;.&lt;/p&gt;
@@ -778,16 +918,16 @@ GEE-ODD-ESS-Y-GEE-NA.  Ha! I'm such a geek.&lt;/p&gt;
 &lt;li&gt;Go to the A(host) section. There should be 1 record with &amp;#64; as the host. Github has two different IP addresses. Edit the current one. Keep the &amp;#64; as the host and replace the IP address with 192.30.252.153. Once that is in, click &amp;quot;Quick add&amp;quot; right underneath and for the new record, put &amp;#64; as the host again and enter the IP address 192.30.252.154.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;That should be it! It may take a little time for your website to update.&lt;/p&gt;
-</summary><category term="pelican"></category><category term="custom domain name"></category><category term="godaddy"></category></entry><entry><title>My Publications</title><link href="http://geodesygina.com/MyPubs.html" rel="alternate"></link><updated>2014-03-10T02:45:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-10:MyPubs.html</id><summary type="html">&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, McCaffrey, R., Creager, K., Central Cascadia Subduction Zone Creep, Geophysics, Geochemistry, Geosystems, doi: 10.1002/2013GC005172, 2014.&lt;/p&gt;
-&lt;p&gt;Karimzadeh, S., Cakir, Z., Osmanoglu, B., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Miyajima, M., Amiraslanzadeh, R., and Djamour, Y., Interseismic strain accumulation across the North Tabriz Fault (NW Iran) deduced from InSAR time series, Journal of Geodynamics, 66, doi: 10.1016/j.jog2013.02.003, 2013.&lt;/p&gt;
-&lt;p&gt;Gourmelen, N., Dixon, T.H., Amelung, F., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Acceleration and Evolution of Faults: An Example from the Hunter Mountain-Panamint Valley Fault Zone, Eastern California, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.11.016, 2010.&lt;/p&gt;
-&lt;p&gt;Fulton, P., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Harris, R., Dixon, T. H., Reconciling patterns of interseismic strain accumulation with thermal observations across the Carrizo segment of the San Andreas Fault, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.10.024, 2010.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, The Earthquake Cycle of Strike-Slip Faults, PhD Thesis, University of Miami, Miami, FL, 211 pp., 2008.&lt;/p&gt;
+</summary><category term="pelican"></category><category term="custom domain name"></category><category term="godaddy"></category></entry><entry><title>My Publications</title><link href="http://geodesygina.com/MyPubs.html" rel="alternate"></link><updated>2014-03-10T02:45:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-10:MyPubs.html</id><summary type="html">&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, McCaffrey, R., Creager, K., &lt;a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract"&gt;Central Cascadia Subduction Zone Creep&lt;/a&gt;, Geophysics, Geochemistry, Geosystems, doi: 10.1002/2013GC005172, 2014.&lt;/p&gt;
+&lt;p&gt;Karimzadeh, S., Cakir, Z., Osmanoglu, B., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Miyajima, M., Amiraslanzadeh, R., and Djamour, Y., &lt;a class="reference external" href="https://www.researchgate.net/publication/235926502_Interseismic_strain_accumulation_across_the_North_Tabriz_Fault_(NW_Iran)_deduced_from_InSAR_time_series"&gt;Interseismic strain accumulation across the North Tabriz Fault (NW Iran) deduced from InSAR time series&lt;/a&gt;, Journal of Geodynamics, 66, doi: 10.1016/j.jog2013.02.003, 2013.&lt;/p&gt;
+&lt;p&gt;Gourmelen, N., Dixon, T.H., Amelung, F., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, &lt;a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0012821X10007119"&gt;Acceleration and Evolution of Faults: An Example from the Hunter Mountain-Panamint Valley Fault Zone, Eastern California&lt;/a&gt;, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.11.016, 2010.&lt;/p&gt;
+&lt;p&gt;Fulton, P., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Harris, R., Dixon, T. H., &lt;a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0012821X10006679"&gt;Reconciling patterns of interseismic strain accumulation with thermal observations across the Carrizo segment of the San Andreas Fault&lt;/a&gt;, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.10.024, 2010.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, &lt;a class="reference external" href="http://scholarlyrepository.miami.edu/oa_dissertations/177/"&gt;The Earthquake Cycle of Strike-Slip Faults&lt;/a&gt;, PhD Thesis, University of Miami, Miami, FL, 211 pp., 2008.&lt;/p&gt;
 &lt;p&gt;Biggs, J., Burgmann, R., Freymueller, J., Lu, Z., Parsons, B., Ryder, I., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Wright, T., The postseismic response to the 2002 M7.9 Denali Fault earthquake: constraints from InSAR, Geophysical Journal International, 175 (3), 10.1111/j.1365-246X.2008.03932.x, 2008.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Dixon, T.H., Malservisi, R., Govers, R., Strain accumulation across the Carrizo segment of the San Andreas Fault, California:  Impact of laterally varying crustal properties, Journal of Geophysical Research, B, Solid Earth and Planets, 111, doi:10.1029/2005JB003843, 2006.&lt;/p&gt;
-&lt;p&gt;Sabburg, J., Kimlin, M. G., Rives, J. E., Meltzer, R. S., Taylor, T. E., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Zheng, S., Huang, N., Wilson, A. R., Udelhofen, P. M., Comparisons of corrected daily integrated erythemal UVR from the U.S. EPA/UGA network of Brewer spectroradiometers with model and satellite data, Proceedings of SPIE, 4482, doi:10.1117/1112.452955, 2002.&lt;/p&gt;
-&lt;p&gt;Sabburg, J., Rives, J. E., Meltzer, R. S., Taylor, T. E., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Zheng, S., Huang, N., Wilson, A. R., Udelhofen, P. M., Comparisons of corrected daily integrated erythemal UVR data from the U.S. EPA/UGA network of Brewer spectroradiometers with model and TOMS-inferred data, Journal of Geophysical Research, 107, doi:10.1029/2001JD001565, 2002.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Dixon, T.H., Malservisi, R., Govers, R., &lt;a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1029/2005JB003843/full"&gt;Strain accumulation across the Carrizo segment of the San Andreas Fault, California:  Impact of laterally varying crustal properties&lt;/a&gt;, Journal of Geophysical Research, B, Solid Earth and Planets, 111, doi:10.1029/2005JB003843, 2006.&lt;/p&gt;
+&lt;p&gt;Sabburg, J., Kimlin, M. G., Rives, J. E., Meltzer, R. S., Taylor, T. E., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Zheng, S., Huang, N., Wilson, A. R., Udelhofen, P. M., &lt;a class="reference external" href="http://proceedings.spiedigitallibrary.org/proceeding.aspx?articleid=892841"&gt;Comparisons of corrected daily integrated erythemal UVR from the U.S. EPA/UGA network of Brewer spectroradiometers with model and satellite data&lt;/a&gt;, Proceedings of SPIE, 4482, doi:10.1117/1112.452955, 2002.&lt;/p&gt;
+&lt;p&gt;Sabburg, J., Rives, J. E., Meltzer, R. S., Taylor, T. E., &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt;, Zheng, S., Huang, N., Wilson, A. R., Udelhofen, P. M., &lt;a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1029/2001JD001565/abstract"&gt;Comparisons of corrected daily integrated erythemal UVR data from the U.S. EPA/UGA network of Brewer spectroradiometers with model and TOMS-inferred data&lt;/a&gt;, Journal of Geophysical Research, 107, doi:10.1029/2001JD001565, 2002.&lt;/p&gt;
 &lt;p&gt;REFERENCE MANUALS&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt; (2005), Survival Guide for the Geodesy Lab, edited, p. 30, University of Miami, Rosenstiel School of Marine and Atmospheric Sciences Miami, FL.&lt;/p&gt;
-&lt;p&gt;Thomas, T., and &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt; (2000), The Site Operator's Standard Operating Procedure for the Brewer Spectrophotometer, edited, NOAA.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt; (2005), &lt;a class="reference external" href="/papers/Survival_Guide_Schmalzle.pdf"&gt;Survival Guide for the Geodesy Lab&lt;/a&gt;, edited, p. 30, University of Miami, Rosenstiel School of Marine and Atmospheric Sciences Miami, FL.&lt;/p&gt;
+&lt;p&gt;Thomas, T., and &lt;strong&gt;Schmalzle, G. M.&lt;/strong&gt; (2000), &lt;a class="reference external" href="http://www.esrl.noaa.gov/gmd/grad/neubrew/docs/uga/Site_Operator_Procedure34100.pdf"&gt;The Site Operator's Standard Operating Procedure for the Brewer Spectrophotometer&lt;/a&gt;, edited, NOAA.&lt;/p&gt;
 </summary><category term="Schmalzle"></category><category term="Publications"></category></entry></feed>

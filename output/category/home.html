@@ -30,6 +30,7 @@
                     <li  >  <a href="/category/pubs.html">Pubs</a></li> 
                     <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
                     <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
+                    <li><a href="/index.html#moreblogs">Past Blogs</a></li>
                 </ul>
                 </nav>
         </header><!-- /#banner -->
@@ -37,73 +38,164 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="../SSEs.html"><strong>The Cascadia Subduction Zone gets Creepier and Creepier...</strong></a></h1>
+                    <h1 class="entry-title"><a href="../make_db.html"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</strong></a></h1>
 <footer class="post-info">
-        <span>Fri 23 May 2014</span>
-<span>| tags: <a href="../tag/cascadia-subduction-zone.html">Cascadia Subduction Zone</a><a href="../tag/seismic-hazard.html">Seismic Hazard</a><a href="../tag/gps.html">GPS</a><a href="../tag/slow-slip.html">Slow Slip</a><a href="../tag/sse.html">SSE</a><a href="../tag/tremor.html">Tremor</a></span>
-</footer><!-- /.post-info --><div class="section" id="cascadia-subduction-zone-creep">
-<h2><strong>Cascadia subduction zone creep</strong></h2>
-<p>This blog is a continuation of the original <a class="reference external" href="http://geodesygina.com/Cascadia.html">'Why the Cascadia Subduction Zone is Creepy'</a> blog posted a few weeks ago, and many of the terms used in this post are defined there. My collaborators on this project are <a class="reference external" href="http://web.pdx.edu/~pdx07343/">Rob McCaffrey</a> at <a class="reference external" href="http://www.pdx.edu/">Portland State University</a> and <a class="reference external" href="http://www.ess.washington.edu/dwp/people/profile.php?name=creager--ken">Ken Creager</a> at the <a class="reference external" href="http://www.washington.edu/">University of Washington</a>. The paper this blog is based on is found <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">here</a>.</p>
-<p>The Cascadia subduction zone is not just creepy, but it is creepy on many different levels (<em>Figure 1</em>).</p>
-<img alt="cat" class="align-center" src="/images/touch_my_tail.jpg" style="width: 300.0px; height: 300.0px;" />
-<p><em>Figure 1.  I had to include this</em> <a class="reference external" href="http://cheezburger.com/1384231168">figure</a>.  <em>So funny, I laughed for hours, and I'm not even a fan of pet photos.</em></p>
-<p>No, I don't mean that kind of creepy.  What I mean is that the tectonic plates that make up the Cascadia subduction zone between major earthquakes are in some places stuck together, but in others are partially slipping (aka, creeping). My previous <a class="reference external" href="http://geodesygina.com/Cascadia.html">blog</a> talks about regions on the subduction fault that are stuck (or 'locked'), and regions undergoing persistent fault creep between major earthquakes, where persistent fault creep means just that -- between earthquakes the plates are constantly, slowly slipping.  However, there is yet another slip phenomenon that periodically occurs between major earthquakes called slow slip, and is the topic of this blog.</p>
-<p><em>Figure 2</em> is a cross section of the Cascadia subduction zone that shows the Juan de Fuca plate subducting beneath the North America plate.  On the up-dip portion of the fault, the plates are stuck in between large earthquakes.  This region is expected to be where the next megathrust earthquake (magnitude ~9) will occur.  Much further down-dip, the plates slide freely past each other.  Between these two regions, however, it was fairly recently discovered using continuously recording GPS that the two plates periodically slip over a period of weeks to months (<a class="reference external" href="http://www.sciencemag.org/content/292/5521/1525">Dragert et al., 2001</a>), and in doing so accumulate enough slip to be equivalent to moment magnitude 6-7 earthquakes!  Interestingly, you can't physically feel these periodic slow slip events (or SSEs) because they happen so slowly compared to an earthquake, which can last for a few seconds to minutes.  Major slow slip events happen every 10 to 24 months, depending where you are observing along the Cascadia subduction zone.  We will talk about how often these events occur a little later in the blog.</p>
-<img alt="xsection" class="align-center" src="/images/xsection_w_sse.png" style="width: 700.0px; height: 500.0px;" />
-<p><em>Figure 2. Cross-sectional view of the Cascadia Subduction Zone. Image from</em> <a class="reference external" href="http://ooi.washington.edu/rsn/jrd/">John Delaney</a>. <em>White oval indicates region that experiences slow slip and non-volcanic tremor.  The</em> <a class="reference external" href="http://peartreedesigns.blogspot.com/2011/11/devil-wallpapers.html">little devil guy</a>, <em>that is courtesy of too much coffee. Thanks to Aaron Wech for giving me the idea (BTW -- that is not Aaron Wech in the photo, though maybe it should be...).</em></p>
-<p>Not too much time after the discovery of SSEs, periodic bursts of noise were observed at nearly the same time among multiple local seismometers (<em>Figure 3</em>).</p>
-<img alt="seismo_map" class="align-center" src="/images/seimograph_map.jpg" style="width: 500.0px; height: 300.0px;" />
-<img alt="seismo_data" class="align-center" src="/images/seismo_tremor.jpg" style="width: 500.0px; height: 300.0px;" />
-<p><em>Figure 3. Figures modified from the</em> <a class="reference external" href="http://www.earthquakescanada.nrcan.gc.ca/pprs-pprp/re/ETS-eng.php">Natural Resources Canada webpage</a>. <em>(A) Map of seismometer network. (B) Example seismic records for corresponding seismometers located in (A).</em></p>
-<p>Soon scientists realized what they were seeing wasn't noise at all -- it was actually a seismic signal generated from these periodic SSEs that became known as non-volcanic tremor, sometimes referred to simply as tremor. <em>Figure 4</em> demonstrates how well in time the non-volcanic tremor correlates with GPS detection of periodic slow slip. The blue dots in <em>Figure 4</em> are the east component positions of a GPS site on Vancouver, WA.  The time series produces a saw-tooth pattern.  Each drop indicates that the motion of the station temporarily reverses (indicating an SSE).  Non-volcanic tremor activity is also plotted on <em>Figure 4</em> and shows that the non-volcanic tremor peaks during these GPS detected SSEs.</p>
-<img alt="ets" class="align-center" src="/images/ETS.jpg" style="width: 500.0px; height: 300.0px;" />
-<p><em>Figure 4. Modified from the</em> <a class="reference external" href="http://www.earthquakescanada.nrcan.gc.ca/pprs-pprp/re/ETS-eng.php">Natural Resources Canada webpage</a>. <em>Blue circles are daily east position time series of a GPS site near Victoria. The  green line is the long term eastward motion of the site (with respect to North America), and the red saw-tooth line shows the motion of the site between events is faster than the long-term motion. The bottom black line shows the number of hours of tremor activity observed on southern Vancouver Island.</em></p>
-<p>The combination of periodic slow slip and non-volcanic tremor together was coined by the Canadian Geologic Survey as 'Episodic Tremor and Slip (ETS)' (<a class="reference external" href="http://www.pnsn.org/tremor/rogers_ETS.pdf">Rogers and Dragert, 2003</a>).  Intriguingly, non-volcanic tremor and SSEs are not observed together or at all for all subduction zones, but that is a topic for another blog.</p>
-<p>Subsequent studies have shown that in Cascadia ETS recurrence varies along strike of the subduction zone.  <em>Figure 5</em>, (from <a class="reference external" href="http://www.intl-geology.geoscienceworld.org/content/35/10/907.abstract">Brudzinski and Allen, 2007</a>) color codes select continuously recording GPS (squares) and broadband seismometers (triangles) by how often they detect periodic slow slip and tremor, respectively.  Warmer colors indicate the site detected them more often.  What <a class="reference external" href="http://www.intl-geology.geoscienceworld.org/content/35/10/907.abstract">Brudzinski and Allen, 2007</a> found is that ETS recurrence seems to be segmented along the margin, with ETS events happening every ~10 months in northern CA, ~24 months in central to northern Oregon, and about every 14 months in Washington (<em>Figure 5</em>).</p>
-<img alt="Brudzinski_Allen" class="align-center" src="/images/Brudzinski_Allen_fig.png" style="width: 300.0px; height: 500.0px;" />
-<p><em>Figure 5. Map of the Cascadia subduction zone modified from</em> <a class="reference external" href="http://www.intl-geology.geoscienceworld.org/content/35/10/907.abstract">Brudzinski and Allen, 2007</a>. <em>Squares and triangles represent locations of high precision GPS and broadband seismometers, respectively, and are colored by how often slip and tremor are detected.</em></p>
-<p>So the recurrence of these events are not the same along the margin, but does that mean that the amount of tremor and slip along the margin also differ?  First, let's look at the tremor. The <a class="reference external" href="http://www.pnsn.org/">Pacific Northwest Seismic Network</a>, operated out of the <a class="reference external" href="http://www.washington.edu/">University of Washington</a>, keeps a continuously updating catalog of tremor along the entire margin. For some interactive tremor fun, you might want to check out their <a class="reference external" href="http://www.pnsn.org/tremor">tremor mapping tool</a>.  <em>Figure 6</em> is a tremor density map -- in other words, it takes how many tremors were detected over a specified region (the squares on the map), applies that number to a color scale that is then used to color the region.   Dark blue colors indicate regions where the tremor counts are higher.  Correlating well with the how often tremor and SSEs are detected, tremor counts for the time period of August 2009-August 2013 (2009.6-2013.6) are elevated where the recurrence time is shorter and lower where the tremor and SSEs are detected less (<em>Figures 5 and 6</em>).</p>
-<img alt="Brudzinski_Allen" class="align-center" src="/images/tremor.png" style="width: 300.0px; height: 500.0px;" />
-<p><em>Figure 6.  Non-volcanic tremor density map of the Casacadia subduction zone.  Tremors from August 2009-August 2013 are used. Tremor counts larger than 400 are colored blue. Tremor locations from the</em> <a class="reference external" href="http://www.pnsn.org/">Pacific Northwest Seismic Network</a> <em>tremor catalog.</em>  Solid red line marks the 10 mgal gravity anomaly from <a class="reference external" href="http://courses.washington.edu/ess502/BlakelyGeology2005.pdf">Blakely et al., 2005</a>.</p>
-<p>So what about periodic SSEs? The total amount of slip on a fault due to periodic SSEs over time is a little more difficult to estimate because our observations are on the surface of the earth, but we really want to know what is going on down on the fault.  In order to figure that out, we will need to build a mechanical model, but we will get to that part in a minute.  For now, let's take a look at the data.  In <em>Figure 4</em> the east component GPS time series of a site in Vancouver, Canada is shown.  The GPS east position time series in this figure has a slope (notice that the time series position starts at about 1996 at -5 mm, and ends in 2004 at about 28 mm.  The slope (calculated by eye) is then (28mm- -5mm)/(2004-1996) = 33mm/8yrs = 4.125 mm/yr).  This slope marks the long term velocity of the time series, which is illustrated in <em>Figure 4</em> as a green line.  Notice that in between slow slip events the slope is larger (red line), and indicates the inter-SSE velocity, which in Cascadia seems to be pretty consistent between SSEs. To better visualize the GPS offsets from SSEs along the Cascadia subduction zone, the inter-SSE velocity is simply subtracted from the time series. <em>Figure 7</em> displays the time series from select sites from Canada down to northern California.  Note that the SSEs (marked by jumps in the time series) are well defined and fairly frequent in the north, reduce in amplitude and recurrence as we enter Oregon, then pick up again as we move into southern Oregon and northern California.  South of about 40 degrees latitude SSEs are not detected with GPS.</p>
-<img alt="deforming_plates" class="align-center" src="/images/time_series.png" style="width: 700.0px; height: 500.0px;" />
-<p><em>Figure 7.  Map of inter-SSE GPS velocities (black arrows) with select GPS monuments labeled (a). East component of detrended GPS position time series (red dots) with model fit (black line) for sites labeled on the map (b). The site name, latitude of the site (Lat), and the east and north velocity components (Ve and Vn, respectively) are given.  Figure from</em> <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.</p>
-<p>Now, let's get into how we figure out what is going on at the fault during the SSEs.  As mentioned previously, the GPS position time series are observations on the surface of the earth, but we would like to know how much periodic slow slip is occurring on the fault. Similar to my previous <a class="reference external" href="http://geodesygina.com/Cascadia.html">blog</a>, we use a mechanical model.  To briefly review, a mechanical model mathematically mimics the behavior of the earth and the math behind these models are based on what we think the earth is doing.  In the previous <a class="reference external" href="http://geodesygina.com/Cascadia.html">blog</a>,  we used a mechanical block model to explore how much the tectonic plates are stuck in between earthquakes, but in this blog we are interested in seeing how much and where the plates are slipping during SSEs. We again use the block modeling software TDEFNODE, which breaks up the region of interest into tectonic blocks (<em>Figure 8</em>).  Instead of using the long-term pre-estimated GPS velocities with the model we use GPS time-series directly.  What I want you to take away here is that the model mimics how much the tectonic plates are stuck between the SSEs, and how much they slip during the SSEs. It estimates slip for 16 SSEs that occur between 2005.5 and 2011 throughout the Cascadia subduction zone. The goal here is to add up all the SSE slip from that time period and see how it changes as we go from north to south. For details on the modeling, please refer to <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.</p>
-<img alt="deforming_plates" class="align-center" src="/images/block_model.png" style="width: 300.0px; height: 500.0px;" />
-<p><em>Figure 8.  Geometry of the three dimensional block model.  Thick black lines mark block boundaries, dots the three dimensional subduction interface. Block names are labeled.Figure modified from</em> <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.</p>
-<p>Now let's look at the results! The black lines in <em>Figure 7b</em> GPS position time series are modeled east positions over time for points that colocate with the observed GPS monuments. <em>Figure 9</em> are examples of model estimated fault slip patterns for two SSEs in 2007, plotted next to tremor detected during the same time period.</p>
-<img alt="deforming_plates" class="align-center" src="/images/ets_examples.png" style="width: 700.0px; height: 900.0px;" />
-<p><em>Figure 9. Slip distributions for two SSEs in 2007 estimated using the block model.  The left-hand images show  slip patterns (colors) overlain with estimated GPS displacement vectors for that event (red arrows).  The images to the right show non-volcanic tremor locations that occurred in the same time period as the SSEs.  Blue dots are tremor from the</em> <a class="reference external" href="http://www.pnsn.org/">Pacific Northwest Seismic Network</a>, <em>and red dots are tremors from the</em> <a class="reference external" href="http://miamioh.edu/">Miami University</a> <em>catalog, courtesy of</em> <a class="reference external" href="http://www.units.miamioh.edu/geology/people/brudzinski.html">M. Brudzinski</a>.  <em>Figure modified from the Supplementary material of</em> <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.</p>
-<p>As expected, <em>Figure 9</em> shows that regions experiencing non-volcanic tremor seem to be the same regions the model detects slip for a given time period. Phew.  So, now, let's add up all the slip from all the slow slip events and see what we get. <em>Figure 10a and b</em> show cumulative GPS displacements and modeled cumulative slow slip on the fault, respectively, for the time period between 2005.5 and 2011.  <em>Figure 10c</em> plots the cumulative tremor counts (blue line) and the sum of slow slip estimated at each node for each down-dip row of nodes as a function of latitude.  The non-volcanic tremor data used in this plot spans from 2009.8 to 2013.0, whereas the estimated slip is from all SSEs between 2005.5-2011.  Hence, some discrepancies are apparent.  However, it is noted that in both cases, more tremor and slow slip occur in northern California and Washington.  Both are suppressed between ~42-43 and 46 degrees latitude.</p>
-<img alt="deforming_plates" class="align-center" src="/images/cumulative_SSEs.png" style="width: 750.0px; height: 500.0px;" />
-<p><em>Figure 10. Figure from</em> <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.  <em>(a) Sum of all SSE displacements detected at GPS (red and black vectors) from 2005.5-2011.  Red vectors indicate sites that were in operation for 90% of the study. (b) Summed plate interface slow-slip from 2005.5 to 2011. Black vectors are North America relative convergence rates and directions. Thick, solid black lines mark the 10 mgal gravity anomaly contour of</em> <a class="reference external" href="http://courses.washington.edu/ess502/BlakelyGeology2005.pdf">Blakely et al., 2005</a>. <em>(c) Cumulative node depth profile interface slow-slip from 2005.5 to 2011 (red line) and 50 km binned cumulative tremor counts from 2009.8 to 2013.0 acquired from the</em> <a class="reference external" href="http://www.pnsn.org/">Pacific Northwest Seismic Network tremor catalog</a> <em>(blue line). Thick black line represents latitudes with high gravity anomalies.</em></p>
-<p>Let's recap our observations:</p>
+        <span>Fri 04 July 2014</span>
+<span>| tags: <a href="../tag/sqlite.html">SQLite</a><a href="../tag/relational-database.html">relational database</a></span>
+</footer><!-- /.post-info --><p>Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.</p>
+<p><a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, a fabulous <strong>python</strong> coder who dabbles in creating and using <strong>SQLite</strong> databases, and knows a thing or two about the <a class="reference external" href="https://brannerchinese.com/">Chinese Language</a>, and I are working on <a class="reference external" href="https://github.com/WeatherStudy/weather_study">The Weather Project</a> where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a>, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on <strong>creating a Database with SQLite3</strong>.  The next blogs will cover <strong>Populating an SQLite Database with Data using Python</strong> and <strong>Retrieving data from an SQLite Database using Python</strong>.</p>
+<div class="section" id="part-1-creating-a-database-with-sqlite3">
+<h2><strong>Part 1: Creating a Database with SQLite3</strong></h2>
+<p><strong>SQLite</strong> is a compact and self contained relational database management system. We decided to use <strong>SQLite3</strong> (Mac OS X's version of SQLite) because</p>
+<blockquote>
 <ol class="arabic simple">
-<li><a class="reference external" href="http://www.intl-geology.geoscienceworld.org/content/35/10/907.abstract">Brudzinski and Allen, 2007</a> demonstrate using GPS and seismometers that SSEs and non-volcanic tremor detection times are segmented (<em>Figure 5</em>). In other words, between 40 and about 43 degrees north, ETS occurs about once every 10-11 months, ~24 months between 43 and 46-47 degrees north, and about every 14 months north of 47 degrees north.</li>
-<li>Tectonic tremor counts are increased south of 43 degrees N and north of 47 degrees N (<em>Figure 6</em> and <em>Figure 10c</em>, blue line).</li>
-<li>Slow slip peaks in northern California and Washington, but is suppressed in Oregon (<em>Figure 10</em>).</li>
+<li>It is included on the Mac OS X operating system (/usr/bin/sqlite3)</li>
+<li>It does not require a server and no need for an administrator</li>
+<li>It does not include any configuration files</li>
+<li>No action is required after a system crash</li>
 </ol>
-<p>These observations sound awfully reminiscent of the observations in my last <a class="reference external" href="http://geodesygina.com/Cascadia.html">blog post</a>.  The observations there were:</p>
-<ol class="arabic simple" start="4">
-<li>Reduced uplift between major subduction zone earthquakes along the coast between 43 and 46 degrees latitude (<a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>).</li>
-<li>Reduced paleoseismically derived subsidence for multiple Cascadia earthquakes between 43.5 and 46 degrees latitude (<a class="reference external" href="http://bulletin.geoscienceworld.org/content/122/11-12/2079.abstract">Leonard et al., 2010</a>).</li>
-</ol>
-<p>In the last <a class="reference external" href="http://geodesygina.com/Cascadia.html">blog post</a>, I talk about how observations 4 and 5 could be explained by persistent fault creep; in other words, if the fault is slipping in between large earthquakes, then it is slowly relieving stress that would have built up if the plates were stuck together. This results in less subsidence during an earthquake, and less coastal uplift between earthquakes. This idea is taken one step further and we suggest that the Siletzia terrane may be the culprit behind the persistent fault creep. The Siletzia terrane is a dense, accreted basalt that can be mapped with gravity surveys (<a class="reference external" href="http://courses.washington.edu/ess502/BlakelyGeology2005.pdf">Blakely et al., 2005</a>).  The 10 mgal gravity anomaly is plotted as a thick red line in <em>Figure 6</em> and a thick black line in <em>Figure 10b</em>. We suggest something similar to the conceptual model presented by <a class="reference external" href="http://www.sciencedirect.com/science/article/pii/S0012821X09001836">Reyners and Eberhart-Phillips, 2009</a>, where the Siletzia terrane, if impermeable (i.e., water cannot pass through it), increases pore fluid pressures at the fault by not allowing water to percolate into the overriding crust. High pore fluid pressures at or near the plate interface encourages creep, since these conditions are thought to promote fault slip (<a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1029/95JB02403/abstract">Segall and Rice, 1995</a>; <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1029/2005JB003872/abstract">Hillers and Miller, 2006</a>).</p>
-<p><a class="reference external" href="http://www.intl-geology.geoscienceworld.org/content/35/10/907.abstract">Brudzinski and Allen, 2007</a> noted that the thickest accumulations of Siletzia terrane near the coast were also the regions that experience major  slow slip and non-tectonic tremor events less often.  In <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a> we see that the total amount of tremor and the total amount of slow slip is also reduced in the region.  <em>But what does that mean???</em></p>
-<p>Similar to the arguments posed for locking, <a class="reference external" href="http://seismo.berkeley.edu/~paudet/Downloads_files/AudetJGR-2010.pdf">Audet et al., 2010</a> suggest that fluids trapped beneath a seal at the plate boundary increase pore fluid pressures.  Although the plates in the region of slow slip are stuck most of the time, they suggest that the increased pore fluid pressures allow the plates to slip with small changes in stress. They suggest that once the fault begins to slip, the pore fluid pressure decreases and the plates become stuck again, stopping the slow slip and re-enforcing the new seal.  You can imagine then, that variations in the permeability of the upper crust could influence the occurrence of periodic slow slip.  If the Siletzia terrane is less permeable, then it may offer a stronger seal than surrounding regions, producing higher pore fluid pressures, which may encourage more of a partial fault creep environment than one that periodically slips.</p>
-<img alt="deforming_plates" class="align-center" src="/images/locking_tremor.png" style="width: 300.0px; height: 500.0px;" />
-<p><em>Figure 11. Map of the Cascadia subduction zone, with the Gamma-style locking model of the subduction fault presented in my previous</em> <a class="reference external" href="http://geodesygina.com/Cascadia.html">post</a>.  <em>Red indicates areas that are completely stuck, blue areas that are freely slipping.  Colors between red and blue indicate regions that are partially creeping.  White line marks the region where 95% of non-volcanic tremor occurred between 2009-2012.</em></p>
-<p><em>Figure 11</em> is a map that contains the results from the Gamma-style locking model described in my previous <a class="reference external" href="http://geodesygina.com/Cascadia.html">post</a>, where red represents areas that are estimated to be completely stuck, and blue represents areas that are freely slipping.  The colors in between represent regions that are partially creeping. Also plotted is an outline of where 95% of the tremor occurred between 2009 and 2012.  Together, it shows that partial fault creep is up-dip of the tremor.  The conundrum here is: <em>if persistent partial fault creep is occurring up-dip of the zone of tremor and slow slip, then wouldn't this increase the stress on the region of tremor and periodic slow slip and foster more slow slip events?</em>  If so, then why do we see the opposite -- we see less tremor and slow slip where we have more persistent fault creep!  We suggest that the partial fault creep must extend into the zone of non-volcanic tremor and slow slip.  Both the locking and the periodic slow slip are thought to be promoted by high pore fluid pressures.  So, as fluid pressure increases due to a better seal (maybe the Siletzia?), perhaps persistent partial fault creep is the dominant mode of slip. If correct, then it is possible that the make up of the over-riding crust may determine if the fault slips as ETS or persistent fault creep (<a class="reference external" href="http://www.nature.com/ngeo/journal/v3/n9/abs/ngeo940.html">Peng and Gomberg, 2010</a>).</p>
-<p>For a deeper discussion of the observations and hypotheses presented in this blog, please read <a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract">Schmalzle et al., 2014</a>.</p>
-<p>Thanks for reading and keep in touch!  Contents of this blogsite are updated at <a class="reference external" href="http://geodesygina.com/">http://geodesygina.com/</a>.  See other contact information below.</p>
-<p>Acknowledgments:
-This work was funded by the National Science Foundation (NSF) Postdoctoral Fellowship Program, award 0847985 (Schmalzle), NSF award EAR-1062251 (McCaffrey), and USGS National Earthquake Hazards Reduction Program, Award G12AP20033 (Schmalzle and Creager).  Some of the figures I made myself using General Mapping Tools (GMT), but some figures I took from random places on the web.  For any of those images I say where the figure was taken.  Many thanks to Reed Burgette and an anonymous reviewer for their thoughtful comments and suggestions that greatly improved this research. Thanks to Mike Brudzinski and Aaron Wech for providing their tremor catalogs. Thanks to Rick Blakeley for providing gravity data. Thanks to PBO and PANGA for providing access to GPS data products. Craig H. Faunce, Bruce Nelson, Steve Malone, Justin Sweet, David Schmidt, Aaron Wech, Tom Pratt, Brian Atwater, Sarah Minson, Lorraine Wolf, and Aimee Schmalzle provided useful comments and insight. Thanks to PBO and PANGA for providing access to GPS data products.</p>
+</blockquote>
+<p>Certainly, there are issues with <strong>SQLite</strong>, but for our humble little project <strong>SQLite</strong> provides all the functionality we wanted. If you are running Mac OSX you can use SQLite3.  Be sure that /usr/bin/ is in your path (it already should be there).  You can check to see if you have it by typing:</p>
+<pre class="literal-block">
+which sqlite3
+</pre>
+<p>Let's get started.  First, a few things about sqlite3. You can enter the sqlite3 <a class="reference external" href="http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop">repl</a> by simply typing sqlite3 at the command line.  Or, you can type:</p>
+<pre class="literal-block">
+sqlite3 mydatabase.db
+</pre>
+<p>to ensure your creations/populations/extractions are all for the database mydatabase.db (or whatever you want it named).  If you make a sqlite3 script that is applied to mydatabase.db called myscript.sql, you can run it at the command line by typing:</p>
+<pre class="literal-block">
+sqlite3 mydatabase.db &lt; myscript.sql.
+</pre>
+<p>Our <strong>SQLite</strong> database that we named <em>weather_data_OWM.db</em> is set up with multiple tables.  Information within those tables are related, and is referred to as a <em>relational database</em>.  As previously mentioned, a relational database is setup so that there is some common information between tables that helps link them.  Our database tables are linked by city id.  The city id is simply a unique number assigned to each location that has a weather forecast.  In one table we keep the properties of each location, such as the latitude, longitude, city name, etc.  In the other, we assign the forecasts to each city id.  Let's take a closer look at how this works.</p>
+<p>The first thing we did was create a TABLE called <em>locations</em> which contains the id, name, latitude, longtiude and country:</p>
+<pre class="literal-block">
+DROP TABLE IF EXISTS locations;
+CREATE TABLE locations (
+   id TEXT PRIMARY KEY UNIQUE,
+   name TEXT,
+   lat NUMBER,
+   lon NUMBER,
+   country TEXT
+);
+</pre>
+<p>Eeeek! The &quot;DROP TABLE&quot; part of this code is a little scary -- here we are saying if there is already a table in our database called <em>locations</em> then remove it!  The table <em>locations</em> will be completely removed and can not be recovered.  You may ask, <em>why would you want to do that???</em> Well, this code is simply meant to provide the bones for our database.  The only reason we are running this script is to make a database from scratch, and if one exists, it should be removed.  It is also recommended because you don't want to confuse the current data with other data sets if a table called <em>locations</em> exists.  So <strong>BE CAREFUL</strong> with this command.</p>
+<p>The next command lines create the table with columns that are defined as containing a certain type of field.  The columns that we have are id, name, lat, lon and country and are either TEXT (strings) or NUMBERS (floats).  The id column is special because it also contains PRIMARY KEY command.  The PRIMARY KEY command ensures that all rows in that column are uniquely identifiable.  To be extra certain of this (but may be a little redundant), we also included UNIQUE, which ensures that all values in the column are different.</p>
+<p>How can we tell if the table was made properly?  If you entered the commands above in the repl, then type:</p>
+<pre class="literal-block">
+SELECT * FROM sqlite_master WHERE type='table';
+</pre>
+<p>What should print out is information on your new table, including its structure:</p>
+<pre class="literal-block">
+table|locations|locations|2|CREATE TABLE locations (
+id TEXT PRIMARY KEY UNIQUE,
+name TEXT,
+lat NUMBER,
+lon NUMBER,
+country TEXT
+)
+</pre>
+<p>The line &quot;table|locations|locations|2|CREATE TABLE locations&quot; is simply output that states: <em>type|name|table name|root page #|sql command used to generate the table</em>. Then the table column names are printed.</p>
+<p>Very good!  Now we have a table that will contain some characteristics of each city. Now let's make a second TABLE that includes the weather forecasts and will be related to the first one by the city code. We are collecting forecasts for up to 14 days before a <em>target_date</em> which we define as the day being forecasted.  We want to know the forecasts for rain and snow, as well as the minimum and maximum temperatures for the <em>target_date</em>.  As before, we first need to DROP any existing tables, then we create the table:</p>
+<pre class="literal-block">
+DROP TABLE IF EXISTS owm_values;
+CREATE TABLE owm_values (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   location_id TEXT,
+   target_date INTEGER,
+   maxt_0 NUMBER,
+   mint_0 NUMBER,
+   rain_0 NUMBER,
+   snow_0 NUMBER,
+   maxt_1 NUMBER,
+   mint_1 NUMBER,
+   rain_1 NUMBER,
+   snow_1 NUMBER,
+   maxt_2 NUMBER,
+   mint_2 NUMBER,
+   rain_2 NUMBER,
+   snow_2 NUMBER,
+   maxt_3 NUMBER,
+   mint_3 NUMBER,
+   rain_3 NUMBER,
+   snow_3 NUMBER,
+   maxt_4 NUMBER,
+   mint_4 NUMBER,
+   rain_4 NUMBER,
+   snow_4 NUMBER,
+   maxt_5 NUMBER,
+   mint_5 NUMBER,
+   rain_5 NUMBER,
+   snow_5 NUMBER,
+   maxt_6 NUMBER,
+   mint_6 NUMBER,
+   rain_6 NUMBER,
+   snow_6 NUMBER,
+   maxt_7 NUMBER,
+   mint_7 NUMBER,
+   rain_7 NUMBER,
+   snow_7 NUMBER,
+   maxt_8 NUMBER,
+   mint_8 NUMBER,
+   rain_8 NUMBER,
+   snow_8 NUMBER,
+   maxt_9 NUMBER,
+   mint_9 NUMBER,
+   rain_9 NUMBER,
+   snow_9 NUMBER,
+   maxt_10 NUMBER,
+   mint_10 NUMBER,
+   rain_10 NUMBER,
+   snow_10 NUMBER,
+   maxt_11 NUMBER,
+   mint_11 NUMBER,
+   rain_11 NUMBER,
+   snow_11 NUMBER,
+   maxt_12 NUMBER,
+   mint_12 NUMBER,
+   rain_12 NUMBER,
+   snow_12 NUMBER,
+   maxt_13 NUMBER,
+   mint_13 NUMBER,
+   rain_13 NUMBER,
+   snow_13 NUMBER,
+   maxt_14 NUMBER,
+   mint_14 NUMBER,
+   rain_14 NUMBER,
+   snow_14 NUMBER,
+   UNIQUE (location_id, target_date),
+   FOREIGN KEY (location_id) REFERENCES locations(id)
+   );
+</pre>
+<p>In this table, each forecast is given its own, unique id (called id).  In addition, it contains a location_id, which will refer to <em>id</em> in our first TABLE, <em>locations</em>.  These values 'link' the two tables, creating a relational database. The FOREIGN KEY statement defines this relationship, stating that the location_id of the TABLE <em>owm_values</em> is REFERENCED to the id of TABLE <em>locations</em>. We also created columns in our TABLE that will store forecasts from the day of (*_0) to 14 days out (*_14).  UNIQUE ensures that both the location_id and the target_date are unique in this table (i.e., every city will have its own unique id, and every city will have forecasts for unique target dates).</p>
+<p>Now if you type into the repl:</p>
+<pre class="literal-block">
+SELECT * FROM sqlite_master WHERE type='table';
+</pre>
+<p>Two tables should print out -- the first one being the <em>locations</em> table, the second your brand new <em>owm_values</em> table.</p>
+<p>Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Stay tuned for  <strong>Part 2 Populating an SQLite Database using Python</strong>, coming soon...</p>
 </div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
-                    <h1>Other articles</h1>
+                    <h1><a name = "moreblogs">Other articles</a></h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="../SSEs.html" rel="bookmark"
+                           title="Permalink to The Cascadia Subduction Zone gets Creepier and Creepier..."><strong>The Cascadia Subduction Zone gets Creepier and Creepier...</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Fri 23 May 2014</span>
+<span>| tags: <a href="../tag/cascadia-subduction-zone.html">Cascadia Subduction Zone</a><a href="../tag/seismic-hazard.html">Seismic Hazard</a><a href="../tag/gps.html">GPS</a><a href="../tag/slow-slip.html">Slow Slip</a><a href="../tag/sse.html">SSE</a><a href="../tag/tremor.html">Tremor</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Cascadia Subduction Zone Slow Slip and Creep</strong></p>
+
+                <a class="readmore" href="../SSEs.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
