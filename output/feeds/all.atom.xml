@@ -1,5 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-04T14:56:00-04:00</updated><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</title><link href="http://geodesygina.com/make_db.html" rel="alternate"></link><updated>2014-07-04T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-04:make_db.html</id><summary type="html">&lt;p&gt;Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-09T14:56:00-04:00</updated><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</title><link href="http://geodesygina.com/pop_db.html" rel="alternate"></link><updated>2014-07-09T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-09:pop_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, who was incredibly patient in teaching me how to do this... Kudos, David!&lt;/p&gt;
+&lt;div class="section" id="part-2-populating-an-sqlite-database-using-python"&gt;
+&lt;h2&gt;&lt;strong&gt;Part 2. Populating an SQLite Database using Python&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Let's put some data into our database!  First, let's fill up our &lt;em&gt;locations&lt;/em&gt; TABLE. We collected and keep a list of the cities, their unique codes provided by Open Weather Map, their latitudes and longitudes and their country codes &lt;a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/data/city_lists/city_list_normalized_20140425-1923.txt"&gt;here&lt;/a&gt;, in a file called city_list_normalized_20140425-1923.txt.  This file contains information on the cities and looks like this:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+id     nm      lat     lon     countryCode
+819827 Razvilka        55.591667       37.740833       RU
+524901 Moscow  55.752220       37.615555       RU
+1271881        Firozpur Jhirka 27.799999       76.949997       IN
+1283240        Kathmandu       27.716667       85.316666       NP
+703448 Kiev    50.433334       30.516666       UA
+1282898        Pokhara 28.233334       83.983330       NP
+3632308        Merida  8.598333        -71.144997      VE
+.
+.
+.
+&lt;/pre&gt;
+&lt;p&gt;We need a way to grab this file and read the contents in python.  Let's create a function that will do just that. If we are in the directory containing the file called city_list_normalized_20140425-1923.txt, we can call the file in python and read its contents:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+def isolate_city_codes():
+   filename = 'city_list_normalized_20140425-1923.txt'
+   with open(filename, 'r') as f:
+       contents = f.read()
+   list_of_lines = [line.split('\t') for line in contents.split('\n')[1:]]
+   # Latitude and longitude should be numbers
+   for i in range(1, len(list_of_lines)-1):
+       list_of_lines[i][2] = float(list_of_lines[i][2])
+       list_of_lines[i][3] = float(list_of_lines[i][3])
+   return list_of_lines
+&lt;/pre&gt;
+&lt;p&gt;Let's break down what the function is doing.  The first thing is that it defines a string called filename as 'city_list_normalized_20140425-1923.txt'.  The next two lines of code are contained in a 'with statement'.  A 'with statement' is a context manager, which provides a way to safely close the opened file and exit out of the python script in case of an error. The contents of the file are read and placed into the variable &lt;em&gt;contents&lt;/em&gt; that looks something like this:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+'id\tnm\tlat\tlon\tcountryCode\n819827\tRazvilka\t55.591667\t37.740833\tRU\n524901\tMoscow\t55.752220\t37.615555\tRU ...
+...
+\n895417\tBanket\t-17.383329\t30.400000\tZW\n'
+&lt;/pre&gt;
+&lt;p&gt;Notice the once tab seperated entries of the file are now separated with '\t' and the lines are now separated with '\n'.  The next line of our program defines list_of_lines, which runs a loop through contents that splits out each line (defined by '\n') and each tab separated space (defined by '\t').  list_of_lines now looks like this:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+[['819827', 'Razvilka', '55.591667', '37.740833', 'RU'],
+ ['524901', 'Moscow', '55.752220', '37.615555', 'RU'],
+ ['1271881', 'Firozpur Jhirka', '27.799999', '76.949997', 'IN'],
+ .
+ .
+ .
+ ['895417', 'Banket', '-17.383329', '30.400000', 'ZW']
+]
+&lt;/pre&gt;
+&lt;p&gt;So, list_of_lines is a &lt;em&gt;list of lists&lt;/em&gt;, where a list contains the contents within a set of square brackets.  The problem with the current list_of_lines is that the latitude and longtitudes are strings and must be converted into floats, which is done using the for statement.  Finally, the revised list_of_lines is returned with floats for the latitude and longitude.&lt;/p&gt;
+&lt;p&gt;Now, let's populate the TABLE &lt;em&gt;locations&lt;/em&gt; in the sqlite3 database &lt;em&gt;weather_data_OWM.db&lt;/em&gt;. We write another function that calls the previous function to grab the data, then it populates the &lt;em&gt;locations&lt;/em&gt; TABLE with those values:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+import sqlite3
+def populate_db_w_city_codes(db='weather_data_OWM.db'):
+   connection = sqlite3.connect(db)
+   with connection:
+       city_codes = isolate_city_codes()
+       cursor = connection.cursor()
+       for code in city_codes[1:-1]:
+           if code == ['']:
+               print('\n    Empty tuple found; skipping.\n')
+               continue
+           cursor.execute(
+                   '''INSERT INTO locations VALUES''' +
+                   str(tuple(code)))
+&lt;/pre&gt;
+&lt;p&gt;Note that we have to import the python module sqlite3.  This module allows you to 'connect' with a specified database.  Once you have a connection, you can create a cursor object that calls its execute() method to perform SQLite3 commands.  In the function described above, we create a &lt;em&gt;connection&lt;/em&gt; which connects to our database (db = 'weather_data_OWM.db').  Then we apply a context manager (the with statement) to:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Collect the information contained within &lt;em&gt;city_list_normalized_20140425-1923.txt&lt;/em&gt; by calling our previous function, &lt;em&gt;isolate_city_codes()&lt;/em&gt;.  The returned &lt;em&gt;list_of_lines&lt;/em&gt; from &lt;em&gt;isolate_city_codes()&lt;/em&gt; is now labeled as &lt;em&gt;city_codes&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Open a &lt;em&gt;cursor&lt;/em&gt; that will execute subsequent &lt;em&gt;SQLite3&lt;/em&gt; commands.&lt;/li&gt;
+&lt;li&gt;Insert the values of &lt;em&gt;city_codes&lt;/em&gt; into the &lt;em&gt;locations&lt;/em&gt; TABLE.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Notice that the SQLite3 commands are imbedded into cursor.execute. The lists within &lt;em&gt;city_codes&lt;/em&gt; are already in the order we want them (same order as the database columns were set up in, see &lt;a class="reference external" href="/make_db.html"&gt;Part 1&lt;/a&gt;). They have been 'tuple-ized' and 'string-ified' since this is the format SQLite3 understands.&lt;/p&gt;
+&lt;p&gt;After executing, you can now check if they were inserted into your database by entering the sqlite3 repl:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+sqlite3 weather_data_OWM.db
+&lt;/pre&gt;
+&lt;p&gt;Once in the sqlite repl type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+SELECT * FROM locations;
+&lt;/pre&gt;
+&lt;p&gt;The output should look something like this:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+.
+.
+.
+894413|Chakari|-18.062941|29.89246|ZW
+894460|Centenary|-16.722891|31.11462|ZW
+895057|Binga|-17.620279|27.341391|ZW
+895417|Banket|-17.383329|30.4|ZW
+&lt;/pre&gt;
+&lt;p&gt;Your new table should have data that include: &lt;em&gt;city id|city name|latitude|longitude|two letter country code&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Splendid!  One table down, one related table to go!  The second table is a bit more complicated.  It involves data that was downloaded through the &lt;a class="reference external" href="http://openweathermap.org/"&gt;Open Weather Map&lt;/a&gt; API that allows for easy access to their data products that are available in XML and JSON formats.   Since this blog is focusing on building and populating databases, I assume that you already have the data downloaded in JSON format. I will not get into how to download the data here, but for more information on how to do this, David developed a nifty little python script called &lt;a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/code/requests.py"&gt;requests.py&lt;/a&gt; that allows you to download data using an API key that is hidden from public access (important when allowing public access to your files in Github).&lt;/p&gt;
+&lt;p&gt;We use the JSON formatted files to populate our database.  JSON files are in the form of a dictionary, also known as an associative array.  If you are not familiar with this data structure, I recommend you read &lt;a class="reference external" href="/dict.html"&gt;this little ditty&lt;/a&gt; before continuing. Otherwise, keep on reading!&lt;/p&gt;
+&lt;p&gt;Below is an example of a JSON file obtained using the Open Weather Map API that has been prettified using &lt;a class="reference external" href="http://jsbeautifier.org/"&gt;http://jsbeautifier.org/&lt;/a&gt;.  The JSON file contains the forecasts and information for a single city:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+{
+   'cod': '200',
+   'message': 0.005,
+   'city': {
+       'name': 'Bay Minette',
+       'id': 4046255,
+       'coord': {
+           'lat': 30.882959,
+           'lon': -87.773048
+       },
+       'population': 8044,
+       'country': 'US'
+   },
+   'list': [{
+       'weather': [{
+           'description': 'few clouds',
+           'icon': '02d',
+           'main': 'Clouds',
+           'id': 801
+       }],
+       'temp': {
+           'max': 27.32,
+           'min': 18.14,
+           'eve': 24.57,
+           'day': 27.22,
+           'night': 18.14,
+           'morn': 27.22
+       },
+       'deg': 199,
+       'clouds': 12,
+       'pressure': 1020.38,
+       'humidity': 42,
+       'dt': 1398186000,
+       'speed': 2.11
+   }, {
+       'weather': [{
+
+       .
+       .
+       .
+
+   }],
+   'cnt': 15
+}
+&lt;/pre&gt;
+&lt;p&gt;Now you see that it is just one giant dictionary, right?  So if we import this into python, then we can call certain values by their keys.  For example, if we call this dictionary x, then we can retrieve the latitude of the city by typing:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+x['city']['coord']['lat']
+&lt;/pre&gt;
+&lt;p&gt;In this JSON file the 'city' key contains the information about the city itself, and the 'list' key contains information on the weather forecasts, where the first value contains information on the weather forecasts for the day the file was downloaded.  The second value in 'list' contains the forecast for the next day, etc.&lt;/p&gt;
+&lt;p&gt;You can see that the file contains the minimum and maximum temperature, and, if it exists, also contains snow and rain amounts. 'dt' is the day the forecast is for in &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Unix_time"&gt;Unix Time&lt;/a&gt;. The 'query date'  which is the day the file was downloaded is not included in these files but is important because this will tell you which day is the day-of forecast.  We dealt with this problem by downloading the JSON files for each city into a directory with the download date.&lt;/p&gt;
+&lt;p&gt;The first thing we will need to do here is extract the information we need from these JSON files. For the sake of simplicity, I assume you know the download date and specify it in the python code (rather than extracting it from the directory name). Depending on what region you are collecting, you may have thousands of files for one download date, each corresponding to an individual location. We would like a function that&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Ingests these JSON formatted files and stores the contents as a dictionary&lt;/li&gt;
+&lt;li&gt;Create a smaller dictionary called &lt;em&gt;forecast_dict&lt;/em&gt; that contains only the information that we need for our database.  The smaller dictionary should have a 'key' that relates to the city_id, and values that contain the forecasted values.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I assume that you have the names of your files in a list called &lt;em&gt;files&lt;/em&gt; that were collected on a specified &lt;em&gt;query_date&lt;/em&gt;.  I use an example query date of 20140422:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+files = [yourfile1.json, yourfile2.json, yourfile3.json... ]  # example files
+
+import ast
+def retrieve_data_vals(files, query_date='20140422'):
+   forecast_dict = {'query_date': query_date}                 # Assign query_date to dictionary
+   files.sort()
+   for file in files:
+       forecast_list_pruned = []
+       try:
+           with open(file, 'r') as f:
+               contents = f.read()                            # Read in file as a string
+       except Exception as e:
+           print('Error {}\n    in file {}'.format(e, file))
+       if contents == '\n':
+           print('File {} empty.'.format(file))
+           continue
+       content_dict = ast.literal_eval(contents)              # Convert to dictionary
+       city_id = (content_dict['city']['id'])                 # Assign city_id
+       forecast_list_received =(content_dict['list'])         # Assign everythin in 'list' to forecast_list_received
+       for i, forecast in enumerate(forecast_list_received):  # For each forecast in the dictionary
+           if 'rain' in forecast:                             # Assign rain, if exists,
+              rain = forecast['rain']                         # Otherwise make 0
+           else:
+              rain = 0
+           if 'snow' in forecast:                             # Same with snow
+               snow = forecast['snow']
+           else:
+               snow = 0
+           forecast_tuple = (                                 # Assign forecast information in tuple form that is SQLite3 readable (if stringified)
+                   forecast['dt'],
+                   float(forecast['temp']['max']),
+                   float(forecast['temp']['min']),
+                   float(rain),
+                   float(snow),
+                   )
+           forecast_list_pruned.append(forecast_tuple)        # Collect all forecasts for that file
+       forecast_dict[city_id] = forecast_list_pruned          # and assign to the forecast_dict for each city
+   return forecast_dict
+&lt;/pre&gt;
+&lt;p&gt;Phew!  Extracting the data from the JSON files and putting it into an SQLite3 friendly format is the toughest part. Now that we have forecast_dict, however, we can populate our database! Our next function will use some of the same techniques described above, which include using the sqlite3 module to make a connection with the sqlite database and execute &lt;strong&gt;SQLite3&lt;/strong&gt; commands:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+import sqlite3
+def populate_db_w_forecasts(db='weather_data_OWM.db'):
+   forecast_dict = retrieve_data_vals(files)                 # Run the function retrieve_data_vals above which returns the forecast dictionary
+   query_date = forecast_dict['query_date']                  # Assign query_date
+   connection = sqlite3.connect(db)                          # Create the SQLite3 connection
+   with connection:
+       cursor = connection.cursor()
+       for key in forecast_dict:
+           if key == 'query_date':
+               continue                                      # After here, &amp;quot;key&amp;quot; is a location_id.
+           for i,item in enumerate(forecast_dict[key]):
+                  target_date = datetime.datetime.fromtimestamp(int(item[0])).strftime('%Y%m%d')                         # Convert the Unix time to human readable string
+                  maxt, mint, rain, snow = item[1:]          # Remember forecast dict contains dt, maxT, minT, rain and snow, so we want everything past dt (hence item[1:])
+                  i = str(i)
+                  fields = ','.join([                        # 'fields' contains question marks that indicate where values will be inserted later in the code
+                          'maxt_' + i + '=?',
+                          'mint_' + i + '=?',
+                          'rain_' + i + '=?',
+                          'snow_' + i + '=?'
+                          ])
+                  try:
+                      cursor.execute(                        # Insert the location_id (key) and target_date
+                              '''INSERT INTO owm_values '''
+                              '''(location_id,target_date) '''
+                              '''VALUES (?,?)''', (key, target_date))
+                  except sqlite3.IntegrityError as e:
+                      pass
+                  cursor.execute(                            # Insert forecast values
+                       '''UPDATE owm_values SET ''' + fields +
+                       ''' WHERE id='''
+                       '''(SELECT id FROM owm_values '''
+                       '''WHERE location_id=? AND target_date=?)''',
+                       (maxt, mint, rain, snow, key, target_date)
+&lt;/pre&gt;
+&lt;p&gt;Let's talk a little about &lt;em&gt;cursor.execute&lt;/em&gt;. Here we do a little python trick to insert values into the SQLite code.  In cursor.execute, we state the SQLite3 commands, but we include question marks (?).  After the SQLite commands we place a comma then a tuple of values.  These tuple values are inserted into where the question marks appear in the code in the order the question marks appear.  So, in the case of:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+cursor.execute(
+        '''INSERT INTO owm_values '''
+        '''(location_id,target_date) '''
+        '''VALUES (?,?)''', (key, target_date))
+&lt;/pre&gt;
+&lt;p&gt;The SQLite3 command is:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
+&lt;/pre&gt;
+&lt;p&gt;where 'key' is the location city id, and 'target_date' is the date the forecast is for.  Note the &lt;em&gt;location_id&lt;/em&gt; of the &lt;em&gt;owm_values&lt;/em&gt; TABLE refers to the &lt;em&gt;city_codes&lt;/em&gt; of the locations TABLE.&lt;/p&gt;
+&lt;p&gt;There you go!  You now have a relational database that has been populated with data!  Now what to do with it... Stay tuned for Part 3 Retrieving data from an SQLite Database using Python.&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</title><link href="http://geodesygina.com/make_db.html" rel="alternate"></link><updated>2014-07-04T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-04:make_db.html</id><summary type="html">&lt;p&gt;Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.&lt;/p&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, a fabulous &lt;strong&gt;python&lt;/strong&gt; coder who dabbles in creating and using &lt;strong&gt;SQLite&lt;/strong&gt; databases, and knows a thing or two about the &lt;a class="reference external" href="https://brannerchinese.com/"&gt;Chinese Language&lt;/a&gt;, and I are working on &lt;a class="reference external" href="https://github.com/WeatherStudy/weather_study"&gt;The Weather Project&lt;/a&gt; where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from &lt;a class="reference external" href="http://openweathermap.org/"&gt;Open Weather Map&lt;/a&gt;, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on &lt;strong&gt;creating a Database with SQLite3&lt;/strong&gt;.  The next blogs will cover &lt;strong&gt;Populating an SQLite Database with Data using Python&lt;/strong&gt; and &lt;strong&gt;Retrieving data from an SQLite Database using Python&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="section" id="part-1-creating-a-database-with-sqlite3"&gt;
 &lt;h2&gt;&lt;strong&gt;Part 1: Creating a Database with SQLite3&lt;/strong&gt;&lt;/h2&gt;
@@ -130,9 +375,59 @@ CREATE TABLE owm_values (
 SELECT * FROM sqlite_master WHERE type='table';
 &lt;/pre&gt;
 &lt;p&gt;Two tables should print out -- the first one being the &lt;em&gt;locations&lt;/em&gt; table, the second your brand new &lt;em&gt;owm_values&lt;/em&gt; table.&lt;/p&gt;
-&lt;p&gt;Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Stay tuned for  &lt;strong&gt;Part 2 Populating an SQLite Database using Python&lt;/strong&gt;, coming soon...&lt;/p&gt;
+&lt;p&gt;Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Now for  &lt;a class="reference external" href="/pop_db.html"&gt;Part 2 Populating an SQLite Database using Python&lt;/a&gt; coming soon...&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SQLite"></category><category term="relational database"></category></entry><entry><title>The Cascadia Subduction Zone gets Creepier and Creepier...</title><link href="http://geodesygina.com/SSEs.html" rel="alternate"></link><updated>2014-05-23T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-05-23:SSEs.html</id><summary type="html">&lt;div class="section" id="cascadia-subduction-zone-creep"&gt;
+</summary><category term="SQLite"></category><category term="relational database"></category></entry><entry><title>The Dictionary Data structure</title><link href="http://geodesygina.com/dict.html" rel="alternate"></link><updated>2014-07-01T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-01:dict.html</id><summary type="html">&lt;div class="section" id="dictionaries"&gt;
+&lt;h2&gt;&lt;strong&gt;Dictionaries&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;This page briefly reviews a &lt;strong&gt;dictionary&lt;/strong&gt;, also known as an &lt;strong&gt;associative array&lt;/strong&gt;, a &lt;strong&gt;map&lt;/strong&gt; or a &lt;strong&gt;symbol table&lt;/strong&gt;. A dictionary is composed of a collection of keys and values, and each key appears only once in a collection.  JSON files, human-readable files that are commonly used for web applications, contains data objects in the form of a dictionary.&lt;/p&gt;
+&lt;p&gt;Let's demonstrate how a dictionary is defined in &lt;strong&gt;python&lt;/strong&gt;.  Open a &lt;strong&gt;python&lt;/strong&gt; repl by typing on the command line: python.  Once in your repl type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a = { 'Hello': 'How are you?'}
+&lt;/pre&gt;
+&lt;p&gt;'a' is a dictionary. Notice how it was defined with the curly brackets.  This dictionary contains one &lt;em&gt;key&lt;/em&gt; on the left of the colon, and one &lt;em&gt;value&lt;/em&gt; on the right side of the colon.  You can retrieve the &lt;em&gt;value&lt;/em&gt; by typing in the repl:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a['Hello']
+&lt;/pre&gt;
+&lt;p&gt;and pressing enter, which returns 'How are you?'.  You can retreive the list of keys by typing:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a.keys()
+&lt;/pre&gt;
+&lt;p&gt;and pressing enter, which returns 'Hello'.  Now let's make this dictionary a little more complicated:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a = { 'Hello': 'How are you?', 'Goodbye': 'See you Later!' }
+&lt;/pre&gt;
+&lt;p&gt;Here you now have two keys that have their own associated values.  Here you can still run:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a['Hello']
+&lt;/pre&gt;
+&lt;p&gt;which will still return 'How are you?', but now you can type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a['Goodbye']
+&lt;/pre&gt;
+&lt;p&gt;which returns 'See you Later!'  A list of keys can be obtained by typing:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a.keys()
+&lt;/pre&gt;
+&lt;p&gt;which returns the keys in a list form: ['Hello', 'Goodbye'].  These keys can be retrieved individually by specifying their element indices starting at 0.  For example:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a.keys()[0]
+&lt;/pre&gt;
+&lt;p&gt;returns 'Hello'.  Making sense?  OK, let's add one more layer of abstraction which is that the values (of the key/value pair) can be a dictionary.  Changing our dictionary again, type:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a = { 'Hello': 'How are you?', 'Goodbye': {'a':'See you Later!','b':'Later Gator' }}
+&lt;/pre&gt;
+&lt;p&gt;into the python repl.  Notice that the key 'Goodbye' now points to a dictionary.  If you type into the python repl:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a ['Goodbye']
+&lt;/pre&gt;
+&lt;p&gt;you now get the dictionary {'a': 'See you Later!', 'b': 'Later Gator'}.  You can choose a particular value of this sub-dictionary by specifying:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+a ['Goodbye']['b']
+&lt;/pre&gt;
+&lt;p&gt;which returns 'Later Gator'.&lt;/p&gt;
+&lt;p&gt;&lt;a class="reference external" href="/pop_db.html"&gt;Return to Populating a Database&lt;/a&gt;!&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="dictionaries"></category><category term="python"></category></entry><entry><title>The Cascadia Subduction Zone gets Creepier and Creepier...</title><link href="http://geodesygina.com/SSEs.html" rel="alternate"></link><updated>2014-05-23T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-05-23:SSEs.html</id><summary type="html">&lt;div class="section" id="cascadia-subduction-zone-creep"&gt;
 &lt;h2&gt;&lt;strong&gt;Cascadia subduction zone creep&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;This blog is a continuation of the original &lt;a class="reference external" href="http://geodesygina.com/Cascadia.html"&gt;'Why the Cascadia Subduction Zone is Creepy'&lt;/a&gt; blog posted a few weeks ago, and many of the terms used in this post are defined there. My collaborators on this project are &lt;a class="reference external" href="http://web.pdx.edu/~pdx07343/"&gt;Rob McCaffrey&lt;/a&gt; at &lt;a class="reference external" href="http://www.pdx.edu/"&gt;Portland State University&lt;/a&gt; and &lt;a class="reference external" href="http://www.ess.washington.edu/dwp/people/profile.php?name=creager--ken"&gt;Ken Creager&lt;/a&gt; at the &lt;a class="reference external" href="http://www.washington.edu/"&gt;University of Washington&lt;/a&gt;. The paper this blog is based on is found &lt;a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/2013GC005172/abstract"&gt;here&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;The Cascadia subduction zone is not just creepy, but it is creepy on many different levels (&lt;em&gt;Figure 1&lt;/em&gt;).&lt;/p&gt;
@@ -902,7 +1197,7 @@ and the fault parallel velocity is: R par= R*cos(t)&lt;/p&gt;
 </summary><category term="GPS"></category><category term="vector projection"></category></entry><entry><title>About Me</title><link href="http://geodesygina.com/MyBio.html" rel="alternate"></link><updated>2014-03-13T12:40:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-13:MyBio.html</id><summary type="html">&lt;img alt="Gina Schmalzle" class="align-right" src="/images/Gina.jpg" style="width: 200.0px; height: 200.0px;" /&gt;
 &lt;div class="section" id="hello-i-m-gina"&gt;
 &lt;h2&gt;Hello! I'm Gina.&lt;/h2&gt;
-&lt;p&gt;I am a geodesist who recieved her PhD at the &lt;a class="reference external" href="http://www.rsmas.miami.edu/"&gt;University of Miami Rosenstiel School of Marine and Atmospheric Sciences&lt;/a&gt; in Miami FL.  Since then I have been a postdoctoral scholar and research scientist at the &lt;a class="reference external" href="http://www.washington.edu/"&gt;University of Washington&lt;/a&gt; in Seattle, WA, and along with Scott Baker and Batuhan Osmanoglu, started a geodetic services company called &lt;a class="reference external" href="http://bostechnologies.com/"&gt;BOS Technologies LLC&lt;/a&gt;. We specialize in high precision Global Positioning Systems (GPS) and Interferometric Synthetic Aperture Radar (InSAR). I am currently an Assistant Scientist at the &lt;a class="reference external" href="http://www.miami.edu/"&gt;University of Miami&lt;/a&gt; working remotely from Seattle, WA. I have an extensive background studying the tectonics of the west coast of the United States.  I started my geophysics career studying the San Andreas fault, and I am currently studying the &lt;a class="reference external" href="http://geodesygina.com/Cascadia.html"&gt;Cascadia Subduction Zone&lt;/a&gt; and Southern California.&lt;/p&gt;
+&lt;p&gt;I am a geodesist who recieved her PhD at the &lt;a class="reference external" href="http://www.rsmas.miami.edu/"&gt;University of Miami Rosenstiel School of Marine and Atmospheric Sciences&lt;/a&gt; in Miami FL.  Since then I have been a postdoctoral scholar and research scientist at the &lt;a class="reference external" href="http://www.washington.edu/"&gt;University of Washington&lt;/a&gt; in Seattle, WA, and along with Scott Baker and Batuhan Osmanoglu, started a geodetic services company called &lt;a class="reference external" href="http://bostechnologies.com/"&gt;BOS Technologies LLC&lt;/a&gt;. We specialize in high precision Global Positioning Systems (GPS) and Interferometric Synthetic Aperture Radar (InSAR). I am currently an Assistant Scientist at the &lt;a class="reference external" href="http://www.miami.edu/"&gt;University of Miami&lt;/a&gt; working remotely from Seattle, WA. I have an extensive background studying the tectonics of the west coast of the United States.  I started my geophysics career studying the San Andreas fault, and I am currently studying the &lt;a class="reference external" href="http://geodesygina.com/Cascadia.html"&gt;Cascadia Subduction Zone&lt;/a&gt; and Southern Californiaq.&lt;/p&gt;
 &lt;p&gt;I love data.  I love visualizing and analyzing it, and just getting my hands dirty with it.  Recently I have been working on developing interactive websites for geophysical datasets.  Many geophysical datasets are publicly available, but it is difficult for the general public to use and play with these data. Presented on this website are two interactive websites that I built with a little help from my friends at &lt;a class="reference external" href="www.hackerschool.com"&gt;Hacker School, NYC&lt;/a&gt;.  The &lt;a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html"&gt;Vector Projector&lt;/a&gt; is a nifty little tool we made that visualizes high precision GPS velocity fields that measure how much tectonic plates move over time.  The &lt;a class="reference external" href="http://geodesygina.com/JapanEarthquake/index.html"&gt;Japan Earthquake Movie&lt;/a&gt; is an animation showing the locations of the main shock and aftershocks of the 2011 Japan earthquake, that simultaneously plots with charts of magnitude versus time.&lt;/p&gt;
 &lt;p&gt;Thanks for reading my website!  I'd love to hear your thoughts, so &lt;a class="reference external" href="mailto:ginaschmalzle&amp;#64;gmail.com"&gt;keep in touch&lt;/a&gt;!&lt;/p&gt;
 &lt;/div&gt;

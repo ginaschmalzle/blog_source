@@ -38,148 +38,276 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="./make_db.html"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</strong></a></h1>
+                    <h1 class="entry-title"><a href="./pop_db.html"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</strong></a></h1>
 <footer class="post-info">
-        <span>Fri 04 July 2014</span>
-<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/relational-database.html">relational database</a></span>
-</footer><!-- /.post-info --><p>Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.</p>
-<p><a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, a fabulous <strong>python</strong> coder who dabbles in creating and using <strong>SQLite</strong> databases, and knows a thing or two about the <a class="reference external" href="https://brannerchinese.com/">Chinese Language</a>, and I are working on <a class="reference external" href="https://github.com/WeatherStudy/weather_study">The Weather Project</a> where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a>, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on <strong>creating a Database with SQLite3</strong>.  The next blogs will cover <strong>Populating an SQLite Database with Data using Python</strong> and <strong>Retrieving data from an SQLite Database using Python</strong>.</p>
-<div class="section" id="part-1-creating-a-database-with-sqlite3">
-<h2><strong>Part 1: Creating a Database with SQLite3</strong></h2>
-<p><strong>SQLite</strong> is a compact and self contained relational database management system. We decided to use <strong>SQLite3</strong> (Mac OS X's version of SQLite) because</p>
+        <span>Wed 09 July 2014</span>
+<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a></span>
+</footer><!-- /.post-info --><p>In <a class="reference external" href="/make_db.html">Part 1 Creating a Database with SQLite3</a>  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with <a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, who was incredibly patient in teaching me how to do this... Kudos, David!</p>
+<div class="section" id="part-2-populating-an-sqlite-database-using-python">
+<h2><strong>Part 2. Populating an SQLite Database using Python</strong></h2>
+<p>Let's put some data into our database!  First, let's fill up our <em>locations</em> TABLE. We collected and keep a list of the cities, their unique codes provided by Open Weather Map, their latitudes and longitudes and their country codes <a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/data/city_lists/city_list_normalized_20140425-1923.txt">here</a>, in a file called city_list_normalized_20140425-1923.txt.  This file contains information on the cities and looks like this:</p>
+<pre class="literal-block">
+id     nm      lat     lon     countryCode
+819827 Razvilka        55.591667       37.740833       RU
+524901 Moscow  55.752220       37.615555       RU
+1271881        Firozpur Jhirka 27.799999       76.949997       IN
+1283240        Kathmandu       27.716667       85.316666       NP
+703448 Kiev    50.433334       30.516666       UA
+1282898        Pokhara 28.233334       83.983330       NP
+3632308        Merida  8.598333        -71.144997      VE
+.
+.
+.
+</pre>
+<p>We need a way to grab this file and read the contents in python.  Let's create a function that will do just that. If we are in the directory containing the file called city_list_normalized_20140425-1923.txt, we can call the file in python and read its contents:</p>
+<pre class="literal-block">
+def isolate_city_codes():
+   filename = 'city_list_normalized_20140425-1923.txt'
+   with open(filename, 'r') as f:
+       contents = f.read()
+   list_of_lines = [line.split('\t') for line in contents.split('\n')[1:]]
+   # Latitude and longitude should be numbers
+   for i in range(1, len(list_of_lines)-1):
+       list_of_lines[i][2] = float(list_of_lines[i][2])
+       list_of_lines[i][3] = float(list_of_lines[i][3])
+   return list_of_lines
+</pre>
+<p>Let's break down what the function is doing.  The first thing is that it defines a string called filename as 'city_list_normalized_20140425-1923.txt'.  The next two lines of code are contained in a 'with statement'.  A 'with statement' is a context manager, which provides a way to safely close the opened file and exit out of the python script in case of an error. The contents of the file are read and placed into the variable <em>contents</em> that looks something like this:</p>
+<pre class="literal-block">
+'id\tnm\tlat\tlon\tcountryCode\n819827\tRazvilka\t55.591667\t37.740833\tRU\n524901\tMoscow\t55.752220\t37.615555\tRU ...
+...
+\n895417\tBanket\t-17.383329\t30.400000\tZW\n'
+</pre>
+<p>Notice the once tab seperated entries of the file are now separated with '\t' and the lines are now separated with '\n'.  The next line of our program defines list_of_lines, which runs a loop through contents that splits out each line (defined by '\n') and each tab separated space (defined by '\t').  list_of_lines now looks like this:</p>
+<pre class="literal-block">
+[['819827', 'Razvilka', '55.591667', '37.740833', 'RU'],
+ ['524901', 'Moscow', '55.752220', '37.615555', 'RU'],
+ ['1271881', 'Firozpur Jhirka', '27.799999', '76.949997', 'IN'],
+ .
+ .
+ .
+ ['895417', 'Banket', '-17.383329', '30.400000', 'ZW']
+]
+</pre>
+<p>So, list_of_lines is a <em>list of lists</em>, where a list contains the contents within a set of square brackets.  The problem with the current list_of_lines is that the latitude and longtitudes are strings and must be converted into floats, which is done using the for statement.  Finally, the revised list_of_lines is returned with floats for the latitude and longitude.</p>
+<p>Now, let's populate the TABLE <em>locations</em> in the sqlite3 database <em>weather_data_OWM.db</em>. We write another function that calls the previous function to grab the data, then it populates the <em>locations</em> TABLE with those values:</p>
+<pre class="literal-block">
+import sqlite3
+def populate_db_w_city_codes(db='weather_data_OWM.db'):
+   connection = sqlite3.connect(db)
+   with connection:
+       city_codes = isolate_city_codes()
+       cursor = connection.cursor()
+       for code in city_codes[1:-1]:
+           if code == ['']:
+               print('\n    Empty tuple found; skipping.\n')
+               continue
+           cursor.execute(
+                   '''INSERT INTO locations VALUES''' +
+                   str(tuple(code)))
+</pre>
+<p>Note that we have to import the python module sqlite3.  This module allows you to 'connect' with a specified database.  Once you have a connection, you can create a cursor object that calls its execute() method to perform SQLite3 commands.  In the function described above, we create a <em>connection</em> which connects to our database (db = 'weather_data_OWM.db').  Then we apply a context manager (the with statement) to:</p>
 <blockquote>
 <ol class="arabic simple">
-<li>It is included on the Mac OS X operating system (/usr/bin/sqlite3)</li>
-<li>It does not require a server and no need for an administrator</li>
-<li>It does not include any configuration files</li>
-<li>No action is required after a system crash</li>
+<li>Collect the information contained within <em>city_list_normalized_20140425-1923.txt</em> by calling our previous function, <em>isolate_city_codes()</em>.  The returned <em>list_of_lines</em> from <em>isolate_city_codes()</em> is now labeled as <em>city_codes</em>.</li>
+<li>Open a <em>cursor</em> that will execute subsequent <em>SQLite3</em> commands.</li>
+<li>Insert the values of <em>city_codes</em> into the <em>locations</em> TABLE.</li>
 </ol>
 </blockquote>
-<p>Certainly, there are issues with <strong>SQLite</strong>, but for our humble little project <strong>SQLite</strong> provides all the functionality we wanted. If you are running Mac OSX you can use SQLite3.  Be sure that /usr/bin/ is in your path (it already should be there).  You can check to see if you have it by typing:</p>
+<p>Notice that the SQLite3 commands are imbedded into cursor.execute. The lists within <em>city_codes</em> are already in the order we want them (same order as the database columns were set up in, see <a class="reference external" href="/make_db.html">Part 1</a>). They have been 'tuple-ized' and 'string-ified' since this is the format SQLite3 understands.</p>
+<p>After executing, you can now check if they were inserted into your database by entering the sqlite3 repl:</p>
 <pre class="literal-block">
-which sqlite3
+sqlite3 weather_data_OWM.db
 </pre>
-<p>Let's get started.  First, a few things about sqlite3. You can enter the sqlite3 <a class="reference external" href="http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop">repl</a> by simply typing sqlite3 at the command line.  Or, you can type:</p>
+<p>Once in the sqlite repl type:</p>
 <pre class="literal-block">
-sqlite3 mydatabase.db
+SELECT * FROM locations;
 </pre>
-<p>to ensure your creations/populations/extractions are all for the database mydatabase.db (or whatever you want it named).  If you make a sqlite3 script that is applied to mydatabase.db called myscript.sql, you can run it at the command line by typing:</p>
+<p>The output should look something like this:</p>
 <pre class="literal-block">
-sqlite3 mydatabase.db &lt; myscript.sql.
+.
+.
+.
+894413|Chakari|-18.062941|29.89246|ZW
+894460|Centenary|-16.722891|31.11462|ZW
+895057|Binga|-17.620279|27.341391|ZW
+895417|Banket|-17.383329|30.4|ZW
 </pre>
-<p>Our <strong>SQLite</strong> database that we named <em>weather_data_OWM.db</em> is set up with multiple tables.  Information within those tables are related, and is referred to as a <em>relational database</em>.  As previously mentioned, a relational database is setup so that there is some common information between tables that helps link them.  Our database tables are linked by city id.  The city id is simply a unique number assigned to each location that has a weather forecast.  In one table we keep the properties of each location, such as the latitude, longitude, city name, etc.  In the other, we assign the forecasts to each city id.  Let's take a closer look at how this works.</p>
-<p>The first thing we did was create a TABLE called <em>locations</em> which contains the id, name, latitude, longtiude and country:</p>
+<p>Your new table should have data that include: <em>city id|city name|latitude|longitude|two letter country code</em>.</p>
+<p>Splendid!  One table down, one related table to go!  The second table is a bit more complicated.  It involves data that was downloaded through the <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a> API that allows for easy access to their data products that are available in XML and JSON formats.   Since this blog is focusing on building and populating databases, I assume that you already have the data downloaded in JSON format. I will not get into how to download the data here, but for more information on how to do this, David developed a nifty little python script called <a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/code/requests.py">requests.py</a> that allows you to download data using an API key that is hidden from public access (important when allowing public access to your files in Github).</p>
+<p>We use the JSON formatted files to populate our database.  JSON files are in the form of a dictionary, also known as an associative array.  If you are not familiar with this data structure, I recommend you read <a class="reference external" href="/dict.html">this little ditty</a> before continuing. Otherwise, keep on reading!</p>
+<p>Below is an example of a JSON file obtained using the Open Weather Map API that has been prettified using <a class="reference external" href="http://jsbeautifier.org/">http://jsbeautifier.org/</a>.  The JSON file contains the forecasts and information for a single city:</p>
 <pre class="literal-block">
-DROP TABLE IF EXISTS locations;
-CREATE TABLE locations (
-   id TEXT PRIMARY KEY UNIQUE,
-   name TEXT,
-   lat NUMBER,
-   lon NUMBER,
-   country TEXT
-);
+{
+   'cod': '200',
+   'message': 0.005,
+   'city': {
+       'name': 'Bay Minette',
+       'id': 4046255,
+       'coord': {
+           'lat': 30.882959,
+           'lon': -87.773048
+       },
+       'population': 8044,
+       'country': 'US'
+   },
+   'list': [{
+       'weather': [{
+           'description': 'few clouds',
+           'icon': '02d',
+           'main': 'Clouds',
+           'id': 801
+       }],
+       'temp': {
+           'max': 27.32,
+           'min': 18.14,
+           'eve': 24.57,
+           'day': 27.22,
+           'night': 18.14,
+           'morn': 27.22
+       },
+       'deg': 199,
+       'clouds': 12,
+       'pressure': 1020.38,
+       'humidity': 42,
+       'dt': 1398186000,
+       'speed': 2.11
+   }, {
+       'weather': [{
+
+       .
+       .
+       .
+
+   }],
+   'cnt': 15
+}
 </pre>
-<p>Eeeek! The &quot;DROP TABLE&quot; part of this code is a little scary -- here we are saying if there is already a table in our database called <em>locations</em> then remove it!  The table <em>locations</em> will be completely removed and can not be recovered.  You may ask, <em>why would you want to do that???</em> Well, this code is simply meant to provide the bones for our database.  The only reason we are running this script is to make a database from scratch, and if one exists, it should be removed.  It is also recommended because you don't want to confuse the current data with other data sets if a table called <em>locations</em> exists.  So <strong>BE CAREFUL</strong> with this command.</p>
-<p>The next command lines create the table with columns that are defined as containing a certain type of field.  The columns that we have are id, name, lat, lon and country and are either TEXT (strings) or NUMBERS (floats).  The id column is special because it also contains PRIMARY KEY command.  The PRIMARY KEY command ensures that all rows in that column are uniquely identifiable.  To be extra certain of this (but may be a little redundant), we also included UNIQUE, which ensures that all values in the column are different.</p>
-<p>How can we tell if the table was made properly?  If you entered the commands above in the repl, then type:</p>
+<p>Now you see that it is just one giant dictionary, right?  So if we import this into python, then we can call certain values by their keys.  For example, if we call this dictionary x, then we can retrieve the latitude of the city by typing:</p>
 <pre class="literal-block">
-SELECT * FROM sqlite_master WHERE type='table';
+x['city']['coord']['lat']
 </pre>
-<p>What should print out is information on your new table, including its structure:</p>
+<p>In this JSON file the 'city' key contains the information about the city itself, and the 'list' key contains information on the weather forecasts, where the first value contains information on the weather forecasts for the day the file was downloaded.  The second value in 'list' contains the forecast for the next day, etc.</p>
+<p>You can see that the file contains the minimum and maximum temperature, and, if it exists, also contains snow and rain amounts. 'dt' is the day the forecast is for in <a class="reference external" href="http://en.wikipedia.org/wiki/Unix_time">Unix Time</a>. The 'query date'  which is the day the file was downloaded is not included in these files but is important because this will tell you which day is the day-of forecast.  We dealt with this problem by downloading the JSON files for each city into a directory with the download date.</p>
+<p>The first thing we will need to do here is extract the information we need from these JSON files. For the sake of simplicity, I assume you know the download date and specify it in the python code (rather than extracting it from the directory name). Depending on what region you are collecting, you may have thousands of files for one download date, each corresponding to an individual location. We would like a function that</p>
+<blockquote>
+<ol class="arabic simple">
+<li>Ingests these JSON formatted files and stores the contents as a dictionary</li>
+<li>Create a smaller dictionary called <em>forecast_dict</em> that contains only the information that we need for our database.  The smaller dictionary should have a 'key' that relates to the city_id, and values that contain the forecasted values.</li>
+</ol>
+</blockquote>
+<p>I assume that you have the names of your files in a list called <em>files</em> that were collected on a specified <em>query_date</em>.  I use an example query date of 20140422:</p>
 <pre class="literal-block">
-table|locations|locations|2|CREATE TABLE locations (
-id TEXT PRIMARY KEY UNIQUE,
-name TEXT,
-lat NUMBER,
-lon NUMBER,
-country TEXT
-)
+files = [yourfile1.json, yourfile2.json, yourfile3.json... ]  # example files
+
+import ast
+def retrieve_data_vals(files, query_date='20140422'):
+   forecast_dict = {'query_date': query_date}                 # Assign query_date to dictionary
+   files.sort()
+   for file in files:
+       forecast_list_pruned = []
+       try:
+           with open(file, 'r') as f:
+               contents = f.read()                            # Read in file as a string
+       except Exception as e:
+           print('Error {}\n    in file {}'.format(e, file))
+       if contents == '\n':
+           print('File {} empty.'.format(file))
+           continue
+       content_dict = ast.literal_eval(contents)              # Convert to dictionary
+       city_id = (content_dict['city']['id'])                 # Assign city_id
+       forecast_list_received =(content_dict['list'])         # Assign everythin in 'list' to forecast_list_received
+       for i, forecast in enumerate(forecast_list_received):  # For each forecast in the dictionary
+           if 'rain' in forecast:                             # Assign rain, if exists,
+              rain = forecast['rain']                         # Otherwise make 0
+           else:
+              rain = 0
+           if 'snow' in forecast:                             # Same with snow
+               snow = forecast['snow']
+           else:
+               snow = 0
+           forecast_tuple = (                                 # Assign forecast information in tuple form that is SQLite3 readable (if stringified)
+                   forecast['dt'],
+                   float(forecast['temp']['max']),
+                   float(forecast['temp']['min']),
+                   float(rain),
+                   float(snow),
+                   )
+           forecast_list_pruned.append(forecast_tuple)        # Collect all forecasts for that file
+       forecast_dict[city_id] = forecast_list_pruned          # and assign to the forecast_dict for each city
+   return forecast_dict
 </pre>
-<p>The line &quot;table|locations|locations|2|CREATE TABLE locations&quot; is simply output that states: <em>type|name|table name|root page #|sql command used to generate the table</em>. Then the table column names are printed.</p>
-<p>Very good!  Now we have a table that will contain some characteristics of each city. Now let's make a second TABLE that includes the weather forecasts and will be related to the first one by the city code. We are collecting forecasts for up to 14 days before a <em>target_date</em> which we define as the day being forecasted.  We want to know the forecasts for rain and snow, as well as the minimum and maximum temperatures for the <em>target_date</em>.  As before, we first need to DROP any existing tables, then we create the table:</p>
+<p>Phew!  Extracting the data from the JSON files and putting it into an SQLite3 friendly format is the toughest part. Now that we have forecast_dict, however, we can populate our database! Our next function will use some of the same techniques described above, which include using the sqlite3 module to make a connection with the sqlite database and execute <strong>SQLite3</strong> commands:</p>
 <pre class="literal-block">
-DROP TABLE IF EXISTS owm_values;
-CREATE TABLE owm_values (
-   id INTEGER PRIMARY KEY AUTOINCREMENT,
-   location_id TEXT,
-   target_date INTEGER,
-   maxt_0 NUMBER,
-   mint_0 NUMBER,
-   rain_0 NUMBER,
-   snow_0 NUMBER,
-   maxt_1 NUMBER,
-   mint_1 NUMBER,
-   rain_1 NUMBER,
-   snow_1 NUMBER,
-   maxt_2 NUMBER,
-   mint_2 NUMBER,
-   rain_2 NUMBER,
-   snow_2 NUMBER,
-   maxt_3 NUMBER,
-   mint_3 NUMBER,
-   rain_3 NUMBER,
-   snow_3 NUMBER,
-   maxt_4 NUMBER,
-   mint_4 NUMBER,
-   rain_4 NUMBER,
-   snow_4 NUMBER,
-   maxt_5 NUMBER,
-   mint_5 NUMBER,
-   rain_5 NUMBER,
-   snow_5 NUMBER,
-   maxt_6 NUMBER,
-   mint_6 NUMBER,
-   rain_6 NUMBER,
-   snow_6 NUMBER,
-   maxt_7 NUMBER,
-   mint_7 NUMBER,
-   rain_7 NUMBER,
-   snow_7 NUMBER,
-   maxt_8 NUMBER,
-   mint_8 NUMBER,
-   rain_8 NUMBER,
-   snow_8 NUMBER,
-   maxt_9 NUMBER,
-   mint_9 NUMBER,
-   rain_9 NUMBER,
-   snow_9 NUMBER,
-   maxt_10 NUMBER,
-   mint_10 NUMBER,
-   rain_10 NUMBER,
-   snow_10 NUMBER,
-   maxt_11 NUMBER,
-   mint_11 NUMBER,
-   rain_11 NUMBER,
-   snow_11 NUMBER,
-   maxt_12 NUMBER,
-   mint_12 NUMBER,
-   rain_12 NUMBER,
-   snow_12 NUMBER,
-   maxt_13 NUMBER,
-   mint_13 NUMBER,
-   rain_13 NUMBER,
-   snow_13 NUMBER,
-   maxt_14 NUMBER,
-   mint_14 NUMBER,
-   rain_14 NUMBER,
-   snow_14 NUMBER,
-   UNIQUE (location_id, target_date),
-   FOREIGN KEY (location_id) REFERENCES locations(id)
-   );
+import sqlite3
+def populate_db_w_forecasts(db='weather_data_OWM.db'):
+   forecast_dict = retrieve_data_vals(files)                 # Run the function retrieve_data_vals above which returns the forecast dictionary
+   query_date = forecast_dict['query_date']                  # Assign query_date
+   connection = sqlite3.connect(db)                          # Create the SQLite3 connection
+   with connection:
+       cursor = connection.cursor()
+       for key in forecast_dict:
+           if key == 'query_date':
+               continue                                      # After here, &quot;key&quot; is a location_id.
+           for i,item in enumerate(forecast_dict[key]):
+                  target_date = datetime.datetime.fromtimestamp(int(item[0])).strftime('%Y%m%d')                         # Convert the Unix time to human readable string
+                  maxt, mint, rain, snow = item[1:]          # Remember forecast dict contains dt, maxT, minT, rain and snow, so we want everything past dt (hence item[1:])
+                  i = str(i)
+                  fields = ','.join([                        # 'fields' contains question marks that indicate where values will be inserted later in the code
+                          'maxt_' + i + '=?',
+                          'mint_' + i + '=?',
+                          'rain_' + i + '=?',
+                          'snow_' + i + '=?'
+                          ])
+                  try:
+                      cursor.execute(                        # Insert the location_id (key) and target_date
+                              '''INSERT INTO owm_values '''
+                              '''(location_id,target_date) '''
+                              '''VALUES (?,?)''', (key, target_date))
+                  except sqlite3.IntegrityError as e:
+                      pass
+                  cursor.execute(                            # Insert forecast values
+                       '''UPDATE owm_values SET ''' + fields +
+                       ''' WHERE id='''
+                       '''(SELECT id FROM owm_values '''
+                       '''WHERE location_id=? AND target_date=?)''',
+                       (maxt, mint, rain, snow, key, target_date)
 </pre>
-<p>In this table, each forecast is given its own, unique id (called id).  In addition, it contains a location_id, which will refer to <em>id</em> in our first TABLE, <em>locations</em>.  These values 'link' the two tables, creating a relational database. The FOREIGN KEY statement defines this relationship, stating that the location_id of the TABLE <em>owm_values</em> is REFERENCED to the id of TABLE <em>locations</em>. We also created columns in our TABLE that will store forecasts from the day of (*_0) to 14 days out (*_14).  UNIQUE ensures that both the location_id and the target_date are unique in this table (i.e., every city will have its own unique id, and every city will have forecasts for unique target dates).</p>
-<p>Now if you type into the repl:</p>
+<p>Let's talk a little about <em>cursor.execute</em>. Here we do a little python trick to insert values into the SQLite code.  In cursor.execute, we state the SQLite3 commands, but we include question marks (?).  After the SQLite commands we place a comma then a tuple of values.  These tuple values are inserted into where the question marks appear in the code in the order the question marks appear.  So, in the case of:</p>
 <pre class="literal-block">
-SELECT * FROM sqlite_master WHERE type='table';
+cursor.execute(
+        '''INSERT INTO owm_values '''
+        '''(location_id,target_date) '''
+        '''VALUES (?,?)''', (key, target_date))
 </pre>
-<p>Two tables should print out -- the first one being the <em>locations</em> table, the second your brand new <em>owm_values</em> table.</p>
-<p>Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Stay tuned for  <strong>Part 2 Populating an SQLite Database using Python</strong>, coming soon...</p>
+<p>The SQLite3 command is:</p>
+<pre class="literal-block">
+INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
+</pre>
+<p>where 'key' is the location city id, and 'target_date' is the date the forecast is for.  Note the <em>location_id</em> of the <em>owm_values</em> TABLE refers to the <em>city_codes</em> of the locations TABLE.</p>
+<p>There you go!  You now have a relational database that has been populated with data!  Now what to do with it... Stay tuned for Part 3 Retrieving data from an SQLite Database using Python.</p>
 </div>
                 </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1><a name = "moreblogs">Other articles</a></h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="./pop_db.html" rel="bookmark"
+                           title="Permalink to SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Wed 09 July 2014</span>
+<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Populating a Database</strong></p>
+
+                <a class="readmore" href="./pop_db.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -194,6 +322,22 @@ SELECT * FROM sqlite_master WHERE type='table';
 </footer><!-- /.post-info -->                <p class="first last"><strong>Creating a Database</strong></p>
 
                 <a class="readmore" href="./make_db.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="./dict.html" rel="bookmark"
+                           title="Permalink to The Dictionary Data structure"><strong>The Dictionary Data structure</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Tue 01 July 2014</span>
+<span>| tags: <a href="./tag/dictionaries.html">dictionaries</a><a href="./tag/python.html">python</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Using dictionaries in Python</strong></p>
+
+                <a class="readmore" href="./dict.html">read more</a>
                 </div><!-- /.entry-content -->
             </article></li>
 
@@ -306,38 +450,6 @@ SELECT * FROM sqlite_master WHERE type='table';
 </footer><!-- /.post-info -->                <p class="first last"><strong>GPS velocity projection</strong></p>
 
                 <a class="readmore" href="./VectorProj.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="./MyBio.html" rel="bookmark"
-                           title="Permalink to About Me">About Me</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Thu 13 March 2014</span>
-<span>| tags: <a href="./tag/gina.html">Gina</a><a href="./tag/schmalzle.html">Schmalzle</a><a href="./tag/bos-techonologies.html">BOS Techonologies</a><a href="./tag/hacker-school.html">Hacker School</a><a href="./tag/university-of-miami.html">University of Miami</a></span>
-</footer><!-- /.post-info -->                <p class="first last">Gina's Bio</p>
-
-                <a class="readmore" href="./MyBio.html">read more</a>
-                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="./GeodesyGina.html" rel="bookmark"
-                           title="Permalink to Setting up Custom Domain Names with Github Pages">Setting up Custom Domain Names with Github Pages</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Tue 11 March 2014</span>
-<span>| tags: <a href="./tag/pelican.html">pelican</a><a href="./tag/custom-domain-name.html">custom domain name</a><a href="./tag/godaddy.html">godaddy</a></span>
-</footer><!-- /.post-info -->                <p class="first last">Custom domain names</p>
-
-                <a class="readmore" href="./GeodesyGina.html">read more</a>
                 </div><!-- /.entry-content -->
             </article></li>
             </ol><!-- /#posts-list -->
