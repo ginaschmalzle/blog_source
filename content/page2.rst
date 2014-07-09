@@ -19,7 +19,7 @@ Fulton, P., **Schmalzle, G. M.**, Harris, R., Dixon, T. H., `Reconciling pattern
 
 **Schmalzle, G. M.**, `The Earthquake Cycle of Strike-Slip Faults <http://scholarlyrepository.miami.edu/oa_dissertations/177/>`_, PhD Thesis, University of Miami, Miami, FL, 211 pp., 2008.
 
-Biggs, J., Burgmann, R., Freymueller, J., Lu, Z., Parsons, B., Ryder, I., **Schmalzle, G. M.**, Wright, T., The postseismic response to the 2002 M7.9 Denali Fault earthquake: constraints from InSAR, Geophysical Journal International, 175 (3), 10.1111/j.1365-246X.2008.03932.x, 2008.
+Biggs, J., Burgmann, R., Freymueller, J., Lu, Z., Parsons, B., Ryder, I., **Schmalzle, G. M.**, Wright, T., `The postseismic response to the 2002 M7.9 Denali Fault earthquake: constraints from InSAR <http://gji.oxfordjournals.org/content/176/2/353.abstract?sid=034a1429-fe9e-464a-8593-2616ee43ac4a>`_, Geophysical Journal International, 175 (3), 10.1111/j.1365-246X.2008.03932.x, 2008.
 
 **Schmalzle, G. M.**, Dixon, T.H., Malservisi, R., Govers, R., `Strain accumulation across the Carrizo segment of the San Andreas Fault, California:  Impact of laterally varying crustal properties <http://onlinelibrary.wiley.com/doi/10.1029/2005JB003843/full>`_, Journal of Geophysical Research, B, Solid Earth and Planets, 111, doi:10.1029/2005JB003843, 2006.
 
