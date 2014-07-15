@@ -11,7 +11,7 @@ TIMEZONE = 'America/New_York'
 
 DEFAULT_LANG = u'en'
 
-DISQUS_SITENAME = u'geodesygina.disqus.com'
+DISQUS_SITENAME = u'geodesygina'
 # Feed generation is usually not desired when developing
 FEED_DOMAIN = SITEURL
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
