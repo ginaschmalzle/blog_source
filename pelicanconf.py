@@ -11,11 +11,11 @@ TIMEZONE = 'America/New_York'
 
 DEFAULT_LANG = u'en'
 PLUGIN_PATH = 'plugins'
-PLUGINS = ['disqus_static']
-DISQUS_SITENAME = 'geodesygina'
-DISQUS_SHORTNAME = 'geodesygina'
-DISQUS_SECRET_KEY = 'jaaoxoW3eIfofTJXNkqJumRS2WSFVXmy7ZmPIpnnc26GeuD49xEhXDv05FltujkC'
-DISQUS_PUBLIC_KEY = 'LWuUAL8MsMXypzANGbAiduBOKxey6KrZNFggyvQfhkjHCigVw2tA7hK3Y3xOXuVz'
+#PLUGINS = ['disqus_static']
+#DISQUS_SITENAME = 'geodesygina'
+#DISQUS_SHORTNAME = 'geodesygina'
+#DISQUS_SECRET_KEY = 'jaaoxoW3eIfofTJXNkqJumRS2WSFVXmy7ZmPIpnnc26GeuD49xEhXDv05FltujkC'
+#DISQUS_PUBLIC_KEY = 'LWuUAL8MsMXypzANGbAiduBOKxey6KrZNFggyvQfhkjHCigVw2tA7hK3Y3xOXuVz'
 # Feed generation is usually not desired when developing
 FEED_DOMAIN = SITEURL
 FEED_ALL_ATOM = 'feeds/all.atom.xml'
