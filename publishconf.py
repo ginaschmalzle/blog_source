@@ -19,6 +19,9 @@ CATEGORY_FEED_ATOM = 'feeds/%s.atom.xml'
 DELETE_OUTPUT_DIRECTORY = True
 
 # Following items are often useful when publishing
+PLUGINS = [u"disqus_static"]
 
-#DISQUS_SITENAME = ""
+DISQUS_SITENAME = u'geodesygina.disqus.com'
+DISQUS_SECRET_KEY = u'jaaoxoW3eIfofTJXNkqJumRS2WSFVXmy7ZmPIpnnc26GeuD49xEhXDv05FltujkC'
+DISQUS_PUBLIC_KEY = u'LWuUAL8MsMXypzANGbAiduBOKxey6KrZNFggyvQfhkjHCigVw2tA7hK3Y3xOXuVz'
 #GOOGLE_ANALYTICS = ""
