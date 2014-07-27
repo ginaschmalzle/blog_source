@@ -38,196 +38,188 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="./ret_db.html"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</strong></a></h1>
+                    <h1 class="entry-title"><a href="./sampling.html"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></a></h1>
 <footer class="post-info">
-        <span>Sun 27 July 2014</span>
-<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a><a href="./tag/spatial-analysis.html">spatial analysis</a></span>
-</footer><!-- /.post-info --><p>In <a class="reference external" href="http://geodesygina.com/make_db.html">Part 1 Creating a Database with SQLite3</a>  we built a database. In <a class="reference external" href="http://geodesygina.com/pop_db.html">Part 2 Populating an SQLite Database using Python</a> we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough <a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, for his efforts with this project!</p>
-<p>Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day.</p>
-<img alt="differenced_forecasts" class="align-left" src="/images/weather_diff.png" style="width: 800.0px; height: 500.0px;" />
-<p><em>Figure 1. Maps of forecasted differences (the difference between the day of forecast and the forecast for X days out).</em></p>
-<div class="section" id="part-3-retrieving-data-from-an-sqlite-database-using-python">
-<h2><strong>Part 3. Retrieving data from an SQLite Database using Python</strong></h2>
-<p>First we need to retrieve the weather forecast data we made in the previous posts.  Our database contains the forecasted maximum temperature (maxt), minimum temperature (mint), rain and snow for a given day that were made the day of to fourteen days prior.  So, we need to be able to extract this information from the database.  This code uses the sqlite3 module in python to extract the information:</p>
+        <span>Mon 28 July 2014</span>
+<span>| tags: <a href="./tag/r.html">R</a><a href="./tag/simulations.html">simulations</a><a href="./tag/sampling.html">sampling</a></span>
+</footer><!-- /.post-info --><div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy">
+<h2><strong>R helped me figure out how many shoes I can buy</strong></h2>
+<p>One of the things I love about coding and data science is that I get to work on a lot of interesting problems.  One of my good friends Craig Faunce <a class="reference external" href="https://www.linkedin.com/pub/craig-h-faunce/66/789/1ba">Craig Faunce</a> approached me over a beer with a problem.  It seems he had been asked to determine how many items he could buy given a certain budget.  Ok, if each and every item costs the same this is simple math, which has me puzzled.  Of course it’s not that easy, since each and every item has a different cost. Ok, still not that difficult.  It only becomes something that I think you would be interested in when he gets to the next part, where he says: &quot;I'm asked to sample one population of items at a given rate, and then with my left-over money, determine at what rate I can afford to sample a second, totally different population of items with totally different costs per item.&quot;</p>
+<p>Ok!  We have an interesting little sampling project.  Since Craig works for a large employer, he can't really divulge every gory detail about this issue, and obviously getting the real data isn't going to happen here.  Besides, it sounded pretty boring to me, so I thought about something that I can relate to - shoes!</p>
+<img alt="deforming_plates" class="align-center" src="/images/shoefits.jpg" style="width: 600.0px; height: 500.0px;" />
+<p><a class="reference external" href="http://www.kulfoto.com/funny-pictures/49597/if-the-shoe-fits-buy-it-in-every-color">Figure 1</a> Ahh, too cute...</p>
+<p>So I reframed the questions.</p>
+<p>My first question is:  If this year (hopefully during a big Sale) I were to blindly have an assigned shopper (or better yet, a blind assigned shopper) randomly buy a set percentage of the store, how much money would I spend?  The reason we want to sample in this exercise is due to the fact that the answer depends on which shoes are purchased, since each one has a different price.  So we are interested in building a distribution of potential outcomes from shoe-shopping, so we can build a range of likely outcomes from the adventure.</p>
+<p>We will need the following libraries:</p>
 <pre class="literal-block">
-import os
-import sqlite3
-def get_single_date_data_from_db(exact_date, db='weather_data_OWM.db'):
-    &quot;&quot;&quot;Retrieve forecasts for single date.&quot;&quot;&quot;
-                # exact date should be in the form YYYYMMDD
-    connection = sqlite3.connect(db)
-    with connection:
-        cursor = connection.cursor()
-        try:
-            cursor_output = cursor.execute(                     # This should all be old hat to you now...
-                '''SELECT lat, lon, '''
-                '''maxt_0, mint_0, rain_0, snow_0, '''
-                '''maxt_1, mint_1, rain_1, snow_1, '''
-                '''maxt_2, mint_2, rain_2, snow_2, '''
-                '''maxt_3, mint_3, rain_3, snow_3, '''
-                '''maxt_4, mint_4, rain_4, snow_4, '''
-                '''maxt_5, mint_5, rain_5, snow_5, '''
-                '''maxt_6, mint_6, rain_6, snow_6, '''
-                '''maxt_7, mint_7, rain_7, snow_7, '''
-                '''maxt_8, mint_8, rain_8, snow_8, '''
-                '''maxt_9, mint_9, rain_9, snow_9, '''
-                '''maxt_10, mint_10, rain_10, snow_10, '''
-                '''maxt_11, mint_11, rain_11, snow_11, '''
-                '''maxt_12, mint_12, rain_12, snow_12, '''
-                '''maxt_13, mint_13, rain_13, snow_13, '''
-                '''maxt_14, mint_14, rain_14, snow_14 '''
-                '''FROM locations, owm_values '''
-                '''ON owm_values.location_id=locations.id '''
-                '''WHERE target_date=?''', (exact_date,))
-        except Exception as e:                                                                                                                  # What exceptions may we encounter here?
-            print(e)
-    retrieved_data = cursor_output.fetchall()                   # We receive list of simple tuples from database.
-    composed_data = generate_dict_of_tuples(retrieved_data)     # Now we need to build some function that converts the retrieved data into a dictionary.
-    return composed_data
+require(plyr)
+require(ggplot2)
 </pre>
-<p>Note the line:</p>
+<p>The actual data doesn't really matter for this exercise, so lets generate some with these parameters:</p>
 <pre class="literal-block">
-composed_data = generate_dict_of_tuples(retrieved_data)
+nshoe1 &lt;- 1000            # Number of shoes in the store in the first year.
+meanprice1 &lt;- 100         # Mean price of shoes in the first year.
+pricesd1 &lt;- 50            # Standard deviation of the price of shoes in the first year.
+R &lt;- 0.01                                     # The sampling rate of my shopper in the first year.
+it &lt;- 200                                     # The number of iterations to build our distribution of outcomes.
 </pre>
-<p>Here we need some way to make a usable form of the dataset. In this case the function generate_dict_of tuples receives the raw data from the SQLite3 database and converts it into a more usable dictionary of tuples:</p>
+<p>I created a makedata function to create a dataframe in R consisting of nshoe rows with the associated price (called bucks) generated from a known distribution (in this case the normal, but who cares?) with a mean price of meanprice1 and a standard deviation of pricesd1:</p>
 <pre class="literal-block">
-def generate_dict_of_tuples(retrieved_data):
-    &quot;&quot;&quot;Compose the data into a succinct dictionary of tuples.&quot;&quot;&quot;
-    # Our re-composed data type is a dictionary of tuples.
-    # Each tuple contains three items:
-    #     sub-tuple containing latitude and longitude (floats);
-    #     list of 15 sub-sub-tuples, each containing
-    #         maxt, mint, rain, snow (floats).
-    # For dates where the database contains no data, the forecast tuple
-    # would be: `(None, None, None, None)` but this is replaced by `None`,
-    # using an `if-else` clause.
-    composed_data = {}
-    for item in retrieved_data:
-        lat_lon = item[0:2]
-        forecasts = [subitem
-                    if subitem[0] or subitem[1] or subitem[2] or subitem[3]
-                    else None
-                for subitem in
-                zip(item[2::4], item[3::4], item[4::4], item[5::4])]
-        composed_data[lat_lon] = forecasts
-    return composed_data
+makedata &lt;- function (numberofshoes, dm, sdv){
+  # Assign number of shoes
+  df &lt;- data.frame(shoes = seq(1:numberofshoes))
+  # Assign random # of bucks for each shoe
+  df$bucks &lt;-  rnorm(n = numberofshoes, mean = dm, sd = sdv)
+  return (df)
+ }
 </pre>
-<p>Now having both of these functions in place, if we run:</p>
+<p>The function sampleme samples from the dataframe that was created from the makedata function above:</p>
 <pre class="literal-block">
-get_single_date_data_from_db(20140522)
+sampleme &lt;- function(dataframe, samplerate){
+  # Generate a subsample of shoe numbers, then take the associated
+  # bucks and stick them into sdf.
+  sdf &lt;- data.frame(shoes=sample(1:nrow(dataframe), size = (samplerate*nrow(dataframe))))
+  sdf &lt;- merge(sdf,dataframe,all.x=TRUE)
+  return (sdf)
+}
 </pre>
-<p>We get a dictionary that looks like this:</p>
+<p>Finally, a third function storesamples enables the outcome of each random sample to be stored and appended to prior samples for later use:</p>
 <pre class="literal-block">
- {(38.576698, -92.173523): [(18.71, 6.97, 0, 0),
- (21.03, 8.7, 0, 0),
- (20.67, 9.72, 0, 0),
- (19.01, 7.23, 0, 0),
- (22.08, 9.07, 0, 0),
- (21.68, 9.53, 0.34, 0),
- (22.33, 10.22, 0, 0),
- (16.18, 12.14, 1.23, 0),
- (19.05, 12.02, 10.08, 0),
- None,
- None,
- None,
- None,
- None,
- None],
-(34.154179, -117.344208): [(17.37, 6.16, 0, 0),
- (19.66, 7.48, 0, 0),
- (21.24, 6.27, 0, 0),
- (21.71, 5.5, 0, 0),
- (18.34, 8.88, 0, 0),
- (20.78, 4.73, 0, 0),
- (20.78, 4.73, 0, 0),
- (22.96, 7.06, 0, 0),
- (20.78, 4.73, 0, 0),
- None,
- None,
- None,
- None,
- None,
- None],
-       .
-       .
-       .}
+storesamples&lt;-function(iteration, df, sr){
+  for (iter in 1:iteration){
+    sdf &lt;- sampleme(dataframe = df, samplerate=sr)
+    sdf$index &lt;- iter
+    ifelse(iter == 1, allsdf &lt;-sdf, allsdf &lt;-rbind(allsdf,sdf))
+  }
+  return(allsdf)
+}
 </pre>
-<p>The keys are the location's latitude and longitude, and the values are the forecasts.  In this example we have 9 forecasts: one for the day of and 8 days out (other values that are not present are marked as ‘None’).</p>
-<p>Fabulous.  In <em>Figure 1</em> we focus only on the maximum temperature (maxt) forecasts. We visualize the absolute differences between the maximum forecasted values for the day of and the forecasted value for that day at some time in the past.  The differenced values are presented on a map of the United States using warm colors to reflect that the forecast the day of was warmer and cooler colors to reflect cooler temperatures (pun intended). With our data extracted, we need only to calculate the differences and we will plot the data using python's matplotlib with the basemap toolkit.</p>
-<p>This visualization will include six subplots- one for each successive day leading up to our target date.  Thinking about this another way, if our target date is April 22, 2014 (20140422), and we assign that the letter t, then we are making a subplot for differences between t, the day of forecast, and the forecast made at t-1, t-2, t-…n days.</p>
-<p>To collect the data for our target date we run the function below, which makes lists containing the latitude, longitude and differences, and sends them off to be processed by our next function:</p>
+<p>Note that the function storesamples calls function sampleme.</p>
+<p>Now that I have my functions, let's figure out how much money I spend if I buy 1% of the store's inventory:</p>
 <pre class="literal-block">
-def make_map(target_date=20140422):
-'''Make a basic map of the United States'''
-# target_date is the day the forecasts were made for
-lat=[]; lon=[]; diff=[]
-forecasts = get_single_date_data_from_db(target_date)                           # Call earlier function to get dictionary
-for city in forecasts:
-        # First collect the lats and longs of the cities
-        lat.append(city[0])
-        lon.append(city[1])
-        #Collect differenced maxt values
-        diff.append([
-                (forecasts[city][0][0]-forecasts[city][1][0]),
-                (forecasts[city][0][0]-forecasts[city][2][0]),
-                (forecasts[city][0][0]-forecasts[city][3][0]),
-                (forecasts[city][0][0]-forecasts[city][4][0]),
-                (forecasts[city][0][0]-forecasts[city][5][0]),
-                (forecasts[city][0][0]-forecasts[city][6][0]),
-                (forecasts[city][0][0]-forecasts[city][7][0]),
-                (forecasts[city][0][0]-forecasts[city][8][0])])
-make_basemap(lon,lat,diff,target_date)                                                                                  # Send this information to make_basemap --&gt; our next function!
-plt.show()
+# make a dataframe
+shoesinstore1 &lt;- makedata(nshoe1, meanprice1, pricesd1)
+# calculate how much $$ you spent by buying 1% of the inventory
+moneyIspent &lt;- storesamples(it,shoesinstore1,R)
 </pre>
-<p>The second function we have named &quot;make_basemap”, and does the mapping work:</p>
+<p>Now let's make a summary of the money I just spent and print it out:</p>
 <pre class="literal-block">
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap, cm
-def make_basemap(lon,lat,diff,target_date):
-        for day in range(1,7):                                                                                                                                          # Run this for each forecasted difference
-                subdiff = []
-                for city in range(0,len(diff)):
-                        subdiff.append(diff[city][day])
-                plt.subplot(3,2,day)                                                                                                                                            # Define where the subplot will lie on figure
-                mindiff = min(subdiff)
-                maxdiff = max(subdiff)
-
-                # create Mercator Projection Basemap instance.
-                m = Basemap(projection='merc',\
-                                                                llcrnrlat=25,urcrnrlat=50,\
-                                                                llcrnrlon=-130,urcrnrlon=-60,\
-                                                                rsphere=6371200.,resolution='l',area_thresh=10000)
-                # draw coastlines, state and country boundaries, edge of map.
-                m.drawcoastlines()
-                m.drawstates()
-                m.drawcountries()
-                # draw parallels.
-                parallels = np.arange(0.,90,10.)
-                m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
-                # draw meridians
-                meridians = np.arange(180.,360.,10.)
-                m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
-
-                # draw Circles on the map
-                # Determine min and max differenced values
-                jet = plt.cm.get_cmap('jet')
-                x,y = (m(lon,lat))
-                sc = plt.scatter(x, y, c=subdiff, vmin=mindiff, vmax=maxdiff, cmap=jet, s=8, edgecolors='none' )
-                # add colorbar
-                plt.colorbar(sc)
-                # add title
-                plt.suptitle(&quot;Differenced Max Temperatures (degrees C) for day &quot;+str(target_date), fontsize=18)
-                plt.title(&quot;Forecast Day 0 - Day &quot;+str(day))
+summarya &lt;- ddply(moneyIspent, .(index), summarize, Totalbucks = floor(sum(bucks)))
+summary(summarya$Totalbucks)
 </pre>
-<p>Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.</p>
-<p>Like what you see?  Stay tuned, the next step on my agenda is making an interactive website that will allow users to play with the data!  Thanks for reading!</p>
+<p>In my last run, here are my results:</p>
+<pre class="literal-block">
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+604.0   897.8  1009.0  1010.0  1120.0  1383.0
+</pre>
+<p>So I can expect my blind shopper to come back with a Visa/AmEX/Mastercard charge of around a thousand bucks, but it could be as low as $600, or as high as $1383 (still within my spending limit- whew!).
+Now let's plot our results using a histogram:</p>
+<pre class="literal-block">
+ (ggplot(summarya, aes(x=Totalbucks))
++ geom_histogram()
+ )
+</pre>
+<p>This gives you:</p>
+<img alt="deforming_plates" class="align-center" src="/images/moneyIspend.png" style="width: 700.0px; height: 400.0px;" />
+<p>Now for my second question.  The following year I am <em>given the same amount of money I spent last year</em> as my budget.  <em>What percentage of the store's inventory in year 2 can I buy given the amount of money I spent last year?</em></p>
+<p>Here we have reversed the sampling question from year 1: instead of sampling at a fixed rate to generate a distribution of credit card debts, we now have a distribution of available spending limits, and are asked to generate a distribution of expected percentage of the store purchased.</p>
+<p>To ensure we don't go over our budget, we can't create a single sample of a given number of shoes as above- we have to select a single pair of shoes, evaluate its cost against our remaining funds, and then repeat until we have no more money.  Of course in addition we need to count the number of shoes.  We select each pair of shoes and conduct our evaluation with our shoesIcanbuy function:</p>
+<pre class="literal-block">
+shoesIcanbuy &lt;- function(dataframe,mypurse){
+numofshoepairs &lt;- 0
+while (mypurse &gt; 0)  {
+    Shoe.pair&lt;-dataframe[sample(nrow(dataframe),1),] # Pick a random pair of shoes
+    if (mypurse &gt;= Shoe.pair$bucks){                 # As long as I have enough money in my purse
+      mypurse&lt;-mypurse-Shoe.pair$bucks               # Buy a pair of shoes and subtract their price from my budget
+      numofshoepairs &lt;- numofshoepairs + 1           # Record the number of shoes I bought
+    }
+    else {
+      break
+    }
+  }
+  return(numofshoepairs)                             # Return the number of shoes I bought
+}
+</pre>
+<p>However the above function only gets us so far- our real interest lies in the summary of multiple shoe-shopping extravaganzas, which- you guessed it- we will conduct with another function:</p>
+<pre class="literal-block">
+how_many_shoes_in_store_I_bought &lt;- function(dataframe, summarya, it){
+  numofshoepairs &lt;- array()                             # Declare an array
+  for (i in 1:nrow(summarya)) {                         # Use each row in summarya as my starting budget
+    mypurse&lt;-summarya[i,2]
+    for (j in 1:(it)){                                # Figure out how many shoes I bought with each starting budget
+      numofshoepairs[j] &lt;- shoesIcanbuy(dataframe, mypurse)
+    }
+    numofshoepairs.df&lt;-data.frame(Shoes=numofshoepairs)
+    ifelse(i==1, numofshoepairs.masterdf&lt;-numofshoepairs.df,
+           numofshoepairs.masterdf&lt;-rbind(numofshoepairs.masterdf,numofshoepairs.df))
+  }
+  return(numofshoepairs.masterdf)
+}
+</pre>
+<p>Now let's make this a little more realistic by making a completely different shoe line-up in the store for year 2:</p>
+<pre class="literal-block">
+shoesinstore2 &lt;- makedata(nshoe2, meanprice2, pricesd2)
+</pre>
+<p>Now collect information on how many shoes I bought, and the corresponding percentage of how many shoes I bought in the store:</p>
+<pre class="literal-block">
+numofshoepairs.masterdf &lt;- how_many_shoes_in_store_I_bought(shoesinstore2,summarya,it)
+</pre>
+<p>Calculate a percent of the store by taking the number of shoes I bought and dividing it by the corresponding number of shoes in the store, and multiplying by 100:</p>
+<pre class="literal-block">
+numofshoepairs.masterdf$Percent&lt;-(numofshoepairs.masterdf$Shoes/nrow(shoesinstore2))*100
+</pre>
+<p>OK, let's see how much of the store I bought out:</p>
+<pre class="literal-block">
+summary(numofshoepairs.masterdf$Percent)
+</pre>
+<p>which gives:</p>
+<pre class="literal-block">
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+0.2143  0.5000  0.5714  0.5736  0.6429  1.0710
+</pre>
+<p>and how many shoes I bought:</p>
+<pre class="literal-block">
+summary(numofshoepairs.masterdf$Shoes)
+</pre>
+<p>which gives:</p>
+<pre class="literal-block">
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+3.000   7.000   8.000   8.031   9.000  15.000
+</pre>
+<p>So, I bought about 8 pairs of shoes.</p>
+<p>Finally, let's plot a histogram of the percentage of shoes in the store I bought:</p>
+<pre class="literal-block">
+(ggplot(numofshoepairs.masterdf, aes(x=Percent))
+ + geom_histogram(aes(y=..density..), fill=&quot;gray&quot;, color=&quot;black&quot;, binwidth = .1)
+ + theme_bw()
+ + geom_vline(x=mean(numofshoepairs.masterdf$Percent), color=&quot;blue&quot;)
+)
+</pre>
+<p>And you get:</p>
+<img alt="deforming_plates" class="align-center" src="/images/percent_store_invent.png" style="width: 700.0px; height: 300.0px;" />
+<p>And that's our shoe-shopping adventure:  Sampling with the built-in function of sample in R, where we determined the size of a single sample through our rate, and secondly with the supplied function where we sample individual elements in a population and evaluate each outcome against a set threshold.  Sampling forwards and backwards- have fun, and good shopping!</p>
 </div>
-<p><a href="./ret_db.html#disqus_thread">comments</a></p>                </article>
+<p><a href="./sampling.html#disqus_thread">comments</a></p>                </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1><a name = "moreblogs">Other articles</a></h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="./sampling.html" rel="bookmark"
+                           title="Permalink to My big fat shoe-shopping adventure: Iterative sampling in R"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Mon 28 July 2014</span>
+<span>| tags: <a href="./tag/r.html">R</a><a href="./tag/simulations.html">simulations</a><a href="./tag/sampling.html">sampling</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Sampling with R</strong></p>
+
+                <a class="readmore" href="./sampling.html">read more</a>
+<p><a href="./sampling.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -371,22 +363,6 @@ def make_basemap(lon,lat,diff,target_date):
 
                 <a class="readmore" href="./GMT.html">read more</a>
 <p><a href="./GMT.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="./Fibo.html" rel="bookmark"
-                           title="Permalink to Iteration and Recursion in Python"><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Thu 10 April 2014</span>
-<span>| tags: <a href="./tag/fibonacci.html">Fibonacci</a><a href="./tag/python.html">python</a><a href="./tag/iterative.html">iterative</a><a href="./tag/recursion.html">recursion</a></span>
-</footer><!-- /.post-info -->                <p class="first last"><strong>Iteration vs. Recursion in Python</strong></p>
-
-                <a class="readmore" href="./Fibo.html">read more</a>
-<p><a href="./Fibo.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
             </article></li>
             </ol><!-- /#posts-list -->
 <p class="paginator">
