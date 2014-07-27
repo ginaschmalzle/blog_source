@@ -1,162 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-28T14:56:00-04:00</updated><entry><title>My big fat shoe-shopping adventure: Iterative sampling in R</title><link href="http://geodesygina.com/sampling.html" rel="alternate"></link><updated>2014-07-28T14:56:00-04:00</updated><author><name>Gina Schmalzle and Craig Faunce</name></author><id>tag:geodesygina.com,2014-07-28:sampling.html</id><summary type="html">&lt;div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy"&gt;
-&lt;h2&gt;&lt;strong&gt;R helped me figure out how many shoes I can buy&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;One of the things I love about coding and data science is that I get to work on a lot of interesting problems.  One of my good friends Craig Faunce &lt;a class="reference external" href="https://www.linkedin.com/pub/craig-h-faunce/66/789/1ba"&gt;Craig Faunce&lt;/a&gt; approached me over a beer with a problem.  It seems he had been asked to determine how many items he could buy given a certain budget.  Ok, if each and every item costs the same this is simple math, which has me puzzled.  Of course it’s not that easy, since each and every item has a different cost. Ok, still not that difficult.  It only becomes something that I think you would be interested in when he gets to the next part, where he says: &amp;quot;I'm asked to sample one population of items at a given rate, and then with my left-over money, determine at what rate I can afford to sample a second, totally different population of items with totally different costs per item.&amp;quot;&lt;/p&gt;
-&lt;p&gt;Ok!  We have an interesting little sampling project.  Since Craig works for a large employer, he can't really divulge every gory detail about this issue, and obviously getting the real data isn't going to happen here.  Besides, it sounded pretty boring to me, so I thought about something that I can relate to - shoes!&lt;/p&gt;
-&lt;img alt="deforming_plates" class="align-center" src="/images/shoefits.jpg" style="width: 600.0px; height: 500.0px;" /&gt;
-&lt;p&gt;&lt;a class="reference external" href="http://www.kulfoto.com/funny-pictures/49597/if-the-shoe-fits-buy-it-in-every-color"&gt;Figure 1&lt;/a&gt; Ahh, too cute...&lt;/p&gt;
-&lt;p&gt;So I reframed the questions.&lt;/p&gt;
-&lt;p&gt;My first question is:  If this year (hopefully during a big Sale) I were to blindly have an assigned shopper (or better yet, a blind assigned shopper) randomly buy a set percentage of the store, how much money would I spend?  The reason we want to sample in this exercise is due to the fact that the answer depends on which shoes are purchased, since each one has a different price.  So we are interested in building a distribution of potential outcomes from shoe-shopping, so we can build a range of likely outcomes from the adventure.&lt;/p&gt;
-&lt;p&gt;We will need the following libraries:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-require(plyr)
-require(ggplot2)
-&lt;/pre&gt;
-&lt;p&gt;The actual data doesn't really matter for this exercise, so lets generate some with these parameters:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-nshoe1 &amp;lt;- 1000            # Number of shoes in the store in the first year.
-meanprice1 &amp;lt;- 100         # Mean price of shoes in the first year.
-pricesd1 &amp;lt;- 50            # Standard deviation of the price of shoes in the first year.
-R &amp;lt;- 0.01                                     # The sampling rate of my shopper in the first year.
-it &amp;lt;- 200                                     # The number of iterations to build our distribution of outcomes.
-&lt;/pre&gt;
-&lt;p&gt;I created a makedata function to create a dataframe in R consisting of nshoe rows with the associated price (called bucks) generated from a known distribution (in this case the normal, but who cares?) with a mean price of meanprice1 and a standard deviation of pricesd1:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-makedata &amp;lt;- function (numberofshoes, dm, sdv){
-  # Assign number of shoes
-  df &amp;lt;- data.frame(shoes = seq(1:numberofshoes))
-  # Assign random # of bucks for each shoe
-  df$bucks &amp;lt;-  rnorm(n = numberofshoes, mean = dm, sd = sdv)
-  return (df)
- }
-&lt;/pre&gt;
-&lt;p&gt;The function sampleme samples from the dataframe that was created from the makedata function above:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-sampleme &amp;lt;- function(dataframe, samplerate){
-  # Generate a subsample of shoe numbers, then take the associated
-  # bucks and stick them into sdf.
-  sdf &amp;lt;- data.frame(shoes=sample(1:nrow(dataframe), size = (samplerate*nrow(dataframe))))
-  sdf &amp;lt;- merge(sdf,dataframe,all.x=TRUE)
-  return (sdf)
-}
-&lt;/pre&gt;
-&lt;p&gt;Finally, a third function storesamples enables the outcome of each random sample to be stored and appended to prior samples for later use:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-storesamples&amp;lt;-function(iteration, df, sr){
-  for (iter in 1:iteration){
-    sdf &amp;lt;- sampleme(dataframe = df, samplerate=sr)
-    sdf$index &amp;lt;- iter
-    ifelse(iter == 1, allsdf &amp;lt;-sdf, allsdf &amp;lt;-rbind(allsdf,sdf))
-  }
-  return(allsdf)
-}
-&lt;/pre&gt;
-&lt;p&gt;Note that the function storesamples calls function sampleme.&lt;/p&gt;
-&lt;p&gt;Now that I have my functions, let's figure out how much money I spend if I buy 1% of the store's inventory:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-# make a dataframe
-shoesinstore1 &amp;lt;- makedata(nshoe1, meanprice1, pricesd1)
-# calculate how much $$ you spent by buying 1% of the inventory
-moneyIspent &amp;lt;- storesamples(it,shoesinstore1,R)
-&lt;/pre&gt;
-&lt;p&gt;Now let's make a summary of the money I just spent and print it out:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-summarya &amp;lt;- ddply(moneyIspent, .(index), summarize, Totalbucks = floor(sum(bucks)))
-summary(summarya$Totalbucks)
-&lt;/pre&gt;
-&lt;p&gt;In my last run, here are my results:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-604.0   897.8  1009.0  1010.0  1120.0  1383.0
-&lt;/pre&gt;
-&lt;p&gt;So I can expect my blind shopper to come back with a Visa/AmEX/Mastercard charge of around a thousand bucks, but it could be as low as $600, or as high as $1383 (still within my spending limit- whew!).
-Now let's plot our results using a histogram:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
- (ggplot(summarya, aes(x=Totalbucks))
-+ geom_histogram()
- )
-&lt;/pre&gt;
-&lt;p&gt;This gives you:&lt;/p&gt;
-&lt;img alt="deforming_plates" class="align-center" src="/images/moneyIspend.png" style="width: 700.0px; height: 400.0px;" /&gt;
-&lt;p&gt;Now for my second question.  The following year I am &lt;em&gt;given the same amount of money I spent last year&lt;/em&gt; as my budget.  &lt;em&gt;What percentage of the store's inventory in year 2 can I buy given the amount of money I spent last year?&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;Here we have reversed the sampling question from year 1: instead of sampling at a fixed rate to generate a distribution of credit card debts, we now have a distribution of available spending limits, and are asked to generate a distribution of expected percentage of the store purchased.&lt;/p&gt;
-&lt;p&gt;To ensure we don't go over our budget, we can't create a single sample of a given number of shoes as above- we have to select a single pair of shoes, evaluate its cost against our remaining funds, and then repeat until we have no more money.  Of course in addition we need to count the number of shoes.  We select each pair of shoes and conduct our evaluation with our shoesIcanbuy function:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-shoesIcanbuy &amp;lt;- function(dataframe,mypurse){
-numofshoepairs &amp;lt;- 0
-while (mypurse &amp;gt; 0)  {
-    Shoe.pair&amp;lt;-dataframe[sample(nrow(dataframe),1),] # Pick a random pair of shoes
-    if (mypurse &amp;gt;= Shoe.pair$bucks){                 # As long as I have enough money in my purse
-      mypurse&amp;lt;-mypurse-Shoe.pair$bucks               # Buy a pair of shoes and subtract their price from my budget
-      numofshoepairs &amp;lt;- numofshoepairs + 1           # Record the number of shoes I bought
-    }
-    else {
-      break
-    }
-  }
-  return(numofshoepairs)                             # Return the number of shoes I bought
-}
-&lt;/pre&gt;
-&lt;p&gt;However the above function only gets us so far- our real interest lies in the summary of multiple shoe-shopping extravaganzas, which- you guessed it- we will conduct with another function:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-how_many_shoes_in_store_I_bought &amp;lt;- function(dataframe, summarya, it){
-  numofshoepairs &amp;lt;- array()                             # Declare an array
-  for (i in 1:nrow(summarya)) {                         # Use each row in summarya as my starting budget
-    mypurse&amp;lt;-summarya[i,2]
-    for (j in 1:(it)){                                # Figure out how many shoes I bought with each starting budget
-      numofshoepairs[j] &amp;lt;- shoesIcanbuy(dataframe, mypurse)
-    }
-    numofshoepairs.df&amp;lt;-data.frame(Shoes=numofshoepairs)
-    ifelse(i==1, numofshoepairs.masterdf&amp;lt;-numofshoepairs.df,
-           numofshoepairs.masterdf&amp;lt;-rbind(numofshoepairs.masterdf,numofshoepairs.df))
-  }
-  return(numofshoepairs.masterdf)
-}
-&lt;/pre&gt;
-&lt;p&gt;Now let's make this a little more realistic by making a completely different shoe line-up in the store for year 2:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-shoesinstore2 &amp;lt;- makedata(nshoe2, meanprice2, pricesd2)
-&lt;/pre&gt;
-&lt;p&gt;Now collect information on how many shoes I bought, and the corresponding percentage of how many shoes I bought in the store:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-numofshoepairs.masterdf &amp;lt;- how_many_shoes_in_store_I_bought(shoesinstore2,summarya,it)
-&lt;/pre&gt;
-&lt;p&gt;Calculate a percent of the store by taking the number of shoes I bought and dividing it by the corresponding number of shoes in the store, and multiplying by 100:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-numofshoepairs.masterdf$Percent&amp;lt;-(numofshoepairs.masterdf$Shoes/nrow(shoesinstore2))*100
-&lt;/pre&gt;
-&lt;p&gt;OK, let's see how much of the store I bought out:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-summary(numofshoepairs.masterdf$Percent)
-&lt;/pre&gt;
-&lt;p&gt;which gives:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-0.2143  0.5000  0.5714  0.5736  0.6429  1.0710
-&lt;/pre&gt;
-&lt;p&gt;and how many shoes I bought:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-summary(numofshoepairs.masterdf$Shoes)
-&lt;/pre&gt;
-&lt;p&gt;which gives:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-3.000   7.000   8.000   8.031   9.000  15.000
-&lt;/pre&gt;
-&lt;p&gt;So, I bought about 8 pairs of shoes.&lt;/p&gt;
-&lt;p&gt;Finally, let's plot a histogram of the percentage of shoes in the store I bought:&lt;/p&gt;
-&lt;pre class="literal-block"&gt;
-(ggplot(numofshoepairs.masterdf, aes(x=Percent))
- + geom_histogram(aes(y=..density..), fill=&amp;quot;gray&amp;quot;, color=&amp;quot;black&amp;quot;, binwidth = .1)
- + theme_bw()
- + geom_vline(x=mean(numofshoepairs.masterdf$Percent), color=&amp;quot;blue&amp;quot;)
-)
-&lt;/pre&gt;
-&lt;p&gt;And you get:&lt;/p&gt;
-&lt;img alt="deforming_plates" class="align-center" src="/images/percent_store_invent.png" style="width: 700.0px; height: 300.0px;" /&gt;
-&lt;p&gt;And that's our shoe-shopping adventure:  Sampling with the built-in function of sample in R, where we determined the size of a single sample through our rate, and secondly with the supplied function where we sample individual elements in a population and evaluate each outcome against a set threshold.  Sampling forwards and backwards- have fun, and good shopping!&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-27T15:56:00-04:00</updated><entry><title>The Million Song Database and Recommendation Systems</title><link href="http://geodesygina.com/recommender.html" rel="alternate"></link><updated>2014-07-27T15:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-27:recommender.html</id><summary type="html">&lt;div class="section" id="building-recommendation-systems"&gt;
+&lt;h2&gt;&lt;strong&gt;Building Recommendation Systems&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Recommender systems filter information to predict how much a user would like a given item.  Companies like Netflix and Tivo use these types of filtering algorithms to try to figure out what a person will want.  Unfortunately, these systems are not perfect, and sometimes can go horribly wrong, as elegantly described by Patton Oswalt on the Conan O'Brien show:&lt;/p&gt;
+&lt;div class="youtube" align="left"&gt;&lt;iframe width="420" height="315" src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&amp;end=272&amp;version=3" frameborder="0"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;p&gt;Yes, bad Tivo.&lt;/p&gt;
+&lt;p&gt;So how do we improve recommender systems?  Companies as well as academics are trying hard to figure this out. Fortunately, some groups released large datasets so the anyone can play with them and try to solves these issues.  One such publicly available dataset is the &lt;a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/"&gt;The Million Song Dataset&lt;/a&gt;  -- a perfect dataset for building recommender systems! So, I thought I would give it a try.&lt;/p&gt;
+&lt;p&gt;For this project, I focused on the &lt;a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile"&gt;Taste Profile subset&lt;/a&gt; provided by Echonest, which includes information on user play lists to build my recommenders located on my &lt;a class="reference external" href="https://github.com/ginaschmalzle/million_song"&gt;Github page&lt;/a&gt;. I built two recommenders; one that figures out what songs a user would like by using an input of a selected song, and another that recommends songs based on what the user has in their play list.&lt;/p&gt;
+&lt;p&gt;Both recommenders use a combination of &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering"&gt;Collaborative filtering techniques&lt;/a&gt; with vote counting. Collaborative filtering makes recommendations by collecting taste preferences and comparing them to other users.  Here we assume that others that have the same song in their play list have similar tastes.  Therefore, songs in the other users play lists would be good ones to recommend.  In these recommenders I ultimately get to a list of songs that were provided by other users.  I then count up how many times a song appears in other people's play lists (vote counting) and spit out the top counted songs as the top recommended songs.  In this blog I briefly describe the approach for both the simple, single song recommender and the slightly more complex user recommender for users with a play list.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="R"></category><category term="simulations"></category><category term="sampling"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</title><link href="http://geodesygina.com/ret_db.html" rel="alternate"></link><updated>2014-07-27T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-27:ret_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="http://geodesygina.com/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database. In &lt;a class="reference external" href="http://geodesygina.com/pop_db.html"&gt;Part 2 Populating an SQLite Database using Python&lt;/a&gt; we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, for his efforts with this project!&lt;/p&gt;
+&lt;div class="section" id="the-data"&gt;
+&lt;h2&gt;&lt;strong&gt;The Data&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;The &lt;a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile"&gt;Taste Profile subset&lt;/a&gt; contains over a million users with over 380,000 unique songs.  I only use a very small subset of data that includes:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;A unique user ID&lt;/li&gt;
+&lt;li&gt;All the songs in the user play list including:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;Song name and id&lt;/li&gt;
+&lt;li&gt;Artist name and id&lt;/li&gt;
+&lt;li&gt;The number of times the song was played by the user&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class="section" id="the-simple-recommender"&gt;
+&lt;h2&gt;&lt;strong&gt;The Simple Recommender&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;For my simple recommender I don't know anything about the person selecting the song.  All I know is the selected artist and song. The steps for this recommender include:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;Find all users that have the song in their play list&lt;/li&gt;
+&lt;li&gt;Make a list of all songs from each person's play list&lt;/li&gt;
+&lt;li&gt;Count how many times a unique song appears in the list&lt;/li&gt;
+&lt;li&gt;Print out the songs in the order of most counts that was not the original input song&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Easy cheesy, right?&lt;/p&gt;
+&lt;p&gt;To illustrate the outcome of this recommender, here is a plot of the top 10 most counted songs from other people's play lists given the song Yeah! by Usher (keep in mind these are the counts for my much smaller subset of data):&lt;/p&gt;
+&lt;img alt="deforming_plates" class="align-center" src="/images/top10.jpg" style="width: 700.0px; height: 700.0px;" /&gt;
+&lt;/div&gt;
+&lt;div class="section" id="adding-user-play-list-into-a-recommender"&gt;
+&lt;h2&gt;&lt;strong&gt;Adding User Play List into a Recommender&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Adding a user play list into a recommender is slightly more complex.  Here, I want to know what other users are most similar to the recommendee (for lack of a better term, I define the recommendee as the person who is going to get the recommendation), then suggest songs from the similar users' play lists. The steps for this recommender include:&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;For each song in the recommendee play list, make a list of all users that also have that song in their play list.&lt;/li&gt;
+&lt;li&gt;Count the number of times a unique user is in the list. The user with the most counts is the most similar to the recommendee.&lt;/li&gt;
+&lt;li&gt;Pick the most similar users and concatenate a list of songs that were not in the recommendee's play list.&lt;/li&gt;
+&lt;li&gt;Count the number of times a song shows up in the list&lt;/li&gt;
+&lt;li&gt;Print out the songs in order of most counted&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Slightly more complicated than the simple recommender, but generally the same idea.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="pitfalls"&gt;
+&lt;h2&gt;&lt;strong&gt;Pitfalls&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;There are issues with these simple approaches.  They work well for the small data set that I downloaded, but as the dataset gets larger, the lists and dictionaries that I make in my code also get larger. So, this approach will take up increasing amounts of memory to make my lists, and increasing amounts of time to sort the lists and count the number of songs.  &lt;a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering"&gt;Model-based approaches&lt;/a&gt; help to minimize these issues. Another issue is making recommendations based on new songs, or songs that very few people have listened to.  In these cases other information about the song, such as genre, would be needed to make recommendations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="more-info-on-my-code"&gt;
+&lt;h2&gt;&lt;strong&gt;More Info on My Code&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Interested in using my recommenders? Check out my &lt;a class="reference external" href="https://github.com/ginaschmalzle/million_song"&gt;Github page&lt;/a&gt; which includes the codes, instructions on how to use them, and some more information on how the codes work. Any comments or suggestions are welcome!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="acknowledgements"&gt;
+&lt;h2&gt;&lt;strong&gt;Acknowledgements&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;Thanks to &lt;a class="reference external" href="http://www.linkedin.com/pub/stella-rowlett/0/797/118"&gt;Stella Rowlett&lt;/a&gt;, &lt;a class="reference external" href="http://jasongowans.net/"&gt;Jason Gowans&lt;/a&gt; and &lt;a class="reference external" href="http://www.linkedin.com/in/manjudotorg"&gt;Manju Muthukumaresan&lt;/a&gt; for suggesting this project!&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="Recommender Systems"></category><category term="python"></category><category term="sqlite3"></category><category term="Million Song Database"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</title><link href="http://geodesygina.com/ret_db.html" rel="alternate"></link><updated>2014-07-27T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-27:ret_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="http://geodesygina.com/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database. In &lt;a class="reference external" href="http://geodesygina.com/pop_db.html"&gt;Part 2 Populating an SQLite Database using Python&lt;/a&gt; we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, for his efforts with this project!&lt;/p&gt;
 &lt;p&gt;Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day.&lt;/p&gt;
 &lt;img alt="differenced_forecasts" class="align-left" src="/images/weather_diff.png" style="width: 800.0px; height: 500.0px;" /&gt;
 &lt;p&gt;&lt;em&gt;Figure 1. Maps of forecasted differences (the difference between the day of forecast and the forecast for X days out).&lt;/em&gt;&lt;/p&gt;
@@ -337,7 +240,164 @@ def make_basemap(lon,lat,diff,target_date):
 &lt;p&gt;Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.&lt;/p&gt;
 &lt;p&gt;Like what you see?  Stay tuned, the next step on my agenda is making an interactive website that will allow users to play with the data!  Thanks for reading!&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category><category term="spatial analysis"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 2</title><link href="http://geodesygina.com/pop_db.html" rel="alternate"></link><updated>2014-07-09T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-09:pop_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, who was incredibly patient in teaching me how to do this... Kudos, David!&lt;/p&gt;
+</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category><category term="spatial analysis"></category></entry><entry><title>My big fat shoe-shopping adventure: Iterative sampling in R</title><link href="http://geodesygina.com/sampling.html" rel="alternate"></link><updated>2014-07-27T14:56:00-04:00</updated><author><name>Gina Schmalzle and Craig Faunce</name></author><id>tag:geodesygina.com,2014-07-27:sampling.html</id><summary type="html">&lt;div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy"&gt;
+&lt;h2&gt;&lt;strong&gt;R helped me figure out how many shoes I can buy&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;One of the things I love about coding and data science is that I get to work on a lot of interesting problems.  One of my good friends Craig Faunce &lt;a class="reference external" href="https://www.linkedin.com/pub/craig-h-faunce/66/789/1ba"&gt;Craig Faunce&lt;/a&gt; approached me over a beer with a problem.  It seems he had been asked to determine how many items he could buy given a certain budget.  Ok, if each and every item costs the same this is simple math, which has me puzzled.  Of course it’s not that easy, since each and every item has a different cost. Ok, still not that difficult.  It only becomes something that I think you would be interested in when he gets to the next part, where he says: &amp;quot;I'm asked to sample one population of items at a given rate, and then with my left-over money, determine at what rate I can afford to sample a second, totally different population of items with totally different costs per item.&amp;quot;&lt;/p&gt;
+&lt;p&gt;Ok!  We have an interesting little sampling project.  Since Craig works for a large employer, he can't really divulge every gory detail about this issue, and obviously getting the real data isn't going to happen here.  Besides, it sounded pretty boring to me, so I thought about something that I can relate to - shoes!&lt;/p&gt;
+&lt;img alt="deforming_plates" class="align-center" src="/images/shoefits.jpg" style="width: 600.0px; height: 500.0px;" /&gt;
+&lt;p&gt;&lt;a class="reference external" href="http://www.kulfoto.com/funny-pictures/49597/if-the-shoe-fits-buy-it-in-every-color"&gt;Figure 1&lt;/a&gt; Ahh, too cute...&lt;/p&gt;
+&lt;p&gt;So I reframed the questions.&lt;/p&gt;
+&lt;p&gt;My first question is:  If this year (hopefully during a big Sale) I were to blindly have an assigned shopper (or better yet, a blind assigned shopper) randomly buy a set percentage of the store, how much money would I spend?  The reason we want to sample in this exercise is due to the fact that the answer depends on which shoes are purchased, since each one has a different price.  So we are interested in building a distribution of potential outcomes from shoe-shopping, so we can build a range of likely outcomes from the adventure.&lt;/p&gt;
+&lt;p&gt;We will need the following libraries:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+require(plyr)
+require(ggplot2)
+&lt;/pre&gt;
+&lt;p&gt;The actual data doesn't really matter for this exercise, so lets generate some with these parameters:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+nshoe1 &amp;lt;- 1000            # Number of shoes in the store in the first year.
+meanprice1 &amp;lt;- 100         # Mean price of shoes in the first year.
+pricesd1 &amp;lt;- 50            # Standard deviation of the price of shoes in the first year.
+R &amp;lt;- 0.01                                     # The sampling rate of my shopper in the first year.
+it &amp;lt;- 200                                     # The number of iterations to build our distribution of outcomes.
+&lt;/pre&gt;
+&lt;p&gt;I created a makedata function to create a dataframe in R consisting of nshoe rows with the associated price (called bucks) generated from a known distribution (in this case the normal, but who cares?) with a mean price of meanprice1 and a standard deviation of pricesd1:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+makedata &amp;lt;- function (numberofshoes, dm, sdv){
+  # Assign number of shoes
+  df &amp;lt;- data.frame(shoes = seq(1:numberofshoes))
+  # Assign random # of bucks for each shoe
+  df$bucks &amp;lt;-  rnorm(n = numberofshoes, mean = dm, sd = sdv)
+  return (df)
+ }
+&lt;/pre&gt;
+&lt;p&gt;The function sampleme samples from the dataframe that was created from the makedata function above:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+sampleme &amp;lt;- function(dataframe, samplerate){
+  # Generate a subsample of shoe numbers, then take the associated
+  # bucks and stick them into sdf.
+  sdf &amp;lt;- data.frame(shoes=sample(1:nrow(dataframe), size = (samplerate*nrow(dataframe))))
+  sdf &amp;lt;- merge(sdf,dataframe,all.x=TRUE)
+  return (sdf)
+}
+&lt;/pre&gt;
+&lt;p&gt;Finally, a third function storesamples enables the outcome of each random sample to be stored and appended to prior samples for later use:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+storesamples&amp;lt;-function(iteration, df, sr){
+  for (iter in 1:iteration){
+    sdf &amp;lt;- sampleme(dataframe = df, samplerate=sr)
+    sdf$index &amp;lt;- iter
+    ifelse(iter == 1, allsdf &amp;lt;-sdf, allsdf &amp;lt;-rbind(allsdf,sdf))
+  }
+  return(allsdf)
+}
+&lt;/pre&gt;
+&lt;p&gt;Note that the function storesamples calls function sampleme.&lt;/p&gt;
+&lt;p&gt;Now that I have my functions, let's figure out how much money I spend if I buy 1% of the store's inventory:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+# make a dataframe
+shoesinstore1 &amp;lt;- makedata(nshoe1, meanprice1, pricesd1)
+# calculate how much $$ you spent by buying 1% of the inventory
+moneyIspent &amp;lt;- storesamples(it,shoesinstore1,R)
+&lt;/pre&gt;
+&lt;p&gt;Now let's make a summary of the money I just spent and print it out:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+summarya &amp;lt;- ddply(moneyIspent, .(index), summarize, Totalbucks = floor(sum(bucks)))
+summary(summarya$Totalbucks)
+&lt;/pre&gt;
+&lt;p&gt;In my last run, here are my results:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+604.0   897.8  1009.0  1010.0  1120.0  1383.0
+&lt;/pre&gt;
+&lt;p&gt;So I can expect my blind shopper to come back with a Visa/AmEX/Mastercard charge of around a thousand bucks, but it could be as low as $600, or as high as $1383 (still within my spending limit- whew!).
+Now let's plot our results using a histogram:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+ (ggplot(summarya, aes(x=Totalbucks))
++ geom_histogram()
+ )
+&lt;/pre&gt;
+&lt;p&gt;This gives you:&lt;/p&gt;
+&lt;img alt="deforming_plates" class="align-center" src="/images/moneyIspend.png" style="width: 700.0px; height: 400.0px;" /&gt;
+&lt;p&gt;Now for my second question.  The following year I am &lt;em&gt;given the same amount of money I spent last year&lt;/em&gt; as my budget.  &lt;em&gt;What percentage of the store's inventory in year 2 can I buy given the amount of money I spent last year?&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;Here we have reversed the sampling question from year 1: instead of sampling at a fixed rate to generate a distribution of credit card debts, we now have a distribution of available spending limits, and are asked to generate a distribution of expected percentage of the store purchased.&lt;/p&gt;
+&lt;p&gt;To ensure we don't go over our budget, we can't create a single sample of a given number of shoes as above- we have to select a single pair of shoes, evaluate its cost against our remaining funds, and then repeat until we have no more money.  Of course in addition we need to count the number of shoes.  We select each pair of shoes and conduct our evaluation with our shoesIcanbuy function:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+shoesIcanbuy &amp;lt;- function(dataframe,mypurse){
+numofshoepairs &amp;lt;- 0
+while (mypurse &amp;gt; 0)  {
+    Shoe.pair&amp;lt;-dataframe[sample(nrow(dataframe),1),] # Pick a random pair of shoes
+    if (mypurse &amp;gt;= Shoe.pair$bucks){                 # As long as I have enough money in my purse
+      mypurse&amp;lt;-mypurse-Shoe.pair$bucks               # Buy a pair of shoes and subtract their price from my budget
+      numofshoepairs &amp;lt;- numofshoepairs + 1           # Record the number of shoes I bought
+    }
+    else {
+      break
+    }
+  }
+  return(numofshoepairs)                             # Return the number of shoes I bought
+}
+&lt;/pre&gt;
+&lt;p&gt;However the above function only gets us so far- our real interest lies in the summary of multiple shoe-shopping extravaganzas, which- you guessed it- we will conduct with another function:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+how_many_shoes_in_store_I_bought &amp;lt;- function(dataframe, summarya, it){
+  numofshoepairs &amp;lt;- array()                             # Declare an array
+  for (i in 1:nrow(summarya)) {                         # Use each row in summarya as my starting budget
+    mypurse&amp;lt;-summarya[i,2]
+    for (j in 1:(it)){                                # Figure out how many shoes I bought with each starting budget
+      numofshoepairs[j] &amp;lt;- shoesIcanbuy(dataframe, mypurse)
+    }
+    numofshoepairs.df&amp;lt;-data.frame(Shoes=numofshoepairs)
+    ifelse(i==1, numofshoepairs.masterdf&amp;lt;-numofshoepairs.df,
+           numofshoepairs.masterdf&amp;lt;-rbind(numofshoepairs.masterdf,numofshoepairs.df))
+  }
+  return(numofshoepairs.masterdf)
+}
+&lt;/pre&gt;
+&lt;p&gt;Now let's make this a little more realistic by making a completely different shoe line-up in the store for year 2:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+shoesinstore2 &amp;lt;- makedata(nshoe2, meanprice2, pricesd2)
+&lt;/pre&gt;
+&lt;p&gt;Now collect information on how many shoes I bought, and the corresponding percentage of how many shoes I bought in the store:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+numofshoepairs.masterdf &amp;lt;- how_many_shoes_in_store_I_bought(shoesinstore2,summarya,it)
+&lt;/pre&gt;
+&lt;p&gt;Calculate a percent of the store by taking the number of shoes I bought and dividing it by the corresponding number of shoes in the store, and multiplying by 100:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+numofshoepairs.masterdf$Percent&amp;lt;-(numofshoepairs.masterdf$Shoes/nrow(shoesinstore2))*100
+&lt;/pre&gt;
+&lt;p&gt;OK, let's see how much of the store I bought out:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+summary(numofshoepairs.masterdf$Percent)
+&lt;/pre&gt;
+&lt;p&gt;which gives:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+0.2143  0.5000  0.5714  0.5736  0.6429  1.0710
+&lt;/pre&gt;
+&lt;p&gt;and how many shoes I bought:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+summary(numofshoepairs.masterdf$Shoes)
+&lt;/pre&gt;
+&lt;p&gt;which gives:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+3.000   7.000   8.000   8.031   9.000  15.000
+&lt;/pre&gt;
+&lt;p&gt;So, I bought about 8 pairs of shoes.&lt;/p&gt;
+&lt;p&gt;Finally, let's plot a histogram of the percentage of shoes in the store I bought:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+(ggplot(numofshoepairs.masterdf, aes(x=Percent))
+ + geom_histogram(aes(y=..density..), fill=&amp;quot;gray&amp;quot;, color=&amp;quot;black&amp;quot;, binwidth = .1)
+ + theme_bw()
+ + geom_vline(x=mean(numofshoepairs.masterdf$Percent), color=&amp;quot;blue&amp;quot;)
+)
+&lt;/pre&gt;
+&lt;p&gt;And you get:&lt;/p&gt;
+&lt;img alt="deforming_plates" class="align-center" src="/images/percent_store_invent.png" style="width: 700.0px; height: 300.0px;" /&gt;
+&lt;p&gt;And that's our shoe-shopping adventure:  Sampling with the built-in function of sample in R, where we determined the size of a single sample through our rate, and secondly with the supplied function where we sample individual elements in a population and evaluate each outcome against a set threshold.  Sampling forwards and backwards- have fun, and good shopping!&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="R"></category><category term="simulations"></category><category term="sampling"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 2</title><link href="http://geodesygina.com/pop_db.html" rel="alternate"></link><updated>2014-07-09T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-09:pop_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, who was incredibly patient in teaching me how to do this... Kudos, David!&lt;/p&gt;
 &lt;div class="section" id="part-2-populating-an-sqlite-database-using-python"&gt;
 &lt;h2&gt;&lt;strong&gt;Part 2. Populating an SQLite Database using Python&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;Let's put some data into our database!  First, let's fill up our &lt;em&gt;locations&lt;/em&gt; TABLE. We collected and keep a list of the cities, their unique codes provided by Open Weather Map, their latitudes and longitudes and their country codes &lt;a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/data/city_lists/city_list_normalized_20140425-1923.txt"&gt;here&lt;/a&gt;, in a file called city_list_normalized_20140425-1923.txt.  This file contains information on the cities and looks like this:&lt;/p&gt;

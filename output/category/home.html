@@ -38,168 +38,71 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="../sampling.html"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></a></h1>
+                    <h1 class="entry-title"><a href="../recommender.html"><strong>The Million Song Database and Recommendation Systems</strong></a></h1>
 <footer class="post-info">
-        <span>Mon 28 July 2014</span>
-<span>| tags: <a href="../tag/r.html">R</a><a href="../tag/simulations.html">simulations</a><a href="../tag/sampling.html">sampling</a></span>
-</footer><!-- /.post-info --><div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy">
-<h2><strong>R helped me figure out how many shoes I can buy</strong></h2>
-<p>One of the things I love about coding and data science is that I get to work on a lot of interesting problems.  One of my good friends Craig Faunce <a class="reference external" href="https://www.linkedin.com/pub/craig-h-faunce/66/789/1ba">Craig Faunce</a> approached me over a beer with a problem.  It seems he had been asked to determine how many items he could buy given a certain budget.  Ok, if each and every item costs the same this is simple math, which has me puzzled.  Of course it’s not that easy, since each and every item has a different cost. Ok, still not that difficult.  It only becomes something that I think you would be interested in when he gets to the next part, where he says: &quot;I'm asked to sample one population of items at a given rate, and then with my left-over money, determine at what rate I can afford to sample a second, totally different population of items with totally different costs per item.&quot;</p>
-<p>Ok!  We have an interesting little sampling project.  Since Craig works for a large employer, he can't really divulge every gory detail about this issue, and obviously getting the real data isn't going to happen here.  Besides, it sounded pretty boring to me, so I thought about something that I can relate to - shoes!</p>
-<img alt="deforming_plates" class="align-center" src="/images/shoefits.jpg" style="width: 600.0px; height: 500.0px;" />
-<p><a class="reference external" href="http://www.kulfoto.com/funny-pictures/49597/if-the-shoe-fits-buy-it-in-every-color">Figure 1</a> Ahh, too cute...</p>
-<p>So I reframed the questions.</p>
-<p>My first question is:  If this year (hopefully during a big Sale) I were to blindly have an assigned shopper (or better yet, a blind assigned shopper) randomly buy a set percentage of the store, how much money would I spend?  The reason we want to sample in this exercise is due to the fact that the answer depends on which shoes are purchased, since each one has a different price.  So we are interested in building a distribution of potential outcomes from shoe-shopping, so we can build a range of likely outcomes from the adventure.</p>
-<p>We will need the following libraries:</p>
-<pre class="literal-block">
-require(plyr)
-require(ggplot2)
-</pre>
-<p>The actual data doesn't really matter for this exercise, so lets generate some with these parameters:</p>
-<pre class="literal-block">
-nshoe1 &lt;- 1000            # Number of shoes in the store in the first year.
-meanprice1 &lt;- 100         # Mean price of shoes in the first year.
-pricesd1 &lt;- 50            # Standard deviation of the price of shoes in the first year.
-R &lt;- 0.01                                     # The sampling rate of my shopper in the first year.
-it &lt;- 200                                     # The number of iterations to build our distribution of outcomes.
-</pre>
-<p>I created a makedata function to create a dataframe in R consisting of nshoe rows with the associated price (called bucks) generated from a known distribution (in this case the normal, but who cares?) with a mean price of meanprice1 and a standard deviation of pricesd1:</p>
-<pre class="literal-block">
-makedata &lt;- function (numberofshoes, dm, sdv){
-  # Assign number of shoes
-  df &lt;- data.frame(shoes = seq(1:numberofshoes))
-  # Assign random # of bucks for each shoe
-  df$bucks &lt;-  rnorm(n = numberofshoes, mean = dm, sd = sdv)
-  return (df)
- }
-</pre>
-<p>The function sampleme samples from the dataframe that was created from the makedata function above:</p>
-<pre class="literal-block">
-sampleme &lt;- function(dataframe, samplerate){
-  # Generate a subsample of shoe numbers, then take the associated
-  # bucks and stick them into sdf.
-  sdf &lt;- data.frame(shoes=sample(1:nrow(dataframe), size = (samplerate*nrow(dataframe))))
-  sdf &lt;- merge(sdf,dataframe,all.x=TRUE)
-  return (sdf)
-}
-</pre>
-<p>Finally, a third function storesamples enables the outcome of each random sample to be stored and appended to prior samples for later use:</p>
-<pre class="literal-block">
-storesamples&lt;-function(iteration, df, sr){
-  for (iter in 1:iteration){
-    sdf &lt;- sampleme(dataframe = df, samplerate=sr)
-    sdf$index &lt;- iter
-    ifelse(iter == 1, allsdf &lt;-sdf, allsdf &lt;-rbind(allsdf,sdf))
-  }
-  return(allsdf)
-}
-</pre>
-<p>Note that the function storesamples calls function sampleme.</p>
-<p>Now that I have my functions, let's figure out how much money I spend if I buy 1% of the store's inventory:</p>
-<pre class="literal-block">
-# make a dataframe
-shoesinstore1 &lt;- makedata(nshoe1, meanprice1, pricesd1)
-# calculate how much $$ you spent by buying 1% of the inventory
-moneyIspent &lt;- storesamples(it,shoesinstore1,R)
-</pre>
-<p>Now let's make a summary of the money I just spent and print it out:</p>
-<pre class="literal-block">
-summarya &lt;- ddply(moneyIspent, .(index), summarize, Totalbucks = floor(sum(bucks)))
-summary(summarya$Totalbucks)
-</pre>
-<p>In my last run, here are my results:</p>
-<pre class="literal-block">
-Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-604.0   897.8  1009.0  1010.0  1120.0  1383.0
-</pre>
-<p>So I can expect my blind shopper to come back with a Visa/AmEX/Mastercard charge of around a thousand bucks, but it could be as low as $600, or as high as $1383 (still within my spending limit- whew!).
-Now let's plot our results using a histogram:</p>
-<pre class="literal-block">
- (ggplot(summarya, aes(x=Totalbucks))
-+ geom_histogram()
- )
-</pre>
-<p>This gives you:</p>
-<img alt="deforming_plates" class="align-center" src="/images/moneyIspend.png" style="width: 700.0px; height: 400.0px;" />
-<p>Now for my second question.  The following year I am <em>given the same amount of money I spent last year</em> as my budget.  <em>What percentage of the store's inventory in year 2 can I buy given the amount of money I spent last year?</em></p>
-<p>Here we have reversed the sampling question from year 1: instead of sampling at a fixed rate to generate a distribution of credit card debts, we now have a distribution of available spending limits, and are asked to generate a distribution of expected percentage of the store purchased.</p>
-<p>To ensure we don't go over our budget, we can't create a single sample of a given number of shoes as above- we have to select a single pair of shoes, evaluate its cost against our remaining funds, and then repeat until we have no more money.  Of course in addition we need to count the number of shoes.  We select each pair of shoes and conduct our evaluation with our shoesIcanbuy function:</p>
-<pre class="literal-block">
-shoesIcanbuy &lt;- function(dataframe,mypurse){
-numofshoepairs &lt;- 0
-while (mypurse &gt; 0)  {
-    Shoe.pair&lt;-dataframe[sample(nrow(dataframe),1),] # Pick a random pair of shoes
-    if (mypurse &gt;= Shoe.pair$bucks){                 # As long as I have enough money in my purse
-      mypurse&lt;-mypurse-Shoe.pair$bucks               # Buy a pair of shoes and subtract their price from my budget
-      numofshoepairs &lt;- numofshoepairs + 1           # Record the number of shoes I bought
-    }
-    else {
-      break
-    }
-  }
-  return(numofshoepairs)                             # Return the number of shoes I bought
-}
-</pre>
-<p>However the above function only gets us so far- our real interest lies in the summary of multiple shoe-shopping extravaganzas, which- you guessed it- we will conduct with another function:</p>
-<pre class="literal-block">
-how_many_shoes_in_store_I_bought &lt;- function(dataframe, summarya, it){
-  numofshoepairs &lt;- array()                             # Declare an array
-  for (i in 1:nrow(summarya)) {                         # Use each row in summarya as my starting budget
-    mypurse&lt;-summarya[i,2]
-    for (j in 1:(it)){                                # Figure out how many shoes I bought with each starting budget
-      numofshoepairs[j] &lt;- shoesIcanbuy(dataframe, mypurse)
-    }
-    numofshoepairs.df&lt;-data.frame(Shoes=numofshoepairs)
-    ifelse(i==1, numofshoepairs.masterdf&lt;-numofshoepairs.df,
-           numofshoepairs.masterdf&lt;-rbind(numofshoepairs.masterdf,numofshoepairs.df))
-  }
-  return(numofshoepairs.masterdf)
-}
-</pre>
-<p>Now let's make this a little more realistic by making a completely different shoe line-up in the store for year 2:</p>
-<pre class="literal-block">
-shoesinstore2 &lt;- makedata(nshoe2, meanprice2, pricesd2)
-</pre>
-<p>Now collect information on how many shoes I bought, and the corresponding percentage of how many shoes I bought in the store:</p>
-<pre class="literal-block">
-numofshoepairs.masterdf &lt;- how_many_shoes_in_store_I_bought(shoesinstore2,summarya,it)
-</pre>
-<p>Calculate a percent of the store by taking the number of shoes I bought and dividing it by the corresponding number of shoes in the store, and multiplying by 100:</p>
-<pre class="literal-block">
-numofshoepairs.masterdf$Percent&lt;-(numofshoepairs.masterdf$Shoes/nrow(shoesinstore2))*100
-</pre>
-<p>OK, let's see how much of the store I bought out:</p>
-<pre class="literal-block">
-summary(numofshoepairs.masterdf$Percent)
-</pre>
-<p>which gives:</p>
-<pre class="literal-block">
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-0.2143  0.5000  0.5714  0.5736  0.6429  1.0710
-</pre>
-<p>and how many shoes I bought:</p>
-<pre class="literal-block">
-summary(numofshoepairs.masterdf$Shoes)
-</pre>
-<p>which gives:</p>
-<pre class="literal-block">
-Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-3.000   7.000   8.000   8.031   9.000  15.000
-</pre>
-<p>So, I bought about 8 pairs of shoes.</p>
-<p>Finally, let's plot a histogram of the percentage of shoes in the store I bought:</p>
-<pre class="literal-block">
-(ggplot(numofshoepairs.masterdf, aes(x=Percent))
- + geom_histogram(aes(y=..density..), fill=&quot;gray&quot;, color=&quot;black&quot;, binwidth = .1)
- + theme_bw()
- + geom_vline(x=mean(numofshoepairs.masterdf$Percent), color=&quot;blue&quot;)
-)
-</pre>
-<p>And you get:</p>
-<img alt="deforming_plates" class="align-center" src="/images/percent_store_invent.png" style="width: 700.0px; height: 300.0px;" />
-<p>And that's our shoe-shopping adventure:  Sampling with the built-in function of sample in R, where we determined the size of a single sample through our rate, and secondly with the supplied function where we sample individual elements in a population and evaluate each outcome against a set threshold.  Sampling forwards and backwards- have fun, and good shopping!</p>
+        <span>Sun 27 July 2014</span>
+<span>| tags: <a href="../tag/recommender-systems.html">Recommender Systems</a><a href="../tag/python.html">python</a><a href="../tag/sqlite3.html">sqlite3</a><a href="../tag/million-song-database.html">Million Song Database</a></span>
+</footer><!-- /.post-info --><div class="section" id="building-recommendation-systems">
+<h2><strong>Building Recommendation Systems</strong></h2>
+<p>Recommender systems filter information to predict how much a user would like a given item.  Companies like Netflix and Tivo use these types of filtering algorithms to try to figure out what a person will want.  Unfortunately, these systems are not perfect, and sometimes can go horribly wrong, as elegantly described by Patton Oswalt on the Conan O'Brien show:</p>
+<div class="youtube" align="left"><iframe width="420" height="315" src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&end=272&version=3" frameborder="0"></iframe></div><p>Yes, bad Tivo.</p>
+<p>So how do we improve recommender systems?  Companies as well as academics are trying hard to figure this out. Fortunately, some groups released large datasets so the anyone can play with them and try to solves these issues.  One such publicly available dataset is the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/">The Million Song Dataset</a>  -- a perfect dataset for building recommender systems! So, I thought I would give it a try.</p>
+<p>For this project, I focused on the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> provided by Echonest, which includes information on user play lists to build my recommenders located on my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a>. I built two recommenders; one that figures out what songs a user would like by using an input of a selected song, and another that recommends songs based on what the user has in their play list.</p>
+<p>Both recommenders use a combination of <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Collaborative filtering techniques</a> with vote counting. Collaborative filtering makes recommendations by collecting taste preferences and comparing them to other users.  Here we assume that others that have the same song in their play list have similar tastes.  Therefore, songs in the other users play lists would be good ones to recommend.  In these recommenders I ultimately get to a list of songs that were provided by other users.  I then count up how many times a song appears in other people's play lists (vote counting) and spit out the top counted songs as the top recommended songs.  In this blog I briefly describe the approach for both the simple, single song recommender and the slightly more complex user recommender for users with a play list.</p>
 </div>
-<p><a href="../sampling.html#disqus_thread">comments</a></p>                </article>
+<div class="section" id="the-data">
+<h2><strong>The Data</strong></h2>
+<p>The <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> contains over a million users with over 380,000 unique songs.  I only use a very small subset of data that includes:</p>
+<ol class="arabic simple">
+<li>A unique user ID</li>
+<li>All the songs in the user play list including:</li>
+</ol>
+<blockquote>
+<ul class="simple">
+<li>Song name and id</li>
+<li>Artist name and id</li>
+<li>The number of times the song was played by the user</li>
+</ul>
+</blockquote>
+</div>
+<div class="section" id="the-simple-recommender">
+<h2><strong>The Simple Recommender</strong></h2>
+<p>For my simple recommender I don't know anything about the person selecting the song.  All I know is the selected artist and song. The steps for this recommender include:</p>
+<ol class="arabic simple">
+<li>Find all users that have the song in their play list</li>
+<li>Make a list of all songs from each person's play list</li>
+<li>Count how many times a unique song appears in the list</li>
+<li>Print out the songs in the order of most counts that was not the original input song</li>
+</ol>
+<p>Easy cheesy, right?</p>
+<p>To illustrate the outcome of this recommender, here is a plot of the top 10 most counted songs from other people's play lists given the song Yeah! by Usher (keep in mind these are the counts for my much smaller subset of data):</p>
+<img alt="deforming_plates" class="align-center" src="/images/top10.jpg" style="width: 700.0px; height: 700.0px;" />
+</div>
+<div class="section" id="adding-user-play-list-into-a-recommender">
+<h2><strong>Adding User Play List into a Recommender</strong></h2>
+<p>Adding a user play list into a recommender is slightly more complex.  Here, I want to know what other users are most similar to the recommendee (for lack of a better term, I define the recommendee as the person who is going to get the recommendation), then suggest songs from the similar users' play lists. The steps for this recommender include:</p>
+<ol class="arabic simple">
+<li>For each song in the recommendee play list, make a list of all users that also have that song in their play list.</li>
+<li>Count the number of times a unique user is in the list. The user with the most counts is the most similar to the recommendee.</li>
+<li>Pick the most similar users and concatenate a list of songs that were not in the recommendee's play list.</li>
+<li>Count the number of times a song shows up in the list</li>
+<li>Print out the songs in order of most counted</li>
+</ol>
+<p>Slightly more complicated than the simple recommender, but generally the same idea.</p>
+</div>
+<div class="section" id="pitfalls">
+<h2><strong>Pitfalls</strong></h2>
+<p>There are issues with these simple approaches.  They work well for the small data set that I downloaded, but as the dataset gets larger, the lists and dictionaries that I make in my code also get larger. So, this approach will take up increasing amounts of memory to make my lists, and increasing amounts of time to sort the lists and count the number of songs.  <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Model-based approaches</a> help to minimize these issues. Another issue is making recommendations based on new songs, or songs that very few people have listened to.  In these cases other information about the song, such as genre, would be needed to make recommendations.</p>
+</div>
+<div class="section" id="more-info-on-my-code">
+<h2><strong>More Info on My Code</strong></h2>
+<p>Interested in using my recommenders? Check out my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a> which includes the codes, instructions on how to use them, and some more information on how the codes work. Any comments or suggestions are welcome!</p>
+</div>
+<div class="section" id="acknowledgements">
+<h2><strong>Acknowledgements</strong></h2>
+<p>Thanks to <a class="reference external" href="http://www.linkedin.com/pub/stella-rowlett/0/797/118">Stella Rowlett</a>, <a class="reference external" href="http://jasongowans.net/">Jason Gowans</a> and <a class="reference external" href="http://www.linkedin.com/in/manjudotorg">Manju Muthukumaresan</a> for suggesting this project!</p>
+</div>
+<p><a href="../recommender.html#disqus_thread">comments</a></p>                </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1><a name = "moreblogs">Other articles</a></h1>
@@ -219,6 +122,22 @@ Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 
                 <a class="readmore" href="../ret_db.html">read more</a>
 <p><a href="../ret_db.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="../sampling.html" rel="bookmark"
+                           title="Permalink to My big fat shoe-shopping adventure: Iterative sampling in R"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Sun 27 July 2014</span>
+<span>| tags: <a href="../tag/r.html">R</a><a href="../tag/simulations.html">simulations</a><a href="../tag/sampling.html">sampling</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Sampling with R</strong></p>
+
+                <a class="readmore" href="../sampling.html">read more</a>
+<p><a href="../sampling.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
             </article></li>
 
             <li><article class="hentry">
@@ -331,22 +250,6 @@ Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 
                 <a class="readmore" href="../ehalf.html">read more</a>
 <p><a href="../ehalf.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="../GMT.html" rel="bookmark"
-                           title="Permalink to Mapping and Plotting data with General Mapping Tools (GMT)"><strong>Mapping and Plotting data with General Mapping Tools (GMT)</strong></a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Mon 14 April 2014</span>
-<span>| tags: <a href="../tag/general-mapping-tools.html">General Mapping Tools</a><a href="../tag/gmt.html">GMT</a><a href="../tag/etopo1.html">ETOPO1</a><a href="../tag/shell-script.html">shell script</a></span>
-</footer><!-- /.post-info -->                <p class="first last"><strong>Data Visualization with GMT</strong></p>
-
-                <a class="readmore" href="../GMT.html">read more</a>
-<p><a href="../GMT.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
             </article></li>
             </ol><!-- /#posts-list -->
 <p class="paginator">
