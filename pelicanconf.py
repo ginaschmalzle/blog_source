@@ -10,8 +10,8 @@ REVERSE_CATEGORY_ORDER = True
 TIMEZONE = 'America/New_York'
 
 DEFAULT_LANG = u'en'
-PLUGIN_PATH = 'plugins'
-#PLUGINS = ['disqus_static']
+#PLUGIN_PATH = 'plugins'
+PLUGINS = ['pelican_youtube']
 DISQUS_SITENAME = 'geodesygina'
 #DISQUS_SHORTNAME = 'geodesygina'
 #DISQUS_SECRET_KEY = 'jaaoxoW3eIfofTJXNkqJumRS2WSFVXmy7ZmPIpnnc26GeuD49xEhXDv05FltujkC'

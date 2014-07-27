@@ -38,256 +38,192 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="./pop_db.html"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</strong></a></h1>
+                    <h1 class="entry-title"><a href="./ret_db.html"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</strong></a></h1>
 <footer class="post-info">
-        <span>Wed 09 July 2014</span>
-<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a></span>
-</footer><!-- /.post-info --><p>In <a class="reference external" href="/make_db.html">Part 1 Creating a Database with SQLite3</a>  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with <a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, who was incredibly patient in teaching me how to do this... Kudos, David!</p>
-<div class="section" id="part-2-populating-an-sqlite-database-using-python">
-<h2><strong>Part 2. Populating an SQLite Database using Python</strong></h2>
-<p>Let's put some data into our database!  First, let's fill up our <em>locations</em> TABLE. We collected and keep a list of the cities, their unique codes provided by Open Weather Map, their latitudes and longitudes and their country codes <a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/data/city_lists/city_list_normalized_20140425-1923.txt">here</a>, in a file called city_list_normalized_20140425-1923.txt.  This file contains information on the cities and looks like this:</p>
+        <span>Sun 27 July 2014</span>
+<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a><a href="./tag/spatial-analysis.html">spatial analysis</a></span>
+</footer><!-- /.post-info --><p>In <a class="reference external" href="http://geodesygina.com/make_db.html">Part 1 Creating a Database with SQLite3</a>  we built a database. In <a class="reference external" href="http://geodesygina.com/pop_db.html">Part 2 Populating an SQLite Database using Python</a> we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough <a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, for his efforts with this project!</p>
+<p>Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day.</p>
+<img alt="differenced_forecasts" class="align-left" src="/images/weather_diff.png" style="width: 800.0px; height: 500.0px;" />
+<p><em>Figure 1. Maps of forecasted differences (the difference between the day of forecast and the forecast for X days out).</em></p>
+<div class="section" id="part-3-retrieving-data-from-an-sqlite-database-using-python">
+<h2><strong>Part 3. Retrieving data from an SQLite Database using Python</strong></h2>
+<p>First we need to retrieve the weather forecast data we made in the previous posts.  Our database contains the forecasted maximum temperature (maxt), minimum temperature (mint), rain and snow for a given day that were made the day of to fourteen days prior.  So, we need to be able to extract this information from the database.  This code uses the sqlite3 module in python to extract the information:</p>
 <pre class="literal-block">
-id     nm      lat     lon     countryCode
-819827 Razvilka        55.591667       37.740833       RU
-524901 Moscow  55.752220       37.615555       RU
-1271881        Firozpur Jhirka 27.799999       76.949997       IN
-1283240        Kathmandu       27.716667       85.316666       NP
-703448 Kiev    50.433334       30.516666       UA
-1282898        Pokhara 28.233334       83.983330       NP
-3632308        Merida  8.598333        -71.144997      VE
-.
-.
-.
-</pre>
-<p>We need a way to grab this file and read the contents in python.  Let's create a function that will do just that. If we are in the directory containing the file called city_list_normalized_20140425-1923.txt, we can call the file in python and read its contents:</p>
-<pre class="literal-block">
-def isolate_city_codes():
-   filename = 'city_list_normalized_20140425-1923.txt'
-   with open(filename, 'r') as f:
-       contents = f.read()
-   list_of_lines = [line.split('\t') for line in contents.split('\n')[1:]]
-   # Latitude and longitude should be numbers
-   for i in range(1, len(list_of_lines)-1):
-       list_of_lines[i][2] = float(list_of_lines[i][2])
-       list_of_lines[i][3] = float(list_of_lines[i][3])
-   return list_of_lines
-</pre>
-<p>Let's break down what the function is doing.  The first thing is that it defines a string called filename as 'city_list_normalized_20140425-1923.txt'.  The next two lines of code are contained in a 'with statement'.  A 'with statement' is a context manager, which provides a way to safely close the opened file and exit out of the python script in case of an error. The contents of the file are read and placed into the variable <em>contents</em> that looks something like this:</p>
-<pre class="literal-block">
-'id\tnm\tlat\tlon\tcountryCode\n819827\tRazvilka\t55.591667\t37.740833\tRU\n524901\tMoscow\t55.752220\t37.615555\tRU ...
-...
-\n895417\tBanket\t-17.383329\t30.400000\tZW\n'
-</pre>
-<p>Notice the once tab seperated entries of the file are now separated with '\t' and the lines are now separated with '\n'.  The next line of our program defines list_of_lines, which runs a loop through contents that splits out each line (defined by '\n') and each tab separated space (defined by '\t').  list_of_lines now looks like this:</p>
-<pre class="literal-block">
-[['819827', 'Razvilka', '55.591667', '37.740833', 'RU'],
- ['524901', 'Moscow', '55.752220', '37.615555', 'RU'],
- ['1271881', 'Firozpur Jhirka', '27.799999', '76.949997', 'IN'],
- .
- .
- .
- ['895417', 'Banket', '-17.383329', '30.400000', 'ZW']
-]
-</pre>
-<p>So, list_of_lines is a <em>list of lists</em>, where a list contains the contents within a set of square brackets.  The problem with the current list_of_lines is that the latitude and longtitudes are strings and must be converted into floats, which is done using the for statement.  Finally, the revised list_of_lines is returned with floats for the latitude and longitude.</p>
-<p>Now, let's populate the TABLE <em>locations</em> in the sqlite3 database <em>weather_data_OWM.db</em>. We write another function that calls the previous function to grab the data, then it populates the <em>locations</em> TABLE with those values:</p>
-<pre class="literal-block">
+import os
 import sqlite3
-def populate_db_w_city_codes(db='weather_data_OWM.db'):
-   connection = sqlite3.connect(db)
-   with connection:
-       city_codes = isolate_city_codes()
-       cursor = connection.cursor()
-       for code in city_codes[1:-1]:
-           if code == ['']:
-               print('\n    Empty tuple found; skipping.\n')
-               continue
-           cursor.execute(
-                   '''INSERT INTO locations VALUES''' +
-                   str(tuple(code)))
+def get_single_date_data_from_db(exact_date, db='weather_data_OWM.db'):
+    &quot;&quot;&quot;Retrieve forecasts for single date.&quot;&quot;&quot;
+                # exact date should be in the form YYYYMMDD
+    connection = sqlite3.connect(db)
+    with connection:
+        cursor = connection.cursor()
+        try:
+            cursor_output = cursor.execute(                     # This should all be old hat to you now...
+                '''SELECT lat, lon, '''
+                '''maxt_0, mint_0, rain_0, snow_0, '''
+                '''maxt_1, mint_1, rain_1, snow_1, '''
+                '''maxt_2, mint_2, rain_2, snow_2, '''
+                '''maxt_3, mint_3, rain_3, snow_3, '''
+                '''maxt_4, mint_4, rain_4, snow_4, '''
+                '''maxt_5, mint_5, rain_5, snow_5, '''
+                '''maxt_6, mint_6, rain_6, snow_6, '''
+                '''maxt_7, mint_7, rain_7, snow_7, '''
+                '''maxt_8, mint_8, rain_8, snow_8, '''
+                '''maxt_9, mint_9, rain_9, snow_9, '''
+                '''maxt_10, mint_10, rain_10, snow_10, '''
+                '''maxt_11, mint_11, rain_11, snow_11, '''
+                '''maxt_12, mint_12, rain_12, snow_12, '''
+                '''maxt_13, mint_13, rain_13, snow_13, '''
+                '''maxt_14, mint_14, rain_14, snow_14 '''
+                '''FROM locations, owm_values '''
+                '''ON owm_values.location_id=locations.id '''
+                '''WHERE target_date=?''', (exact_date,))
+        except Exception as e:                                                                                                                  # What exceptions may we encounter here?
+            print(e)
+    retrieved_data = cursor_output.fetchall()                   # We receive list of simple tuples from database.
+    composed_data = generate_dict_of_tuples(retrieved_data)     # Now we need to build some function that converts the retrieved data into a dictionary.
+    return composed_data
 </pre>
-<p>Note that we have to import the python module sqlite3.  This module allows you to 'connect' with a specified database.  Once you have a connection, you can create a cursor object that calls its execute() method to perform SQLite3 commands.  In the function described above, we create a <em>connection</em> which connects to our database (db = 'weather_data_OWM.db').  Then we apply a context manager (the with statement) to:</p>
-<blockquote>
-<ol class="arabic simple">
-<li>Collect the information contained within <em>city_list_normalized_20140425-1923.txt</em> by calling our previous function, <em>isolate_city_codes()</em>.  The returned <em>list_of_lines</em> from <em>isolate_city_codes()</em> is now labeled as <em>city_codes</em>.</li>
-<li>Open a <em>cursor</em> that will execute subsequent <em>SQLite3</em> commands.</li>
-<li>Insert the values of <em>city_codes</em> into the <em>locations</em> TABLE.</li>
-</ol>
-</blockquote>
-<p>Notice that the SQLite3 commands are imbedded into cursor.execute. The lists within <em>city_codes</em> are already in the order we want them (same order as the database columns were set up in, see <a class="reference external" href="/make_db.html">Part 1</a>). They have been 'tuple-ized' and 'string-ified' since this is the format SQLite3 understands.</p>
-<p>After executing, you can now check if they were inserted into your database by entering the sqlite3 repl:</p>
+<p>Note the line:</p>
 <pre class="literal-block">
-sqlite3 weather_data_OWM.db
+composed_data = generate_dict_of_tuples(retrieved_data)
 </pre>
-<p>Once in the sqlite repl type:</p>
+<p>Here we need some way to make a usable form of the dataset. In this case the function generate_dict_of tuples receives the raw data from the SQLite3 database and converts it into a more usable dictionary of tuples:</p>
 <pre class="literal-block">
-SELECT * FROM locations;
+def generate_dict_of_tuples(retrieved_data):
+    &quot;&quot;&quot;Compose the data into a succinct dictionary of tuples.&quot;&quot;&quot;
+    # Our re-composed data type is a dictionary of tuples.
+    # Each tuple contains three items:
+    #     sub-tuple containing latitude and longitude (floats);
+    #     list of 15 sub-sub-tuples, each containing
+    #         maxt, mint, rain, snow (floats).
+    # For dates where the database contains no data, the forecast tuple
+    # would be: `(None, None, None, None)` but this is replaced by `None`,
+    # using an `if-else` clause.
+    composed_data = {}
+    for item in retrieved_data:
+        lat_lon = item[0:2]
+        forecasts = [subitem
+                    if subitem[0] or subitem[1] or subitem[2] or subitem[3]
+                    else None
+                for subitem in
+                zip(item[2::4], item[3::4], item[4::4], item[5::4])]
+        composed_data[lat_lon] = forecasts
+    return composed_data
 </pre>
-<p>The output should look something like this:</p>
+<p>Now having both of these functions in place, if we run:</p>
 <pre class="literal-block">
-.
-.
-.
-894413|Chakari|-18.062941|29.89246|ZW
-894460|Centenary|-16.722891|31.11462|ZW
-895057|Binga|-17.620279|27.341391|ZW
-895417|Banket|-17.383329|30.4|ZW
+get_single_date_data_from_db(20140522)
 </pre>
-<p>Your new table should have data that include: <em>city id|city name|latitude|longitude|two letter country code</em>.</p>
-<p>Splendid!  One table down, one related table to go!  The second table is a bit more complicated.  It involves data that was downloaded through the <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a> API that allows for easy access to their data products that are available in XML and JSON formats.   Since this blog is focusing on building and populating databases, I assume that you already have the data downloaded in JSON format. I will not get into how to download the data here, but for more information on how to do this, David developed a nifty little python script called <a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/code/requests.py">requests.py</a> that allows you to download data using an API key that is hidden from public access (important when allowing public access to your files in Github).</p>
-<p>We use the JSON formatted files to populate our database.  JSON files are in the form of a dictionary, also known as an associative array.  If you are not familiar with this data structure, I recommend you read <a class="reference external" href="/dict.html">this little ditty</a> before continuing. Otherwise, keep on reading!</p>
-<p>Below is an example of a JSON file obtained using the Open Weather Map API that has been prettified using <a class="reference external" href="http://jsbeautifier.org/">http://jsbeautifier.org/</a>.  The JSON file contains the forecasts and information for a single city:</p>
+<p>We get a dictionary that looks like this:</p>
 <pre class="literal-block">
-{
-   'cod': '200',
-   'message': 0.005,
-   'city': {
-       'name': 'Bay Minette',
-       'id': 4046255,
-       'coord': {
-           'lat': 30.882959,
-           'lon': -87.773048
-       },
-       'population': 8044,
-       'country': 'US'
-   },
-   'list': [{
-       'weather': [{
-           'description': 'few clouds',
-           'icon': '02d',
-           'main': 'Clouds',
-           'id': 801
-       }],
-       'temp': {
-           'max': 27.32,
-           'min': 18.14,
-           'eve': 24.57,
-           'day': 27.22,
-           'night': 18.14,
-           'morn': 27.22
-       },
-       'deg': 199,
-       'clouds': 12,
-       'pressure': 1020.38,
-       'humidity': 42,
-       'dt': 1398186000,
-       'speed': 2.11
-   }, {
-       'weather': [{
-
+ {(38.576698, -92.173523): [(18.71, 6.97, 0, 0),
+ (21.03, 8.7, 0, 0),
+ (20.67, 9.72, 0, 0),
+ (19.01, 7.23, 0, 0),
+ (22.08, 9.07, 0, 0),
+ (21.68, 9.53, 0.34, 0),
+ (22.33, 10.22, 0, 0),
+ (16.18, 12.14, 1.23, 0),
+ (19.05, 12.02, 10.08, 0),
+ None,
+ None,
+ None,
+ None,
+ None,
+ None],
+(34.154179, -117.344208): [(17.37, 6.16, 0, 0),
+ (19.66, 7.48, 0, 0),
+ (21.24, 6.27, 0, 0),
+ (21.71, 5.5, 0, 0),
+ (18.34, 8.88, 0, 0),
+ (20.78, 4.73, 0, 0),
+ (20.78, 4.73, 0, 0),
+ (22.96, 7.06, 0, 0),
+ (20.78, 4.73, 0, 0),
+ None,
+ None,
+ None,
+ None,
+ None,
+ None],
        .
        .
-       .
+       .}
+</pre>
+<p>The keys are the location's latitude and longitude, and the values are the forecasts.  In this example we have 9 forecasts: one for the day of and 8 days out (other values that are not present are marked as ‘None’).</p>
+<p>Fabulous.  In <em>Figure 1</em> we focus only on the maximum temperature (maxt) forecasts. We visualize the absolute differences between the maximum forecasted values for the day of and the forecasted value for that day at some time in the past.  The differenced values are presented on a map of the United States using warm colors to reflect that the forecast the day of was warmer and cooler colors to reflect cooler temperatures (pun intended). With our data extracted, we need only to calculate the differences and we will plot the data using python's matplotlib with the basemap toolkit.</p>
+<p>This visualization will include six subplots- one for each successive day leading up to our target date.  Thinking about this another way, if our target date is April 22, 2014 (20140422), and we assign that the letter t, then we are making a subplot for differences between t, the day of forecast, and the forecast made at t-1, t-2, t-…n days.</p>
+<p>To collect the data for our target date we run the function below, which makes lists containing the latitude, longitude and differences, and sends them off to be processed by our next function:</p>
+<pre class="literal-block">
+def make_map(target_date=20140422):
+'''Make a basic map of the United States'''
+# target_date is the day the forecasts were made for
+lat=[]; lon=[]; diff=[]
+forecasts = get_single_date_data_from_db(target_date)                           # Call earlier function to get dictionary
+for city in forecasts:
+        # First collect the lats and longs of the cities
+        lat.append(city[0])
+        lon.append(city[1])
+        #Collect differenced maxt values
+        diff.append([
+                (forecasts[city][0][0]-forecasts[city][1][0]),
+                (forecasts[city][0][0]-forecasts[city][2][0]),
+                (forecasts[city][0][0]-forecasts[city][3][0]),
+                (forecasts[city][0][0]-forecasts[city][4][0]),
+                (forecasts[city][0][0]-forecasts[city][5][0]),
+                (forecasts[city][0][0]-forecasts[city][6][0]),
+                (forecasts[city][0][0]-forecasts[city][7][0]),
+                (forecasts[city][0][0]-forecasts[city][8][0])])
+make_basemap(lon,lat,diff,target_date)                                                                                  # Send this information to make_basemap --&gt; our next function!
+plt.show()
+</pre>
+<p>The second function we have named &quot;make_basemap”, and does the mapping work:</p>
+<pre class="literal-block">
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap, cm
+def make_basemap(lon,lat,diff,target_date):
+        for day in range(1,7):                                                                                                                                          # Run this for each forecasted difference
+                subdiff = []
+                for city in range(0,len(diff)):
+                        subdiff.append(diff[city][day])
+                plt.subplot(3,2,day)                                                                                                                                            # Define where the subplot will lie on figure
+                mindiff = min(subdiff)
+                maxdiff = max(subdiff)
 
-   }],
-   'cnt': 15
-}
-</pre>
-<p>Now you see that it is just one giant dictionary, right?  So if we import this into python, then we can call certain values by their keys.  For example, if we call this dictionary x, then we can retrieve the latitude of the city by typing:</p>
-<pre class="literal-block">
-x['city']['coord']['lat']
-</pre>
-<p>In this JSON file the 'city' key contains the information about the city itself, and the 'list' key contains information on the weather forecasts, where the first value contains information on the weather forecasts for the day the file was downloaded.  The second value in 'list' contains the forecast for the next day, etc.</p>
-<p>You can see that the file contains the minimum and maximum temperature, and, if it exists, also contains snow and rain amounts. 'dt' is the day the forecast is for in <a class="reference external" href="http://en.wikipedia.org/wiki/Unix_time">Unix Time</a>. The 'query date'  which is the day the file was downloaded is not included in these files but is important because this will tell you which day is the day-of forecast.  We dealt with this problem by downloading the JSON files for each city into a directory with the download date.</p>
-<p>The first thing we will need to do here is extract the information we need from these JSON files. For the sake of simplicity, I assume you know the download date and specify it in the python code (rather than extracting it from the directory name). Depending on what region you are collecting, you may have thousands of files for one download date, each corresponding to an individual location. We would like a function that</p>
-<blockquote>
-<ol class="arabic simple">
-<li>Ingests these JSON formatted files and stores the contents as a dictionary</li>
-<li>Create a smaller dictionary called <em>forecast_dict</em> that contains only the information that we need for our database.  The smaller dictionary should have a 'key' that relates to the city_id, and values that contain the forecasted values.</li>
-</ol>
-</blockquote>
-<p>I assume that you have the names of your files in a list called <em>files</em> that were collected on a specified <em>query_date</em>.  I use an example query date of 20140422:</p>
-<pre class="literal-block">
-files = [yourfile1.json, yourfile2.json, yourfile3.json... ]  # example files
+                # create Mercator Projection Basemap instance.
+                m = Basemap(projection='merc',\
+                                                                llcrnrlat=25,urcrnrlat=50,\
+                                                                llcrnrlon=-130,urcrnrlon=-60,\
+                                                                rsphere=6371200.,resolution='l',area_thresh=10000)
+                # draw coastlines, state and country boundaries, edge of map.
+                m.drawcoastlines()
+                m.drawstates()
+                m.drawcountries()
+                # draw parallels.
+                parallels = np.arange(0.,90,10.)
+                m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
+                # draw meridians
+                meridians = np.arange(180.,360.,10.)
+                m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
 
-import ast
-def retrieve_data_vals(files, query_date='20140422'):
-   forecast_dict = {'query_date': query_date}                 # Assign query_date to dictionary
-   files.sort()
-   for file in files:
-       forecast_list_pruned = []
-       try:
-           with open(file, 'r') as f:
-               contents = f.read()                            # Read in file as a string
-       except Exception as e:
-           print('Error {}\n    in file {}'.format(e, file))
-       if contents == '\n':
-           print('File {} empty.'.format(file))
-           continue
-       content_dict = ast.literal_eval(contents)              # Convert to dictionary
-       city_id = (content_dict['city']['id'])                 # Assign city_id
-       forecast_list_received =(content_dict['list'])         # Assign everythin in 'list' to forecast_list_received
-       for i, forecast in enumerate(forecast_list_received):  # For each forecast in the dictionary
-           if 'rain' in forecast:                             # Assign rain, if exists,
-              rain = forecast['rain']                         # Otherwise make 0
-           else:
-              rain = 0
-           if 'snow' in forecast:                             # Same with snow
-               snow = forecast['snow']
-           else:
-               snow = 0
-           forecast_tuple = (                                 # Assign forecast information in tuple form that is SQLite3 readable (if stringified)
-                   forecast['dt'],
-                   float(forecast['temp']['max']),
-                   float(forecast['temp']['min']),
-                   float(rain),
-                   float(snow),
-                   )
-           forecast_list_pruned.append(forecast_tuple)        # Collect all forecasts for that file
-       forecast_dict[city_id] = forecast_list_pruned          # and assign to the forecast_dict for each city
-   return forecast_dict
+                # draw Circles on the map
+                # Determine min and max differenced values
+                jet = plt.cm.get_cmap('jet')
+                x,y = (m(lon,lat))
+                sc = plt.scatter(x, y, c=subdiff, vmin=mindiff, vmax=maxdiff, cmap=jet, s=8, edgecolors='none' )
+                # add colorbar
+                plt.colorbar(sc)
+                # add title
+                plt.suptitle(&quot;Differenced Max Temperatures (degrees C) for day &quot;+str(target_date), fontsize=18)
+                plt.title(&quot;Forecast Day 0 - Day &quot;+str(day))
 </pre>
-<p>Phew!  Extracting the data from the JSON files and putting it into an SQLite3 friendly format is the toughest part. Now that we have forecast_dict, however, we can populate our database! Our next function will use some of the same techniques described above, which include using the sqlite3 module to make a connection with the sqlite database and execute <strong>SQLite3</strong> commands:</p>
-<pre class="literal-block">
-import sqlite3
-def populate_db_w_forecasts(db='weather_data_OWM.db'):
-   forecast_dict = retrieve_data_vals(files)                 # Run the function retrieve_data_vals above which returns the forecast dictionary
-   query_date = forecast_dict['query_date']                  # Assign query_date
-   connection = sqlite3.connect(db)                          # Create the SQLite3 connection
-   with connection:
-       cursor = connection.cursor()
-       for key in forecast_dict:
-           if key == 'query_date':
-               continue                                      # After here, &quot;key&quot; is a location_id.
-           for i,item in enumerate(forecast_dict[key]):
-                  target_date = datetime.datetime.fromtimestamp(int(item[0])).strftime('%Y%m%d')                         # Convert the Unix time to human readable string
-                  maxt, mint, rain, snow = item[1:]          # Remember forecast dict contains dt, maxT, minT, rain and snow, so we want everything past dt (hence item[1:])
-                  i = str(i)
-                  fields = ','.join([                        # 'fields' contains question marks that indicate where values will be inserted later in the code
-                          'maxt_' + i + '=?',
-                          'mint_' + i + '=?',
-                          'rain_' + i + '=?',
-                          'snow_' + i + '=?'
-                          ])
-                  try:
-                      cursor.execute(                        # Insert the location_id (key) and target_date
-                              '''INSERT INTO owm_values '''
-                              '''(location_id,target_date) '''
-                              '''VALUES (?,?)''', (key, target_date))
-                  except sqlite3.IntegrityError as e:
-                      pass
-                  cursor.execute(                            # Insert forecast values
-                       '''UPDATE owm_values SET ''' + fields +
-                       ''' WHERE id='''
-                       '''(SELECT id FROM owm_values '''
-                       '''WHERE location_id=? AND target_date=?)''',
-                       (maxt, mint, rain, snow, key, target_date)
-</pre>
-<p>Let's talk a little about <em>cursor.execute</em>. Here we do a little python trick to insert values into the SQLite code.  In cursor.execute, we state the SQLite3 commands, but we include question marks (?).  After the SQLite commands we place a comma then a tuple of values.  These tuple values are inserted into where the question marks appear in the code in the order the question marks appear.  So, in the case of:</p>
-<pre class="literal-block">
-cursor.execute(
-        '''INSERT INTO owm_values '''
-        '''(location_id,target_date) '''
-        '''VALUES (?,?)''', (key, target_date))
-</pre>
-<p>The SQLite3 command is:</p>
-<pre class="literal-block">
-INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
-</pre>
-<p>where 'key' is the location city id, and 'target_date' is the date the forecast is for.  Note the <em>location_id</em> of the <em>owm_values</em> TABLE refers to the <em>city_codes</em> of the locations TABLE.</p>
-<p>There you go!  You now have a relational database that has been populated with data!  Now what to do with it... Stay tuned for Part 3 Retrieving data from an SQLite Database using Python.</p>
+<p>Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.</p>
+<p>Like what you see?  Stay tuned, the next step on my agenda is making an interactive website that will allow users to play with the data!  Thanks for reading!</p>
 </div>
-<p><a href="./pop_db.html#disqus_thread">comments</a></p>                </article>
+<p><a href="./ret_db.html#disqus_thread">comments</a></p>                </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1><a name = "moreblogs">Other articles</a></h1>
@@ -295,8 +231,24 @@ INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
 
             <li><article class="hentry">
                 <header>
+                    <h1><a href="./ret_db.html" rel="bookmark"
+                           title="Permalink to SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Sun 27 July 2014</span>
+<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/python.html">python</a><a href="./tag/relational-database.html">relational database</a><a href="./tag/spatial-analysis.html">spatial analysis</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Retrieving Data from a Database</strong></p>
+
+                <a class="readmore" href="./ret_db.html">read more</a>
+<p><a href="./ret_db.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
                     <h1><a href="./pop_db.html" rel="bookmark"
-                           title="Permalink to SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</strong></a></h1>
+                           title="Permalink to SQLite3 Databases: Creating, Populating and Retrieving Data, Part 2"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 2</strong></a></h1>
                 </header>
 
                 <div class="entry-content">
@@ -312,7 +264,7 @@ INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
             <li><article class="hentry">
                 <header>
                     <h1><a href="./make_db.html" rel="bookmark"
-                           title="Permalink to SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1"><strong>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</strong></a></h1>
+                           title="Permalink to SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong></a></h1>
                 </header>
 
                 <div class="entry-content">
@@ -435,22 +387,6 @@ INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
 
                 <a class="readmore" href="./Fibo.html">read more</a>
 <p><a href="./Fibo.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="./VectorProj.html" rel="bookmark"
-                           title="Permalink to Projecting GPS velocity vectors onto a profile">Projecting GPS velocity vectors onto a profile</a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Wed 19 March 2014</span>
-<span>| tags: <a href="./tag/gps.html">GPS</a><a href="./tag/vector-projection.html">vector projection</a></span>
-</footer><!-- /.post-info -->                <p class="first last"><strong>GPS velocity projection</strong></p>
-
-                <a class="readmore" href="./VectorProj.html">read more</a>
-<p><a href="./VectorProj.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
             </article></li>
             </ol><!-- /#posts-list -->
 <p class="paginator">

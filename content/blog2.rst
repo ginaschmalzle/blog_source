@@ -13,11 +13,11 @@ Projecting GPS velocity vectors onto a profile
 ===============================
 **Global Positioning Systems** (**GPS**) are used to measure the three dimensional position of a point over time. High precision GPS are used to measure tectonic plate motion by measuring the position of a permanently installed geodetic monument over time.  The GPS instruments are either permanently installed over the monument and continuously recording its position over time, or the GPS monuments are perodically measured. With either method, three dimensional position estimates are made over time.
 
-This is an image of a high precision GPS antenna, whose image I took from the UNAVCO website:   
+This is an image of a high precision GPS antenna, whose image I took from the `UNAVCO website <http://www.unavco.org/projects/major-projects/pbo/pbo.html>`_:   
 
-.. image:: http://facility.unavco.org/project_support/engineer-equip/images/1ASHM_north_stripped2.jpg
+.. image:: /images/gps_site.jpg
    :height: 200
-   :width: 200
+   :width: 400
    :scale: 100
    :alt: UNAVCO GPS antenna
    :align: right

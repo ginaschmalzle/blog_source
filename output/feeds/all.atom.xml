@@ -1,5 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-09T14:56:00-04:00</updated><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 2</title><link href="http://geodesygina.com/pop_db.html" rel="alternate"></link><updated>2014-07-09T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-09:pop_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, who was incredibly patient in teaching me how to do this... Kudos, David!&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Gina Schmalzle</title><link href="http://geodesygina.com/" rel="alternate"></link><link href="http://geodesygina.com/feeds/all.atom.xml" rel="self"></link><id>http://geodesygina.com/</id><updated>2014-07-27T14:56:00-04:00</updated><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3</title><link href="http://geodesygina.com/ret_db.html" rel="alternate"></link><updated>2014-07-27T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-27:ret_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="http://geodesygina.com/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database. In &lt;a class="reference external" href="http://geodesygina.com/pop_db.html"&gt;Part 2 Populating an SQLite Database using Python&lt;/a&gt; we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, for his efforts with this project!&lt;/p&gt;
+&lt;p&gt;Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day.&lt;/p&gt;
+&lt;img alt="differenced_forecasts" class="align-left" src="/images/weather_diff.png" style="width: 800.0px; height: 500.0px;" /&gt;
+&lt;p&gt;&lt;em&gt;Figure 1. Maps of forecasted differences (the difference between the day of forecast and the forecast for X days out).&lt;/em&gt;&lt;/p&gt;
+&lt;div class="section" id="part-3-retrieving-data-from-an-sqlite-database-using-python"&gt;
+&lt;h2&gt;&lt;strong&gt;Part 3. Retrieving data from an SQLite Database using Python&lt;/strong&gt;&lt;/h2&gt;
+&lt;p&gt;First we need to retrieve the weather forecast data we made in the previous posts.  Our database contains the forecasted maximum temperature (maxt), minimum temperature (mint), rain and snow for a given day that were made the day of to fourteen days prior.  So, we need to be able to extract this information from the database.  This code uses the sqlite3 module in python to extract the information:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+import os
+import sqlite3
+def get_single_date_data_from_db(exact_date, db='weather_data_OWM.db'):
+    &amp;quot;&amp;quot;&amp;quot;Retrieve forecasts for single date.&amp;quot;&amp;quot;&amp;quot;
+                # exact date should be in the form YYYYMMDD
+    connection = sqlite3.connect(db)
+    with connection:
+        cursor = connection.cursor()
+        try:
+            cursor_output = cursor.execute(                     # This should all be old hat to you now...
+                '''SELECT lat, lon, '''
+                '''maxt_0, mint_0, rain_0, snow_0, '''
+                '''maxt_1, mint_1, rain_1, snow_1, '''
+                '''maxt_2, mint_2, rain_2, snow_2, '''
+                '''maxt_3, mint_3, rain_3, snow_3, '''
+                '''maxt_4, mint_4, rain_4, snow_4, '''
+                '''maxt_5, mint_5, rain_5, snow_5, '''
+                '''maxt_6, mint_6, rain_6, snow_6, '''
+                '''maxt_7, mint_7, rain_7, snow_7, '''
+                '''maxt_8, mint_8, rain_8, snow_8, '''
+                '''maxt_9, mint_9, rain_9, snow_9, '''
+                '''maxt_10, mint_10, rain_10, snow_10, '''
+                '''maxt_11, mint_11, rain_11, snow_11, '''
+                '''maxt_12, mint_12, rain_12, snow_12, '''
+                '''maxt_13, mint_13, rain_13, snow_13, '''
+                '''maxt_14, mint_14, rain_14, snow_14 '''
+                '''FROM locations, owm_values '''
+                '''ON owm_values.location_id=locations.id '''
+                '''WHERE target_date=?''', (exact_date,))
+        except Exception as e:                                                                                                                  # What exceptions may we encounter here?
+            print(e)
+    retrieved_data = cursor_output.fetchall()                   # We receive list of simple tuples from database.
+    composed_data = generate_dict_of_tuples(retrieved_data)     # Now we need to build some function that converts the retrieved data into a dictionary.
+    return composed_data
+&lt;/pre&gt;
+&lt;p&gt;Note the line:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+composed_data = generate_dict_of_tuples(retrieved_data)
+&lt;/pre&gt;
+&lt;p&gt;Here we need some way to make a usable form of the dataset. In this case the function generate_dict_of tuples receives the raw data from the SQLite3 database and converts it into a more usable dictionary of tuples:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+def generate_dict_of_tuples(retrieved_data):
+    &amp;quot;&amp;quot;&amp;quot;Compose the data into a succinct dictionary of tuples.&amp;quot;&amp;quot;&amp;quot;
+    # Our re-composed data type is a dictionary of tuples.
+    # Each tuple contains three items:
+    #     sub-tuple containing latitude and longitude (floats);
+    #     list of 15 sub-sub-tuples, each containing
+    #         maxt, mint, rain, snow (floats).
+    # For dates where the database contains no data, the forecast tuple
+    # would be: `(None, None, None, None)` but this is replaced by `None`,
+    # using an `if-else` clause.
+    composed_data = {}
+    for item in retrieved_data:
+        lat_lon = item[0:2]
+        forecasts = [subitem
+                    if subitem[0] or subitem[1] or subitem[2] or subitem[3]
+                    else None
+                for subitem in
+                zip(item[2::4], item[3::4], item[4::4], item[5::4])]
+        composed_data[lat_lon] = forecasts
+    return composed_data
+&lt;/pre&gt;
+&lt;p&gt;Now having both of these functions in place, if we run:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+get_single_date_data_from_db(20140522)
+&lt;/pre&gt;
+&lt;p&gt;We get a dictionary that looks like this:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+ {(38.576698, -92.173523): [(18.71, 6.97, 0, 0),
+ (21.03, 8.7, 0, 0),
+ (20.67, 9.72, 0, 0),
+ (19.01, 7.23, 0, 0),
+ (22.08, 9.07, 0, 0),
+ (21.68, 9.53, 0.34, 0),
+ (22.33, 10.22, 0, 0),
+ (16.18, 12.14, 1.23, 0),
+ (19.05, 12.02, 10.08, 0),
+ None,
+ None,
+ None,
+ None,
+ None,
+ None],
+(34.154179, -117.344208): [(17.37, 6.16, 0, 0),
+ (19.66, 7.48, 0, 0),
+ (21.24, 6.27, 0, 0),
+ (21.71, 5.5, 0, 0),
+ (18.34, 8.88, 0, 0),
+ (20.78, 4.73, 0, 0),
+ (20.78, 4.73, 0, 0),
+ (22.96, 7.06, 0, 0),
+ (20.78, 4.73, 0, 0),
+ None,
+ None,
+ None,
+ None,
+ None,
+ None],
+       .
+       .
+       .}
+&lt;/pre&gt;
+&lt;p&gt;The keys are the location's latitude and longitude, and the values are the forecasts.  In this example we have 9 forecasts: one for the day of and 8 days out (other values that are not present are marked as ‘None’).&lt;/p&gt;
+&lt;p&gt;Fabulous.  In &lt;em&gt;Figure 1&lt;/em&gt; we focus only on the maximum temperature (maxt) forecasts. We visualize the absolute differences between the maximum forecasted values for the day of and the forecasted value for that day at some time in the past.  The differenced values are presented on a map of the United States using warm colors to reflect that the forecast the day of was warmer and cooler colors to reflect cooler temperatures (pun intended). With our data extracted, we need only to calculate the differences and we will plot the data using python's matplotlib with the basemap toolkit.&lt;/p&gt;
+&lt;p&gt;This visualization will include six subplots- one for each successive day leading up to our target date.  Thinking about this another way, if our target date is April 22, 2014 (20140422), and we assign that the letter t, then we are making a subplot for differences between t, the day of forecast, and the forecast made at t-1, t-2, t-…n days.&lt;/p&gt;
+&lt;p&gt;To collect the data for our target date we run the function below, which makes lists containing the latitude, longitude and differences, and sends them off to be processed by our next function:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+def make_map(target_date=20140422):
+'''Make a basic map of the United States'''
+# target_date is the day the forecasts were made for
+lat=[]; lon=[]; diff=[]
+forecasts = get_single_date_data_from_db(target_date)                           # Call earlier function to get dictionary
+for city in forecasts:
+        # First collect the lats and longs of the cities
+        lat.append(city[0])
+        lon.append(city[1])
+        #Collect differenced maxt values
+        diff.append([
+                (forecasts[city][0][0]-forecasts[city][1][0]),
+                (forecasts[city][0][0]-forecasts[city][2][0]),
+                (forecasts[city][0][0]-forecasts[city][3][0]),
+                (forecasts[city][0][0]-forecasts[city][4][0]),
+                (forecasts[city][0][0]-forecasts[city][5][0]),
+                (forecasts[city][0][0]-forecasts[city][6][0]),
+                (forecasts[city][0][0]-forecasts[city][7][0]),
+                (forecasts[city][0][0]-forecasts[city][8][0])])
+make_basemap(lon,lat,diff,target_date)                                                                                  # Send this information to make_basemap --&amp;gt; our next function!
+plt.show()
+&lt;/pre&gt;
+&lt;p&gt;The second function we have named &amp;quot;make_basemap”, and does the mapping work:&lt;/p&gt;
+&lt;pre class="literal-block"&gt;
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap, cm
+def make_basemap(lon,lat,diff,target_date):
+        for day in range(1,7):                                                                                                                                          # Run this for each forecasted difference
+                subdiff = []
+                for city in range(0,len(diff)):
+                        subdiff.append(diff[city][day])
+                plt.subplot(3,2,day)                                                                                                                                            # Define where the subplot will lie on figure
+                mindiff = min(subdiff)
+                maxdiff = max(subdiff)
+
+                # create Mercator Projection Basemap instance.
+                m = Basemap(projection='merc',\
+                                                                llcrnrlat=25,urcrnrlat=50,\
+                                                                llcrnrlon=-130,urcrnrlon=-60,\
+                                                                rsphere=6371200.,resolution='l',area_thresh=10000)
+                # draw coastlines, state and country boundaries, edge of map.
+                m.drawcoastlines()
+                m.drawstates()
+                m.drawcountries()
+                # draw parallels.
+                parallels = np.arange(0.,90,10.)
+                m.drawparallels(parallels,labels=[1,0,0,0],fontsize=10)
+                # draw meridians
+                meridians = np.arange(180.,360.,10.)
+                m.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
+
+                # draw Circles on the map
+                # Determine min and max differenced values
+                jet = plt.cm.get_cmap('jet')
+                x,y = (m(lon,lat))
+                sc = plt.scatter(x, y, c=subdiff, vmin=mindiff, vmax=maxdiff, cmap=jet, s=8, edgecolors='none' )
+                # add colorbar
+                plt.colorbar(sc)
+                # add title
+                plt.suptitle(&amp;quot;Differenced Max Temperatures (degrees C) for day &amp;quot;+str(target_date), fontsize=18)
+                plt.title(&amp;quot;Forecast Day 0 - Day &amp;quot;+str(day))
+&lt;/pre&gt;
+&lt;p&gt;Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.&lt;/p&gt;
+&lt;p&gt;Like what you see?  Stay tuned, the next step on my agenda is making an interactive website that will allow users to play with the data!  Thanks for reading!&lt;/p&gt;
+&lt;/div&gt;
+</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category><category term="spatial analysis"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 2</title><link href="http://geodesygina.com/pop_db.html" rel="alternate"></link><updated>2014-07-09T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-09:pop_db.html</id><summary type="html">&lt;p&gt;In &lt;a class="reference external" href="/make_db.html"&gt;Part 1 Creating a Database with SQLite3&lt;/a&gt;  we built a database.  Here we will use the functionality of Python 3.4 to help populate our database created in Part 1 with data and weather forecasts. This blog assumes you followd Part 1, and have some prior knowledge of Python. Much of this work was done with &lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, who was incredibly patient in teaching me how to do this... Kudos, David!&lt;/p&gt;
 &lt;div class="section" id="part-2-populating-an-sqlite-database-using-python"&gt;
 &lt;h2&gt;&lt;strong&gt;Part 2. Populating an SQLite Database using Python&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;Let's put some data into our database!  First, let's fill up our &lt;em&gt;locations&lt;/em&gt; TABLE. We collected and keep a list of the cities, their unique codes provided by Open Weather Map, their latitudes and longitudes and their country codes &lt;a class="reference external" href="https://raw.githubusercontent.com/WeatherStudy/weather_study/master/data/city_lists/city_list_normalized_20140425-1923.txt"&gt;here&lt;/a&gt;, in a file called city_list_normalized_20140425-1923.txt.  This file contains information on the cities and looks like this:&lt;/p&gt;
@@ -244,7 +425,7 @@ INSERT INTO owm_values (location_id, target_date) VALUES (key, target_date)
 &lt;p&gt;where 'key' is the location city id, and 'target_date' is the date the forecast is for.  Note the &lt;em&gt;location_id&lt;/em&gt; of the &lt;em&gt;owm_values&lt;/em&gt; TABLE refers to the &lt;em&gt;city_codes&lt;/em&gt; of the locations TABLE.&lt;/p&gt;
 &lt;p&gt;There you go!  You now have a relational database that has been populated with data!  Now what to do with it... Stay tuned for Part 3 Retrieving data from an SQLite Database using Python.&lt;/p&gt;
 &lt;/div&gt;
-</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1</title><link href="http://geodesygina.com/make_db.html" rel="alternate"></link><updated>2014-07-04T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-04:make_db.html</id><summary type="html">&lt;p&gt;Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.&lt;/p&gt;
+</summary><category term="SQLite"></category><category term="python"></category><category term="relational database"></category></entry><entry><title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</title><link href="http://geodesygina.com/make_db.html" rel="alternate"></link><updated>2014-07-04T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-07-04:make_db.html</id><summary type="html">&lt;p&gt;Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.&lt;/p&gt;
 &lt;p&gt;&lt;a class="reference external" href="https://github.com/brannerchinese"&gt;David Branner&lt;/a&gt;, a fabulous &lt;strong&gt;python&lt;/strong&gt; coder who dabbles in creating and using &lt;strong&gt;SQLite&lt;/strong&gt; databases, and knows a thing or two about the &lt;a class="reference external" href="https://brannerchinese.com/"&gt;Chinese Language&lt;/a&gt;, and I are working on &lt;a class="reference external" href="https://github.com/WeatherStudy/weather_study"&gt;The Weather Project&lt;/a&gt; where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from &lt;a class="reference external" href="http://openweathermap.org/"&gt;Open Weather Map&lt;/a&gt;, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on &lt;strong&gt;creating a Database with SQLite3&lt;/strong&gt;.  The next blogs will cover &lt;strong&gt;Populating an SQLite Database with Data using Python&lt;/strong&gt; and &lt;strong&gt;Retrieving data from an SQLite Database using Python&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class="section" id="part-1-creating-a-database-with-sqlite3"&gt;
 &lt;h2&gt;&lt;strong&gt;Part 1: Creating a Database with SQLite3&lt;/strong&gt;&lt;/h2&gt;
@@ -1168,8 +1349,8 @@ if(typeof(mpld3) !== "undefined"){
 </summary><category term="Fibonacci"></category><category term="python"></category><category term="iterative"></category><category term="recursion"></category></entry><entry><title>Projecting GPS velocity vectors onto a profile</title><link href="http://geodesygina.com/VectorProj.html" rel="alternate"></link><updated>2014-03-19T14:56:00-04:00</updated><author><name>Gina Schmalzle</name></author><id>tag:geodesygina.com,2014-03-19:VectorProj.html</id><summary type="html">&lt;div class="section" id="global-positioning-systems"&gt;
 &lt;h2&gt;&lt;strong&gt;Global Positioning Systems&lt;/strong&gt;&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Global Positioning Systems&lt;/strong&gt; (&lt;strong&gt;GPS&lt;/strong&gt;) are used to measure the three dimensional position of a point over time. High precision GPS are used to measure tectonic plate motion by measuring the position of a permanently installed geodetic monument over time.  The GPS instruments are either permanently installed over the monument and continuously recording its position over time, or the GPS monuments are perodically measured. With either method, three dimensional position estimates are made over time.&lt;/p&gt;
-&lt;p&gt;This is an image of a high precision GPS antenna, whose image I took from the UNAVCO website:&lt;/p&gt;
-&lt;img alt="UNAVCO GPS antenna" class="align-right" src="http://facility.unavco.org/project_support/engineer-equip/images/1ASHM_north_stripped2.jpg" style="width: 200.0px; height: 200.0px;" /&gt;
+&lt;p&gt;This is an image of a high precision GPS antenna, whose image I took from the &lt;a class="reference external" href="http://www.unavco.org/projects/major-projects/pbo/pbo.html"&gt;UNAVCO website&lt;/a&gt;:&lt;/p&gt;
+&lt;img alt="UNAVCO GPS antenna" class="align-right" src="/images/gps_site.jpg" style="width: 400.0px; height: 200.0px;" /&gt;
 &lt;p&gt;And this is an example of the GPS site BEMT position 3D time series taken from UNAVCO:&lt;/p&gt;
 &lt;img alt="UNAVCO GPS antenna" class="align-right" src="http://cws.unavco.org:8080/cws/modules/GPStimeseriesCA/versions/version2011may/BEMT_2011.png" style="width: 400.0px; height: 400.0px;" /&gt;
 &lt;p&gt;Blue dots are daily position estimates in the north (top), east (middle) and vertical (bottom) components.  This site experienced an offset due to an earthquake in 2010.  For more information on how GPS works, please visit:  &lt;a class="reference external" href="http://www.unavco.org/edu_outreach/teachers/teachers.html"&gt;http://www.unavco.org/edu_outreach/teachers/teachers.html&lt;/a&gt;&lt;/p&gt;

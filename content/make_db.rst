@@ -1,4 +1,4 @@
-**SQLite3 Databases: Creating, Populating and Retreiving Data, Part 1** 
+**SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1** 
 ################################################################################
 
 :date: 2014-07-04 14:56
