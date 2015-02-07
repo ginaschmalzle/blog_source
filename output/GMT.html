@@ -12,7 +12,7 @@
 
 </script>
         <meta charset="utf-8" />
-        <title>Mapping and Plotting data with General Mapping Tools (GMT)</title>
+        <title>Mapping and Plotting data with Generic Mapping Tools (GMT)</title>
         <link rel="stylesheet" href="./theme/css/main.css" />
         <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Atom Feed" />
 
@@ -39,16 +39,18 @@
     <header>
       <h1 class="entry-title">
         <a href="./GMT.html" rel="bookmark"
-           title="Permalink to Mapping and Plotting data with General Mapping Tools (GMT)"><strong>Mapping and Plotting data with General Mapping Tools (GMT)</strong></a></h1>
+           title="Permalink to Mapping and Plotting data with Generic Mapping Tools (GMT)"><strong>Mapping and Plotting data with Generic Mapping Tools (GMT)</strong></a></h1>
     </header>
 
     <div class="entry-content">
 <footer class="post-info">
         <span>Mon 14 April 2014</span>
-<span>| tags: <a href="./tag/general-mapping-tools.html">General Mapping Tools</a><a href="./tag/gmt.html">GMT</a><a href="./tag/etopo1.html">ETOPO1</a><a href="./tag/shell-script.html">shell script</a></span>
-</footer><!-- /.post-info -->      <div class="section" id="general-mapping-tools">
-<h2><strong>General Mapping Tools</strong></h2>
-<p>Before my time here at <strong>Hacker School</strong> I put together a short, hands on course on how to use <a class="reference external" href="http://gmt.soest.hawaii.edu/">General Mapping Tools (GMT)</a>.  <strong>GMT</strong> is a very powerful <strong>mapping</strong> and <strong>data visualization</strong> package. This class was based around using <strong>GMT</strong> 4.  <strong>GMT</strong> 5 has slightly different syntax and functionality and will not work with the scripts presented here.  I intend to update the scripts to <strong>GMT</strong> 5 in the near future.</p>
+<span>| tags: <a href="./tag/generic-mapping-tools.html">Generic Mapping Tools</a><a href="./tag/gmt.html">GMT</a><a href="./tag/etopo1.html">ETOPO1</a><a href="./tag/shell-script.html">shell script</a></span>
+</footer><!-- /.post-info -->      <div class="section" id="generic-mapping-tools">
+<h2><strong>Generic Mapping Tools</strong></h2>
+<p><strong>Update, Feb. 7, 2015</strong>: <em>A comment made by Joseph below alerted me that I had been referring to GMT as General Mapping Tools, which was incorrect!  The correct name is Generic Mapping Tools and has since been updated.  Many thanks to Joseph for pointing this out, and my apologies for my gaffe! BTW -- I love the commentary -- it provides great feedback for improving my blog.  Please don't be shy!</em></p>
+<p><strong>Original (Revised) Text:</strong></p>
+<p>Before my time here at <strong>Hacker School</strong> I put together a short, hands on course on how to use <a class="reference external" href="http://gmt.soest.hawaii.edu/">Generic Mapping Tools (GMT)</a>.  <strong>GMT</strong> is a very powerful <strong>mapping</strong> and <strong>data visualization</strong> package. This class was based around using <strong>GMT</strong> 4.  <strong>GMT</strong> 5 has slightly different syntax and functionality and will not work with the scripts presented here.  I intend to update the scripts to <strong>GMT</strong> 5 in the near future.</p>
 <p>The class was taught at the University of Washington Earth in the Department of Earth and Space Science, so it has an earth science theme -- <strong>earthquakes</strong>!  Here, students learn how to make a map with layers that include <strong>mapping</strong> <strong>topography</strong> and <strong>earthquake locations</strong>.  A subset of data is extracted from a profile line (red line in map below) so that <strong>earthquake</strong> depths can be plotted as a function of distance.   The end goal of the class is to produce the following map and transect:</p>
 <img alt="Cascadia_earthquakes" class="align-right" src="/images/cascadia_seis.jpg" style="width: 800.0px; height: 1100.0px;" />
 <p><em>Figure 1. Map of the Cascadia subduction zone in northwestern United states overlain with ETOPO1 topography model (relief map), and earthquake locations from the ANSS catalog (circles) colored according to earthquake depth.  Red line marks profile line from which data are extracted and plotted the depth vs. longitude graph below the map.</em></p>
