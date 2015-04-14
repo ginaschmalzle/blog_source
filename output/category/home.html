@@ -38,75 +38,469 @@
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="../recommender.html"><strong>The Million Song Database and Recommendation Systems</strong></a></h1>
+                    <h1 class="entry-title"><a href="../matplotlib.html"><strong>An Introduction to Plotting and Mapping in Python</strong></a></h1>
 <footer class="post-info">
-        <span>Sun 27 July 2014</span>
-<span>| tags: <a href="../tag/recommender-systems.html">Recommender Systems</a><a href="../tag/python.html">python</a><a href="../tag/sqlite3.html">sqlite3</a><a href="../tag/million-song-database.html">Million Song Database</a></span>
-</footer><!-- /.post-info --><div class="section" id="building-recommendation-systems">
-<h2><strong>Building Recommendation Systems</strong></h2>
-<p>Recommender systems filter information to predict how much a user would like a given item.  Companies like Netflix and Tivo use these types of filtering algorithms to try to figure out what a person will want.  Unfortunately, these systems are not perfect, and sometimes can go horribly wrong, as elegantly described by Patton Oswalt on the Conan O'Brien show:</p>
-<div class="youtube" align="left"><iframe width="420" height="315" src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&end=272&version=3" frameborder="0"></iframe></div><p>Yes, bad Tivo.</p>
-<p>So how do we improve recommender systems?  Companies as well as academics are trying hard to figure this out. Fortunately, some groups released large datasets so the anyone can play with them and try to solves these issues.  One such publicly available dataset is the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/">The Million Song Dataset</a>  -- a perfect dataset for building recommender systems! So, I thought I would give it a try.</p>
-<p>For this project, I focused on the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> provided by Echonest, which includes information on user play lists to build my recommenders located on my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a>. I built two recommenders; one that figures out what songs a user would like by using an input of a selected song, and another that recommends songs based on what the user has in their play list.</p>
-<p>Both recommenders use a combination of <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Collaborative filtering techniques</a> with vote counting. Collaborative filtering makes recommendations by collecting taste preferences and comparing them to other users.  Here we assume that others that have the same song in their play list have similar tastes.  Therefore, songs in the other users play lists would be good ones to recommend.  In these recommenders I ultimately get to a list of songs that were provided by other users.  I then count up how many times a song appears in other people's play lists (vote counting) and spit out the top counted songs as the top recommended songs.  In this blog I briefly describe the approach for both the simple, single song recommender and the slightly more complex user recommender for users with a play list.</p>
-</div>
+        <span>Mon 13 April 2015</span>
+<span>| tags: <a href="../tag/python.html">python</a><a href="../tag/matplotlib.html">matplotlib</a><a href="../tag/basemap.html">basemap</a><a href="../tag/open-weather-map.html">Open Weather Map</a></span>
+</footer><!-- /.post-info --><div class="section" id="tutorial-on-matplotlib-and-basemap">
+<h2><strong>Tutorial on Matplotlib and Basemap</strong></h2>
+<p>On January 29, 2015 <a class="reference external" href="https://www.linkedin.com/pub/mark-blunk/5a/574/222">Mark Blunk</a> and I prepared a workshop on <a class="reference external" href="http://ipython.org/notebook.html">IPython Notebooks</a>, <a class="reference external" href="http://matplotlib.org/">Matplotlib</a> and <a class="reference external" href="http://matplotlib.org/basemap/">Basemap</a> held at <a class="reference external" href="http://adadevelopersacademy.org/">Ada Developers Academy</a> and sponsored by <a class="reference external" href="http://www.meetup.com/Seattle-PyLadies/">PyLadies Seattle</a>.  This blog goes over the  Matplotlib and Basemap components of the workshop.  The code, contained within Ipython notebooks, are located in <a class="reference external" href="https://github.com/ginaschmalzle/pyladies_matplotlib_ipython_notebooks">this Github Repo</a>.</p>
+<p>The Matplotlib/Basemap part of the workshop focuses on:</p>
+<p><a class="reference internal" href="#getting-to-the-basics-data-structures">1. Getting to the Basics -- Data Structures</a> --  Brief overview of the data structures used in this workshop.</p>
+<p><a class="reference internal" href="#prepare-the-data">2. Prepare the data</a> -- Prepare our data for plotting.</p>
+<p><a class="reference internal" href="#time-to-plot-general-scatter-plots">3. Time to Plot!  General Scatter Plots</a> -- Make some simple scatter plots and learn how to change their attributes.</p>
+<p><a class="reference internal" href="#histograms">4. Histograms!</a> -- Make some simple histograms and learn about how to extract information from them.</p>
+<p><a class="reference internal" href="#mapping">5. Mapping</a> -- Make some maps, and let's throw some data on them too!</p>
 <div class="section" id="the-data">
-<h2><strong>The Data</strong></h2>
-<p>The <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> contains over a million users with over 380,000 unique songs.  I only use a very small subset of data that includes:</p>
-<ol class="arabic simple">
-<li>A unique user ID</li>
-<li>All the songs in the user play list including:</li>
-</ol>
+<h3>The Data</h3>
+<p>I thought it would be fun to work with real data instead of some randomly generated data.  The data we will use are <a class="reference external" href="https://raw.githubusercontent.com/ginaschmalzle/pyladies_matplotlib_ipython_notebooks/master/target_day_20140422.dat">modeled weather forecasts at weather stations across the United States</a>.  This information was collected from the <a class="reference external" href="http://openweathermap.org/">OpenWeatherMap project</a> who provides an API service to download weather forecasts, but unfortunately, does not keep a historical record of the forecasts (actual observations, yes, but modeled forecasts no).  <a class="reference external" href="https://brannerchinese.com/">David Branner</a> and I were curious about how accurate the forecasts were, and wanted to keep the forecasts to see how well they perform over time.  Hence, we created a <a class="reference external" href="https://github.com/WeatherStudy/weather_study">database</a> that collects the weather forecasts for these stations.  The file target_day_20140422.dat that is in the <a class="reference external" href="https://github.com/ginaschmalzle/pyladies_matplotlib_ipython_notebooks">Github repo for this workshop</a> was extracted from our database and contains weather forecasts for each station in the United States for the 'target day' of April 22, 2014. The stations themselves are defined by their latitude and longitude and the file contains forecasts that were done 0 to 7 days out, where day zero is the forecast made on April 22, 2014.  Hence a forecast made one day out was made on April 21, two days out April 20th, etc.</p>
+</div>
+</div>
+<div class="section" id="getting-to-the-basics-data-structures">
+<h2>1. Getting to the Basics -- Data Structures</h2>
+<p>A basic understanding of data structures is useful when playing with and visualizing data. If you are already familiar with data structures you can skip ahead to <a class="reference internal" href="#prepare-the-data">2. Prepare the data</a>.</p>
+<p>In computer science, a data structure is a way to organize data in a computer that makes it computationally efficient.  Three basic data structures are used in this workshop:  <em>lists</em>, <em>tuples</em> and <em>dictionaries</em>.</p>
+<div class="section" id="lists">
+<h3>Lists</h3>
+<p>Lists represent a sequence of values.  In python a list is designated with square brackets [].  The following are examples of lists:</p>
+<pre class="literal-block">
+a = []
+b = ['a', 'b', 'c']
+c = [4,1,6,9,2,10]
+d = [[1,2,3],['a','n','q']]
+</pre>
+<p>The items in these lists are called elements or items.  You can figure out how many elements are in these lists by asking for its length:</p>
+<pre class="literal-block">
+print (len(d))
+</pre>
+<p>The example d above has two lists as elements.  d is called a list of lists.</p>
+<p>So how do you retrieve an element of a list? Each element is assigned a number, starting at 0, that represents where it sits in the list.  For example, element 0 of b is 'a'.  It can be retrieved like this:</p>
+<pre class="literal-block">
+b[0]
+</pre>
+<p>Now you try -- What is c[4]?  How about d[2]?</p>
+<p>Great things about lists are that they are very simple to understand, and they take up relatively little amounts of memory. However they do have some limitations.  Say if you have a long list of values, but you wanted to see if a certain value is in the list.  You potentially would have to read through all the items in the list in order to see if it is in there.  Hence, it can be computationally slow.</p>
+</div>
+<div class="section" id="tuples">
+<h3>Tuples</h3>
+<p>Tuples are similar to lists in that they also represent a sequence of values, however they have a very special property -- i.e., they are immutable.  This means that once they are created they can not be changed.  They are represented by parentheses () rather than square brackets. So, in python, you could define a tuple like this:</p>
+<pre class="literal-block">
+a = ()
+b = (32, 41)
+c = ('x', 'y')
+</pre>
+<p>Similar to lists, you can access a specific element like so:</p>
+<pre class="literal-block">
+b[1]
+</pre>
+<p>This would produce the output of 41.</p>
+<p>Tuples seem a lot more restrictive than a list, so you may ask, why would you ever use a tuple?  Tuples are useful when you would like to describe something that needs multiple values to make sense, and these values cannot change.  For example, you can create a tuple of a location on the surface of the earth that contains a latitude and longitude.  The location would not make sense if one of those values were wrong or missing.  Hence, having an immutable property that describes its location is appropriate in this case.</p>
+</div>
+<div class="section" id="dictionaries">
+<h3>Dictionaries</h3>
+<p>Also known as associative arrays, maps, symbol tables or hash tables, this data structure is computationally fast, but uses lots of memory.  A dictionary consists of key-value pairs, where the keys are all unique and refer to a specific value.  Values among the keys can be identical, however.  Dictionaries are designated with curly brackets {}.  Here are examples of dictionaries:</p>
+<pre class="literal-block">
+dict_a = {}
+dict_b = {'Hello beautiful': 'Ew, Gross', 'Goodbye Gorgeous':'Finally'}
+dict_c = {'Bad Pickup Lines': {'example 1': 'Did it hurt when you fell from heaven?',
+                               'example 2': 'Do you alway wear your shoes over your socks?'
+                              }}
+</pre>
+<p>For dict_b, you can think of a bad pickup line as the 'key' to your response, or 'value'.  For example, if someone said:</p>
+<pre class="literal-block">
+dict_b['Hello beautiful']
+</pre>
+<p>the response would be:</p>
+<pre class="literal-block">
+'Ew, Gross'
+</pre>
+<p>For dict_c, we have a dictionary of dictionaries.  Here we have a dictionary of bad pickup lines that contain examples.  To get to a nested dictionary, say you want the value for 'example 2', you would type:</p>
+<pre class="literal-block">
+dict_c['Bad Pickup Lines']['example 2']
+</pre>
+<p>Get it?  If you need more help, I've put together a <a class="reference external" href="http://geodesygina.com/dict.html">post on dictionaries here</a>.</p>
+<p>The great thing about dictionaries is that we can have a lot of data, but if we know the key, we can very quickly get the associated values.  If this information were in a list, it <em>could</em> take a long time to read through the list to get to the value you want.  The down side however, is that dictionaries could take up a lot of memory, but that's not a problem in this excersize on most modern computers.</p>
+</div>
+</div>
+<div class="section" id="prepare-the-data">
+<h2>2. Prepare the data</h2>
+<div class="section" id="retrieving-the-data">
+<h3>Retrieving the data</h3>
+<p>In this section we focus on reading in data and putting it into an appropriate data structure.  These <a class="reference external" href="https://raw.githubusercontent.com/ginaschmalzle/pyladies_matplotlib_ipython_notebooks/master/target_day_20140422.dat">'data'</a> are  modeled weather forecasts for individual weather stations across the United States. (I put quotes on data because these are modeled solutions, not actual observations).  The file that will be read contains the forecast for one day (April 22, 2014) for 0 to 7 days prior, where the 0th day is the forecast on April 22nd:</p>
+<pre class="literal-block">
+# Read file
+filename='target_day_20140422.dat'
+f = open(filename, 'r')
+contents = f.readlines()
+</pre>
+<p>Where contents looks like this:</p>
+<pre class="literal-block">
+['Lat, Lon, days_out, MaxT, MinT \n',
+ '38.576698 -92.173523 0 18.71 6.97\n',
+ '38.576698 -92.173523 1 21.03 8.7\n',
+ '38.576698 -92.173523 2 20.67 9.72\n',
+ '38.576698 -92.173523 3 19.01 7.23\n',
+ '38.576698 -92.173523 4 22.08 9.07\n',
+ '38.576698 -92.173523 5 21.68 9.53\n',
+ '38.576698 -92.173523 6 22.33 10.22\n',
+ '38.576698 -92.173523 7 16.18 12.14\n',
+ '34.154179 -117.344208 0 17.37 6.16\n',
+ '34.154179 -117.344208 1 19.66 7.48\n',
+ '34.154179 -117.344208 2 21.24 6.27\n',
+ '34.154179 -117.344208 3 21.71 5.5\n',
+ '34.154179 -117.344208 4 18.34 8.88\n', ...]
+</pre>
+<p>Couple of things here -- we have a list of strings, where the end of the string is marked with an 'n'.  This marker indicates that it is the end of the line in the file and will need to be accounted for when we ingest the data into a useable form.</p>
+<p>Let's make a dictionary of values, where lat, long are the keys (in tuple form).  The values are also dictionaries, where the number of days out are the keys, and MaxT and MinT are the values:</p>
+<pre class="literal-block">
+forecast_dict = {}
+for line in range(1, len(contents)):
+    line_split = contents[line].split(' ')
+    try:
+        forecast_dict[line_split[0], line_split[1]][line_split[2]] = {'MaxT':float(line_split[3]),
+                                                                      'MinT':float(line_split[4][:-1])}
+    except:
+        forecast_dict[line_split[0], line_split[1]] = {}
+        forecast_dict[line_split[0], line_split[1]][line_split[2]] = {'MaxT':float(line_split[3]),
+                                                                      'MinT':float(line_split[4][:-1])}
+</pre>
+<p>Here forecast_dict looks like this:</p>
+<pre class="literal-block">
+{('19.068609', '-155.764999'): {'0': {'MaxT': 25.67, 'MinT': 24.45},
+  '1': {'MaxT': 25.88, 'MinT': 24.66},
+  '2': {'MaxT': 25.17, 'MinT': 24.49},
+  '3': {'MaxT': 25.67, 'MinT': 24.37},
+  '4': {'MaxT': 25.35, 'MinT': 23.76},
+  '5': {'MaxT': 24.57, 'MinT': 23.27},
+  '6': {'MaxT': 24.26, 'MinT': 23.33},
+  '7': {'MaxT': 24.71, 'MinT': 23.78}},
+ ('19.43083', '-155.237778'): {'0': {'MaxT': 25.38, 'MinT': 23.41},
+  '1': {'MaxT': 25.39, 'MinT': 22.47},
+  '2': {'MaxT': 24.77, 'MinT': 23.35},
+  '3': {'MaxT': 25.38, 'MinT': 22.45},
+  '4': {'MaxT': 24.36, 'MinT': 22.5},
+  '5': {'MaxT': 23.92, 'MinT': 22.57},
+  '6': {'MaxT': 23.21, 'MinT': 22.45},
+  '7': {'MaxT': 23.56, 'MinT': 22.68}},...
+</pre>
+<p>So now we have for each site (defined by its latitude and longitude) the Maximum Temperature (MaxT) and Minimum Temperature (Min T) for each forecast done the day of (day '0') to 7 days prior.  It's pretty easy to retrieve the stations (and hence the latitudes and longitudes) by typing:</p>
+<pre class="literal-block">
+forecast_dict.keys()
+</pre>
+<p>which gives:</p>
+<pre class="literal-block">
+[('37.224239', '-95.708313'),
+ ('27.53587', '-82.561211'),
+ ('32.709301', '-96.008301'),
+ ('42.09808', '-88.28286'),
+ ('36.424229', '-89.057007'),
+ ('36.98801', '-121.956627'),
+ ('43.02496', '-108.380096'),
+ ('41.802601', '-71.88591'),
+ ('37.99548', '-122.332748'),
+ ('43.416679', '-86.35701'),
+ ('41.85371', '-71.758118'),...
+</pre>
+<p>And you can extract values for a random station by selecting one of these keys, e.g.:</p>
+<pre class="literal-block">
+forecast_dict[('40.51218', '-111.47435')]
+</pre>
+<p>gives you:</p>
+<pre class="literal-block">
+{'0': {'MaxT': 17.45, 'MinT': 2.04},
+ '1': {'MaxT': 17.95, 'MinT': 5.84},
+ '2': {'MaxT': 18.33, 'MinT': 7.99},
+ '3': {'MaxT': 18.16, 'MinT': 7.7},
+ '4': {'MaxT': 13.75, 'MinT': 3.62},
+ '5': {'MaxT': 14.58, 'MinT': 9.23},
+ '6': {'MaxT': 14.58, 'MinT': 9.23},
+ '7': {'MaxT': 13.08, 'MinT': -2.99}}
+</pre>
+<p>The output above shows the forecasted Max T and Min T values for 0-7 days prior for a specific station at Latitude 40.51218N, Longitude -111.47435E.</p>
+</div>
+<div class="section" id="prepare-our-data-for-plotting">
+<h3>Prepare our data for Plotting</h3>
+<p>The plot will be Max T vs. day out for this one station.  It will be a simple plot, but first, we need to make some lists that matplotlib can use to do the plotting.  We will need a list of days, and a list of corresponding Max T values:</p>
+<pre class="literal-block">
+# First retrieve the days
+day_keys  = forecast_dict[('40.51218', '-111.47435')].keys()
+</pre>
+<p>day_keys gives you:</p>
+<pre class="literal-block">
+['1', '0', '3', '2', '5', '4', '7', '6']
+</pre>
+<p>Dictionaries don't necessarily sort alphabetically or numerically, so let's sort them:</p>
+<pre class="literal-block">
+day_keys.sort()
+</pre>
+<p>returns:</p>
+<pre class="literal-block">
+['0', '1', '2', '3', '4', '5', '6', '7']
+</pre>
+<p>Matplotlib plots lists of one thing against another.  So, let's make our lists:</p>
+<pre class="literal-block">
+# First define the variables as lists
+day_list = []; maxt_list = []
+
+# Then populate the lists
+for day_key in day_keys:
+    day_list.append(float(day_key))
+    maxt_list.append(float(forecast_dict[('40.51218', '-111.47435')][day_key]['MaxT']))
+</pre>
+<p>Now the element in one list corresponds with an element in the other list, for a given element number.  For example day_list[0] corresponds to maxt_list[0]</p>
+</div>
+</div>
+<div class="section" id="time-to-plot-general-scatter-plots">
+<h2>3. Time to Plot!  General Scatter Plots</h2>
+<p>First let's import everything we will need:</p>
+<pre class="literal-block">
+%matplotlib inline  # In ipython or ipython notebook only
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from mpl_toolkits.basemap import Basemap
+import numpy as np
+</pre>
+<p>Our most simple scatter plot can be made by typing:</p>
+<pre class="literal-block">
+plt.scatter(day_list, maxt_list)
+# Let's add a line --
+plt.plot(day_list, maxt_list)
+</pre>
+<p>This gives you:</p>
+<img alt="simple_scatter" class="align-right" src="/images/simple_scatter.png" style="width: 400.0px; height: 300.0px;" />
+<p>Now let's jazz is up a bit -- Let's Make the lines red and dashed and change the size of the circles, change them to stars and make them green. Also, how is one to know what you just plotted?  Let's add the axes labels and the title:</p>
+<pre class="literal-block">
+plt.plot(day_list, maxt_list, '.r--')
+plt.scatter(day_list, maxt_list, s = 400, color='green', marker='*')
+plt.ylabel ('Forecasted Max Temperature, Deg C')
+plt.xlabel ('Days from Target day April 22, 2014')
+plt.title ('Forecasted Max Temperature')
+plt.show()
+</pre>
+<p>This will give you:</p>
+<img alt="fancy_scatter" class="align-right" src="/images/fancy_scatter.png" style="width: 400.0px; height: 300.0px;" />
+<p>Click <a class="reference external" href="http://matplotlib.org/api/markers_api.html">here for more marker fun</a>, and more <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot">info on pretty-ing up lines  can be found here</a>.</p>
+<p>Getting the idea?</p>
+<p>Let's do another plot and this time look at all of the Max Temperature forecasts 2 days out, and plot them with respect to Latitude.  We will need to pick out from forecast_dict all the Max T values for all of the weather stations made 2 days before April 22, 2014.  First, we will need to get all the Latitudes and Longitudes for each site, then we will need to pick out all the Max T values for each of the stations for that day.</p>
+<p>We will keep in mind that maybe in the future you might want to look at Min T, or a different day:</p>
+<pre class="literal-block">
+# Get keys of forecast_dict (lats and longs):
+keys = forecast_dict.keys()
+# Circle through all the keys to get the values for the 2nd day maximum temperature and the
+# corresponding Lat and Longs
+day_out = '2'       # 0-7
+temp = 'MaxT'  # MaxT or MinT
+temperature = []; lat = []; lon = []
+for key in keys:
+    temperature.append(float(forecast_dict[key][day_out][temp]))
+    lat.append(float(key[0]))
+    lon.append(float(key[1]))
+# Now that those are collected, let's see what the Temperature as a function of Latitude is:
+plt.scatter(temperature,lat)
+</pre>
+<p>This will give you:</p>
+<img alt="blue_t_v_lon" class="align-right" src="/images/blue_t_v_lon.png" style="width: 400.0px; height: 300.0px;" />
+<div class="section" id="coloring-points-in-a-scatter-plot">
+<h3>Coloring Points in a Scatter Plot</h3>
+<p>Let's try again, but this time, color according to Longitude.  Again, let's keep in mind we may want to color by something else.  You can try playing with these:</p>
+<pre class="literal-block">
+color_by = lon
+label = 'Long'  # Need to rename if 'color_by' is changed
+max_color_by = max(color_by)
+min_color_by = min(color_by)
+
+fig, ax = plt.subplots()
+s = ax.scatter(temperature, lat,
+               c=color_by,
+               s=200,
+               marker='o',                   # Plot circles
+              # alpha = 0.2,
+               cmap = plt.cm.coolwarm,       # Color pallete
+               vmin = min_color_by,          # Min value
+               vmax = max_color_by)          # Max value
+
+cbar = plt.colorbar(mappable = s, ax = ax)   # Mappable 'maps' the values of s to an array of RGB colors defined by a color palette
+cbar.set_label(label)
+plt.xlabel('{0} in Deg C, forecasted {1} days out'.format(temp,day_out))
+plt.ylabel('Latitude, Deg N')
+plt.title('{0} forecasted {1} Days out from target day April 22, 2014'.format(temp,day_out))
+plt.show()
+</pre>
+<p>And now you have color:</p>
+<img alt="color_t_v_lon" class="align-right" src="/images/color_t_v_lon.png" style="width: 400.0px; height: 300.0px;" />
+<p><a class="reference external" href="http://matplotlib.org/users/colormaps.html">Click here for more color mapping fun</a>.</p>
+<p>Any ideas what the blue blobs are?  (Hint: they are not part of the contiguous United States!)</p>
+</div>
+</div>
+<div class="section" id="histograms">
+<h2>4. Histograms!</h2>
+<p>Let's take a step back and work on a histogram.
+What we are going to plot is the distribution of forecasted temperatures.
+Let's start with a very simple histogram of the temperature we left off with:</p>
+<pre class="literal-block">
+plt.hist(temperature)
+plt.ylabel ('Counts')
+plt.xlabel(temp)
+plt.show()
+</pre>
+<p>This gives you a very simple histogram that looks like this:</p>
+<img alt="simple_hist" class="align-right" src="/images/simple_hist.png" style="width: 400.0px; height: 300.0px;" />
+<p>Now let's try again and jazz it up... Let's increase the number of bins (bin size calculated by the difference Min and Max values, divided by the number of bins). Let's also change the color of the bars and make them a little translucent.</p>
+<img alt="green_hist" class="align-right" src="/images/green_hist.png" style="width: 400.0px; height: 300.0px;" />
+<p>Python histograms give you some information about them. Let's explore:</p>
+<pre class="literal-block">
+n, bins, patches = plt.hist(temperature, 10, color='green', alpha=0.2)
+</pre>
+<p>Note that I've fattened up the bins again for this example...
+n are the number of counts for each bin:</p>
+<pre class="literal-block">
+[   69.,   322.,  1078.,  1732.,  2243.,  2285.,  2421.,  1267.,  275.,    38.]
+</pre>
+<p>bins are the x-centered location of the bins:</p>
+<pre class="literal-block">
+[  0.91 ,   4.425,   7.94 ,  11.455,  14.97 ,  18.485,  22., 25.515,  29.03 ,  32.545,  36.06 ]
+</pre>
+<p>And patches are a list of the matplotlib rectangle shapes that make the bins.</p>
+</div>
+<div class="section" id="mapping">
+<h2>5. Mapping</h2>
+<p>Now that we have the basics down, let's start with mapping!
+We will be using Matplotlib's basemap:  <a class="reference external" href="http://matplotlib.org/basemap/">http://matplotlib.org/basemap/</a>.</p>
+<p>Let's make a simple Mercator Projection Map.  The code in the next cell is straight from the Basemap example section -- <a class="reference external" href="http://matplotlib.org/basemap/users/merc.html">http://matplotlib.org/basemap/users/merc.html</a>:</p>
+<pre class="literal-block">
+# Define the projection, scale, the corners of the map, and the resolution.
+m = Basemap(projection='merc',llcrnrlat=-80,urcrnrlat=80,\
+            llcrnrlon=-180,urcrnrlon=180,lat_ts=20,resolution='c')
+# Draw the coastlines
+m.drawcoastlines()
+# Color the continents
+m.fillcontinents(color='coral',lake_color='aqua')
+# draw parallels and meridians.
+m.drawparallels(np.arange(-90.,91.,30.))
+m.drawmeridians(np.arange(-180.,181.,60.))
+# fill in the oceans
+m.drawmapboundary(fill_color='aqua')
+plt.title(&quot;Mercator Projection&quot;)
+plt.show()
+</pre>
+<p>llcrnrlat,llcrnrlon,urcrnrlat,urcrnrlon are the lat/lon values of the lower left and upper right corners of the map.
+lat_ts is the latitude of true scale.
+resolution = 'c' means use crude resolution coastlines.</p>
+<p>And here is the result:</p>
+<img alt="default_map" class="align-right" src="/images/default_map.png" style="width: 400.0px; height: 300.0px;" />
+<p>Now let's change this map to do what we need.  Let's
+1. Change the area to the continental United States
+2. Increase the resolution to intermediate ('i')
+3. Remove the horrific ocean/land colors provided above:</p>
+<pre class="literal-block">
+m = Basemap(projection='merc',llcrnrlat=20,urcrnrlat=50,\
+            llcrnrlon=-130,urcrnrlon=-60,lat_ts=20,resolution='i')
+m.drawcoastlines()
+m.drawcountries()
+#m.drawstates()
+# draw parallels and meridians.
+parallels = np.arange(-90.,91.,5.)
+# Label the meridians and parallels
+m.drawparallels(parallels,labels=[False,True,True,False])
+# Draw Meridians and Labels
+meridians = np.arange(-180.,181.,10.)
+m.drawmeridians(meridians,labels=[True,False,False,True])
+m.drawmapboundary(fill_color='white')
+plt.title(&quot;Forecast {0} days out&quot;.format(day_out))
+plt.show()
+</pre>
+<p>Now the map looks like this:</p>
+<img alt="us" class="align-right" src="/images/us.png" style="width: 500.0px; height: 300.0px;" />
+<p>Awesome, now we have the area of our interest -- a map of the contiguous United States.  Let's put some data on this map.  First, let's just start by putting the points on the map.  Here I am just going to make some small changes to the code in the previous code block -- namely, I am going to take the latitudes and longitudes from our dataset and convert them into the map's projection.  In this case, it will be converted into the mercator projection I've defined:</p>
+<pre class="literal-block">
+m = Basemap(projection='merc',llcrnrlat=20,urcrnrlat=50,\
+            llcrnrlon=-130,urcrnrlon=-60,lat_ts=20,resolution='i')
+m.drawcoastlines()
+m.drawcountries()
+# draw parallels and meridians.
+parallels = np.arange(-90.,91.,5.)
+# Label the meridians and parallels
+m.drawparallels(parallels,labels=[False,True,True,False])
+# Draw Meridians and Labels
+meridians = np.arange(-180.,181.,10.)
+m.drawmeridians(meridians,labels=[True,False,False,True])
+m.drawmapboundary(fill_color='white')
+plt.title(&quot;Forecast {0} days out&quot;.format(day_out))
+x,y = m(lon, lat)                            # This is the step that transforms the data into the map's projection
+m.plot(x,y, 'bo', markersize=5)
+plt.show()
+</pre>
+<p>Now we have a map with the location of the weather stations mapped:</p>
+<img alt="us" class="align-right" src="/images/blue_us.png" style="width: 500.0px; height: 300.0px;" />
+<p>This is nice and all, but it would be great if we can color each of the points by their forecasted maximum temperature -- so let's do that!  Here we have to define what points we want to color, and what we want to color them by:</p>
+<pre class="literal-block">
+m = Basemap(projection='merc',llcrnrlat=20,urcrnrlat=50,\
+            llcrnrlon=-130,urcrnrlon=-60,lat_ts=20,resolution='i')
+m.drawcoastlines()
+m.drawcountries()
+# draw parallels and meridians.
+parallels = np.arange(-90.,91.,5.)
+# Label the meridians and parallels
+m.drawparallels(parallels,labels=[True,False,False,False])
+# Draw Meridians and Labels
+meridians = np.arange(-180.,181.,10.)
+m.drawmeridians(meridians,labels=[True,False,False,True])
+m.drawmapboundary(fill_color='white')
+plt.title(&quot;Forecast {0} days out&quot;.format(day_out))
+# Define a colormap
+jet = plt.cm.get_cmap('jet')
+# Transform points into Map's projection
+x,y = m(lon, lat)
+# Color the transformed points!
+sc = plt.scatter(x,y, c=temperature, vmin=0, vmax =35, cmap=jet, s=20, edgecolors='none')
+# And let's include that colorbar
+cbar = plt.colorbar(sc, shrink = .5)
+cbar.set_label(temp)
+plt.show()
+</pre>
+<p>And finally, now we have a map with colored points:</p>
+<img alt="us" class="align-right" src="/images/color_us.png" style="width: 500.0px; height: 300.0px;" />
+<p>Interested in playing with this more on your own?  Here are a few exercises you can try:</p>
 <blockquote>
-<ul class="simple">
-<li>Song name and id</li>
-<li>Artist name and id</li>
-<li>The number of times the song was played by the user</li>
-</ul>
+<ol class="arabic simple">
+<li>In the first graph -- include the weather forecast through time for multiple stations.  Color each set of lines differently for each weather station.  Also color the points differently for each.</li>
+<li>In the second graph -- Try creating a figure with subplots and show the forecasted Max Temperature and forecasted Min Temperature as a function of Latitude side by side.</li>
+<li>In the histogram -- Try overlaying a histogram with of the distribution of Max T values for day 2 with the distribution of Min T values for the same day.</li>
+<li>For the map -- Create a figure with multiple maps, where each map shows the forecasted distribution of temperature for each day out.  Change the location of labels.</li>
+<li>What is the difference of the temperature forecast made April 22, 2014 with the previous forecast days? Can you map the differences?</li>
+</ol>
 </blockquote>
-</div>
-<div class="section" id="the-simple-recommender">
-<h2><strong>The Simple Recommender</strong></h2>
-<p>For my simple recommender I don't know anything about the person selecting the song.  All I know is the selected artist and song. The steps for this recommender include:</p>
-<ol class="arabic simple">
-<li>Find all users that have the song in their play list</li>
-<li>Make a list of all songs from each person's play list</li>
-<li>Count how many times a unique song appears in the list</li>
-<li>Print out the songs in the order of most counts that was not the original input song</li>
-</ol>
-<p>Easy cheesy, right?</p>
-<p>To illustrate the outcome of this recommender, here is a plot of the top 10 most counted songs from other people's play lists given the song Yeah! by Usher (keep in mind these are the counts for my much smaller subset of data):</p>
-<img alt="deforming_plates" class="align-center" src="/images/top10.jpg" style="width: 700.0px; height: 700.0px;" />
-</div>
-<div class="section" id="adding-user-play-list-into-a-recommender">
-<h2><strong>Adding User Play List into a Recommender</strong></h2>
-<p>Adding a user play list into a recommender is slightly more complex.  Here, I want to know what other users are most similar to the recommendee (for lack of a better term, I define the recommendee as the person who is going to get the recommendation), then suggest songs from the similar users' play lists. The steps for this recommender include:</p>
-<ol class="arabic simple">
-<li>For each song in the recommendee play list, make a list of all users that also have that song in their play list.</li>
-<li>Count the number of times a unique user is in the list. The user with the most counts is the most similar to the recommendee.</li>
-<li>Pick the most similar users and concatenate a list of songs that were not in the recommendee's play list.</li>
-<li>Count the number of times a song shows up in the list</li>
-<li>Print out the songs in order of most counted</li>
-</ol>
-<p>Slightly more complicated than the simple recommender, but generally the same idea.</p>
-</div>
-<div class="section" id="pitfalls">
-<h2><strong>Pitfalls</strong></h2>
-<p>There are issues with these simple approaches.  They work well for the small data set that I downloaded, but as the dataset gets larger, the lists and dictionaries that I make in my code also get larger. So, this approach will take up increasing amounts of memory to make my lists, and increasing amounts of time to sort the lists and count the number of songs.  <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Model-based approaches</a> help to minimize these issues. Another issue is making recommendations based on new songs, or songs that very few people have listened to.  In these cases other information about the song, such as genre, would be needed to make recommendations.</p>
+<p>That's it for this workshop!  Hope you had fun, and I would love to see what you come up with!</p>
 </div>
 <div class="section" id="more-info-on-my-code">
 <h2><strong>More Info on My Code</strong></h2>
-<p>Interested in using my recommenders? Check out my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a> which includes the codes, instructions on how to use them, and some more information on how the codes work. Any comments or suggestions are welcome!</p>
+<p>Interested in using the notebooks? Check out my <a class="reference external" href="https://github.com/ginaschmalzle/pyladies_matplotlib_ipython_notebooks">Github page</a> which includes the codes, data and instructions on how to use them. Any comments or suggestions are welcome!</p>
 </div>
 <div class="section" id="acknowledgements">
 <h2><strong>Acknowledgements</strong></h2>
-<p>Thanks to <a class="reference external" href="http://www.linkedin.com/pub/stella-rowlett/0/797/118">Stella Rowlett</a>, <a class="reference external" href="http://jasongowans.net/">Jason Gowans</a> and <a class="reference external" href="http://www.linkedin.com/in/manjudotorg">Manju Muthukumaresan</a> for suggesting this project!</p>
+<p>Thanks to <a class="reference external" href="http://www.meetup.com/Seattle-PyLadies/">PyLadies Seattle</a>, specifically <a class="reference external" href="http://www.erinshellman.com/">Erin Shellman</a> and <a class="reference external" href="https://www.linkedin.com/pub/wendy-grus/12/1a6/8ba">Wendy Grus</a> for organizing this fun little workshop!  Also many thanks to <a class="reference external" href="http://adadevelopersacademy.org/">Ada Developers Academy</a> for providing the space.</p>
 </div>
-<p><a href="../recommender.html#disqus_thread">comments</a></p>                </article>
+<p><a href="../matplotlib.html#disqus_thread">comments</a></p>                </article>
             </aside><!-- /#featured -->
                 <section id="content" class="body">
                     <h1><a name = "moreblogs">Other articles</a></h1>
                     <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="../recommender.html" rel="bookmark"
+                           title="Permalink to The Million Song Database and Recommendation Systems"><strong>The Million Song Database and Recommendation Systems</strong></a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <span>Sun 27 July 2014</span>
+<span>| tags: <a href="../tag/recommender-systems.html">Recommender Systems</a><a href="../tag/python.html">python</a><a href="../tag/sqlite3.html">sqlite3</a><a href="../tag/million-song-database.html">Million Song Database</a></span>
+</footer><!-- /.post-info -->                <p class="first last"><strong>Recommender System for the Million Song Database</strong></p>
+
+                <a class="readmore" href="../recommender.html">read more</a>
+<p><a href="../recommender.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
+            </article></li>
 
             <li><article class="hentry">
                 <header>
@@ -234,22 +628,6 @@
 
                 <a class="readmore" href="../japan_eq.html">read more</a>
 <p><a href="../japan_eq.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
-            </article></li>
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="../ehalf.html" rel="bookmark"
-                           title="Permalink to Elastic half space model of a vertical strike slip fault"><strong>Elastic half space model of a vertical strike slip fault</strong></a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Fri 18 April 2014</span>
-<span>| tags: <a href="../tag/strike-slip-faults.html">Strike Slip Faults</a><a href="../tag/fortran.html">Fortran</a><a href="../tag/gmt.html">GMT</a><a href="../tag/python.html">Python</a></span>
-</footer><!-- /.post-info -->                <p class="first last"><strong>Elastic Half Space modeling of a vertical Strike Slip Fault</strong></p>
-
-                <a class="readmore" href="../ehalf.html">read more</a>
-<p><a href="../ehalf.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
             </article></li>
             </ol><!-- /#posts-list -->
 <p class="paginator">

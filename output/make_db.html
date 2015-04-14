@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-49087945-1', 'geodesygina.com');
+  ga('send', 'pageview');
+
+</script>
+        <meta charset="utf-8" />
+        <title>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</title>
+        <link rel="stylesheet" href="./theme/css/main.css" />
+        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Atom Feed" />
+
+        <!--[if IE]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="./">Gina Schmalzle </a></h1>
+                <nav><ul>
+                    <li  class="active" >  <a href="/category/home.html">Home</a></li> 
+                    <li  >  <a href="/category/bio.html">Bio</a></li> 
+                    <li  >  <a href="/category/pubs.html">Pubs</a></li> 
+                    <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
+                    <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
+                    <li><a href="/index.html#moreblogs">Past Blogs</a></li>
+                </ul>
+                </nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="./make_db.html" rel="bookmark"
+           title="Permalink to SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong></a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <span>Fri 04 July 2014</span>
+<span>| tags: <a href="./tag/sqlite.html">SQLite</a><a href="./tag/relational-database.html">relational database</a></span>
+</footer><!-- /.post-info -->      <p>Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.</p>
+<p><a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, a fabulous <strong>python</strong> coder who dabbles in creating and using <strong>SQLite</strong> databases, and knows a thing or two about the <a class="reference external" href="https://brannerchinese.com/">Chinese Language</a>, and I are working on <a class="reference external" href="https://github.com/WeatherStudy/weather_study">The Weather Project</a> where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a>, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on <strong>creating a Database with SQLite3</strong>.  The next blogs will cover <strong>Populating an SQLite Database with Data using Python</strong> and <strong>Retrieving data from an SQLite Database using Python</strong>.</p>
+<div class="section" id="part-1-creating-a-database-with-sqlite3">
+<h2><strong>Part 1: Creating a Database with SQLite3</strong></h2>
+<p><strong>SQLite</strong> is a compact and self contained relational database management system. We decided to use <strong>SQLite3</strong> (Mac OS X's version of SQLite) because</p>
+<blockquote>
+<ol class="arabic simple">
+<li>It is included on the Mac OS X operating system (/usr/bin/sqlite3)</li>
+<li>It does not require a server and no need for an administrator</li>
+<li>It does not include any configuration files</li>
+<li>No action is required after a system crash</li>
+</ol>
+</blockquote>
+<p>Certainly, there are issues with <strong>SQLite</strong>, but for our humble little project <strong>SQLite</strong> provides all the functionality we wanted. If you are running Mac OSX you can use SQLite3.  Be sure that /usr/bin/ is in your path (it already should be there).  You can check to see if you have it by typing:</p>
+<pre class="literal-block">
+which sqlite3
+</pre>
+<p>Let's get started.  First, a few things about sqlite3. You can enter the sqlite3 <a class="reference external" href="http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop">repl</a> by simply typing sqlite3 at the command line.  Or, you can type:</p>
+<pre class="literal-block">
+sqlite3 mydatabase.db
+</pre>
+<p>to ensure your creations/populations/extractions are all for the database mydatabase.db (or whatever you want it named).  If you make a sqlite3 script that is applied to mydatabase.db called myscript.sql, you can run it at the command line by typing:</p>
+<pre class="literal-block">
+sqlite3 mydatabase.db &lt; myscript.sql.
+</pre>
+<p>Our <strong>SQLite</strong> database that we named <em>weather_data_OWM.db</em> is set up with multiple tables.  Information within those tables are related, and is referred to as a <em>relational database</em>.  As previously mentioned, a relational database is setup so that there is some common information between tables that helps link them.  Our database tables are linked by city id.  The city id is simply a unique number assigned to each location that has a weather forecast.  In one table we keep the properties of each location, such as the latitude, longitude, city name, etc.  In the other, we assign the forecasts to each city id.  Let's take a closer look at how this works.</p>
+<p>The first thing we did was create a TABLE called <em>locations</em> which contains the id, name, latitude, longtiude and country:</p>
+<pre class="literal-block">
+DROP TABLE IF EXISTS locations;
+CREATE TABLE locations (
+   id TEXT PRIMARY KEY UNIQUE,
+   name TEXT,
+   lat NUMBER,
+   lon NUMBER,
+   country TEXT
+);
+</pre>
+<p>Eeeek! The &quot;DROP TABLE&quot; part of this code is a little scary -- here we are saying if there is already a table in our database called <em>locations</em> then remove it!  The table <em>locations</em> will be completely removed and can not be recovered.  You may ask, <em>why would you want to do that???</em> Well, this code is simply meant to provide the bones for our database.  The only reason we are running this script is to make a database from scratch, and if one exists, it should be removed.  It is also recommended because you don't want to confuse the current data with other data sets if a table called <em>locations</em> exists.  So <strong>BE CAREFUL</strong> with this command.</p>
+<p>The next command lines create the table with columns that are defined as containing a certain type of field.  The columns that we have are id, name, lat, lon and country and are either TEXT (strings) or NUMBERS (floats).  The id column is special because it also contains PRIMARY KEY command.  The PRIMARY KEY command ensures that all rows in that column are uniquely identifiable.  To be extra certain of this (but may be a little redundant), we also included UNIQUE, which ensures that all values in the column are different.</p>
+<p>How can we tell if the table was made properly?  If you entered the commands above in the repl, then type:</p>
+<pre class="literal-block">
+SELECT * FROM sqlite_master WHERE type='table';
+</pre>
+<p>What should print out is information on your new table, including its structure:</p>
+<pre class="literal-block">
+table|locations|locations|2|CREATE TABLE locations (
+id TEXT PRIMARY KEY UNIQUE,
+name TEXT,
+lat NUMBER,
+lon NUMBER,
+country TEXT
+)
+</pre>
+<p>The line &quot;table|locations|locations|2|CREATE TABLE locations&quot; is simply output that states: <em>type|name|table name|root page #|sql command used to generate the table</em>. Then the table column names are printed.</p>
+<p>Very good!  Now we have a table that will contain some characteristics of each city. Now let's make a second TABLE that includes the weather forecasts and will be related to the first one by the city code. We are collecting forecasts for up to 14 days before a <em>target_date</em> which we define as the day being forecasted.  We want to know the forecasts for rain and snow, as well as the minimum and maximum temperatures for the <em>target_date</em>.  As before, we first need to DROP any existing tables, then we create the table:</p>
+<pre class="literal-block">
+DROP TABLE IF EXISTS owm_values;
+CREATE TABLE owm_values (
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   location_id TEXT,
+   target_date INTEGER,
+   maxt_0 NUMBER,
+   mint_0 NUMBER,
+   rain_0 NUMBER,
+   snow_0 NUMBER,
+   maxt_1 NUMBER,
+   mint_1 NUMBER,
+   rain_1 NUMBER,
+   snow_1 NUMBER,
+   maxt_2 NUMBER,
+   mint_2 NUMBER,
+   rain_2 NUMBER,
+   snow_2 NUMBER,
+   maxt_3 NUMBER,
+   mint_3 NUMBER,
+   rain_3 NUMBER,
+   snow_3 NUMBER,
+   maxt_4 NUMBER,
+   mint_4 NUMBER,
+   rain_4 NUMBER,
+   snow_4 NUMBER,
+   maxt_5 NUMBER,
+   mint_5 NUMBER,
+   rain_5 NUMBER,
+   snow_5 NUMBER,
+   maxt_6 NUMBER,
+   mint_6 NUMBER,
+   rain_6 NUMBER,
+   snow_6 NUMBER,
+   maxt_7 NUMBER,
+   mint_7 NUMBER,
+   rain_7 NUMBER,
+   snow_7 NUMBER,
+   maxt_8 NUMBER,
+   mint_8 NUMBER,
+   rain_8 NUMBER,
+   snow_8 NUMBER,
+   maxt_9 NUMBER,
+   mint_9 NUMBER,
+   rain_9 NUMBER,
+   snow_9 NUMBER,
+   maxt_10 NUMBER,
+   mint_10 NUMBER,
+   rain_10 NUMBER,
+   snow_10 NUMBER,
+   maxt_11 NUMBER,
+   mint_11 NUMBER,
+   rain_11 NUMBER,
+   snow_11 NUMBER,
+   maxt_12 NUMBER,
+   mint_12 NUMBER,
+   rain_12 NUMBER,
+   snow_12 NUMBER,
+   maxt_13 NUMBER,
+   mint_13 NUMBER,
+   rain_13 NUMBER,
+   snow_13 NUMBER,
+   maxt_14 NUMBER,
+   mint_14 NUMBER,
+   rain_14 NUMBER,
+   snow_14 NUMBER,
+   UNIQUE (location_id, target_date),
+   FOREIGN KEY (location_id) REFERENCES locations(id)
+   );
+</pre>
+<p>In this table, each forecast is given its own, unique id (called id).  In addition, it contains a location_id, which will refer to <em>id</em> in our first TABLE, <em>locations</em>.  These values 'link' the two tables, creating a relational database. The FOREIGN KEY statement defines this relationship, stating that the location_id of the TABLE <em>owm_values</em> is REFERENCED to the id of TABLE <em>locations</em>. We also created columns in our TABLE that will store forecasts from the day of (*_0) to 14 days out (*_14).  UNIQUE ensures that both the location_id and the target_date are unique in this table (i.e., every city will have its own unique id, and every city will have forecasts for unique target dates).</p>
+<p>Now if you type into the repl:</p>
+<pre class="literal-block">
+SELECT * FROM sqlite_master WHERE type='table';
+</pre>
+<p>Two tables should print out -- the first one being the <em>locations</em> table, the second your brand new <em>owm_values</em> table.</p>
+<p>Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Now for  <a class="reference external" href="/pop_db.html">Part 2 Populating an SQLite Database using Python</a> coming soon...</p>
+</div>
+
+    </div><!-- /.entry-content -->
+    <div class="comments">
+      <h2>Comments </h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'geodesygina'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+    
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="blogroll">
+                        <h2>blogroll</h2>
+                        <ul>
+                            <li><a href="http://getpelican.com/">Pelican</a></li>
+                            <li><a href="http://python.org/">Python.org</a></li>
+                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
+                            <li><a href="http://hackerschool.com">Hacker School</a></li>
+                            <li><a href="http://bostechnologies.com">BOS Technologies</a></li>
+                            <li><a href="http://osmanoglu.org/">Batu Osmanoglu</a></li>
+                        </ul>
+                </div><!-- /.blogroll -->
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="https://twitter.com/GinaSchmalzle">Twitter</a></li>
+                            <li><a href="https://www.facebook.com/gschmalzle">Facebook</a></li>
+                            <li><a href="http://www.linkedin.com/pub/gina-schmalzle/13/8a/234">LinkedIn</a></li>
+                            <li><a href="https://github.com/ginaschmalzle">github</a></li>
+			<li>
+			   <img src="/images/email.png" alt="email" width="20" height="20" align="left" ><address><a href="mailto:ginaschmalzle@gmail.com">Contact Me!</a></address>
+			</li> 
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
+        </footer><!-- /#contentinfo -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'geodesygina';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
