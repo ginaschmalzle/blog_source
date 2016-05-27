@@ -25,11 +25,12 @@
         <header id="banner" class="body">
                 <h1><a href="../">Gina Schmalzle </a></h1>
                 <nav><ul>
-                    <li  >  <a href="/category/home.html">Home</a></li> 
-                    <li  >  <a href="/category/bio.html">Bio</a></li> 
-                    <li  >  <a href="/category/pubs.html">Pubs</a></li> 
+                    <li  >  <a href="/category/home.html">Home</a></li>
+                    <li  >  <a href="/category/bio.html">Bio</a></li>
+                    <li  >  <a href="/category/pubs.html">Pubs</a></li>
                     <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
                     <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
+                    <li><a href="/BreathingEarth/index.html">Breathing Earth</a></li>
                     <li><a href="/index.html#moreblogs">Past Blogs</a></li>
                 </ul>
                 </nav>
@@ -45,7 +46,7 @@
 </footer><!-- /.post-info --><div class="section" id="building-recommendation-systems">
 <h2><strong>Building Recommendation Systems</strong></h2>
 <p>Recommender systems filter information to predict how much a user would like a given item.  Companies like Netflix and Tivo use these types of filtering algorithms to try to figure out what a person will want.  Unfortunately, these systems are not perfect, and sometimes can go horribly wrong, as elegantly described by Patton Oswalt on the Conan O'Brien show:</p>
-<div class="youtube" align="left"><iframe width="420" height="315" src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&end=272&version=3" frameborder="0"></iframe></div><p>Yes, bad Tivo.</p>
+<div class="youtube youtube-16x9"><iframe src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&end=272&version=3" allowfullscreen seamless frameBorder="0"></iframe></div><p>Yes, bad Tivo.</p>
 <p>So how do we improve recommender systems?  Companies as well as academics are trying hard to figure this out. Fortunately, some groups released large datasets so the anyone can play with them and try to solves these issues.  One such publicly available dataset is the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/">The Million Song Dataset</a>  -- a perfect dataset for building recommender systems! So, I thought I would give it a try.</p>
 <p>For this project, I focused on the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> provided by Echonest, which includes information on user play lists to build my recommenders located on my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a>. I built two recommenders; one that figures out what songs a user would like by using an input of a selected song, and another that recommends songs based on what the user has in their play list.</p>
 <p>Both recommenders use a combination of <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Collaborative filtering techniques</a> with vote counting. Collaborative filtering makes recommendations by collecting taste preferences and comparing them to other users.  Here we assume that others that have the same song in their play list have similar tastes.  Therefore, songs in the other users play lists would be good ones to recommend.  In these recommenders I ultimately get to a list of songs that were provided by other users.  I then count up how many times a song appears in other people's play lists (vote counting) and spit out the top counted songs as the top recommended songs.  In this blog I briefly describe the approach for both the simple, single song recommender and the slightly more complex user recommender for users with a play list.</p>
@@ -103,30 +104,11 @@
 <p>Thanks to <a class="reference external" href="http://www.linkedin.com/pub/stella-rowlett/0/797/118">Stella Rowlett</a>, <a class="reference external" href="http://jasongowans.net/">Jason Gowans</a> and <a class="reference external" href="http://www.linkedin.com/in/manjudotorg">Manju Muthukumaresan</a> for suggesting this project!</p>
 </div>
 <p><a href="../recommender.html#disqus_thread">comments</a></p>                </article>
-            </aside><!-- /#featured -->
-                <section id="content" class="body">
-                    <h1><a name = "moreblogs">Other articles</a></h1>
-                    <ol id="posts-list" class="hfeed">
-
-            <li><article class="hentry">
-                <header>
-                    <h1><a href="../recommender.html" rel="bookmark"
-                           title="Permalink to The Million Song Database and Recommendation Systems"><strong>The Million Song Database and Recommendation Systems</strong></a></h1>
-                </header>
-
-                <div class="entry-content">
-<footer class="post-info">
-        <span>Sun 27 July 2014</span>
-<span>| tags: <a href="../tag/recommender-systems.html">Recommender Systems</a><a href="../tag/python.html">python</a><a href="../tag/sqlite3.html">sqlite3</a><a href="../tag/million-song-database.html">Million Song Database</a></span>
-</footer><!-- /.post-info -->                <p class="first last"><strong>Recommender System for the Million Song Database</strong></p>
-
-                <a class="readmore" href="../recommender.html">read more</a>
-<p><a href="../recommender.html#disqus_thread">comments</a></p>                </div><!-- /.entry-content -->
-            </article></li>
-            </ol><!-- /#posts-list -->
 <p class="paginator">
     Page 1 / 1
 </p>
+            </aside><!-- /#featured -->
+            </ol><!-- /#posts-list -->
             </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="blogroll">
@@ -151,7 +133,7 @@
                             <li><a href="https://github.com/ginaschmalzle">github</a></li>
 			<li>
 			   <img src="/images/email.png" alt="email" width="20" height="20" align="left" ><address><a href="mailto:ginaschmalzle@gmail.com">Contact Me!</a></address>
-			</li> 
+			</li>
                         </ul>
                 </div><!-- /.social -->
         </section><!-- /#extras -->
