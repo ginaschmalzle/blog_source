@@ -1,6 +1,6 @@
 # GeodesyGina Website Code
 
-This code is used to build the [Geodesy Gina Website](http://geodesygina.com/) using [Pelican](http://docs.getpelican.com/en/stable/).  
+This code is used to build the [Geodesy Gina Website](http://geodesygina.com/) using [Pelican](http://docs.getpelican.com/en/stable/).  The theme is based off of the pelican theme [attila](https://github.com/arulrajnet/attila/)
 
 ### Installing the code:
 1. Fork this repository
