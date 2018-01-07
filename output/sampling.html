@@ -1,43 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-          <title>Gina Schmalzle</title>
-        <meta charset="utf-8" />
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="./" rel="canonical" />
+
+  <!-- Feed -->
         <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Full Atom Feed" />
 
+  <link href="./theme/css/style.css" type="text/css" rel="stylesheet" />
 
-    <meta name="tags" content="R" />
-    <meta name="tags" content="simulations" />
-    <meta name="tags" content="sampling" />
+  <!-- Code highlight color scheme -->
+      <link href="./theme/css/code_blocks/github.css" rel="stylesheet">
 
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="./sampling.html" rel="canonical" />
+
+        <meta name="description" content="Sampling with R">
+
+        <meta name="author" content="Gina Schmalzle and Craig Faunce">
+
+        <meta name="tags" content="R">
+        <meta name="tags" content="simulations">
+        <meta name="tags" content="sampling">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Gina Schmalzle"/>
+<meta property="og:title" content="My big fat shoe-shopping adventure: Iterative sampling in R"/>
+<meta property="og:description" content="Sampling with R"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="./sampling.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-07-27 14:56:00-04:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="./author/gina-schmalzle-and-craig-faunce.html">
+  <meta property="article:publisher" content="https://www.facebook.com/gschmalzle" />
+<meta property="article:section" content="Home"/>
+<meta property="article:tag" content="R"/>
+<meta property="article:tag" content="simulations"/>
+<meta property="article:tag" content="sampling"/>
+<meta property="og:image" content="./theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@GinaSchmalzle">
+    <meta name="twitter:title" content="<strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong>">
+    <meta name="twitter:url" content="./sampling.html">
+
+        <meta name="twitter:image:src" content="./theme/images/post-bg.jpg">
+
+      <meta name="twitter:description" content="Sampling with R">
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "My big fat shoe-shopping adventure: Iterative sampling in R",
+  "headline": "My big fat shoe-shopping adventure: Iterative sampling in R",
+  "datePublished": "2014-07-27 14:56:00-04:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Gina Schmalzle and Craig Faunce",
+    "url": "./author/gina-schmalzle-and-craig-faunce.html"
+  },
+  "image": "./theme/images/post-bg.jpg",
+  "url": "./sampling.html",
+  "description": "Sampling with R"
+}
+</script>
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="./">Gina Schmalzle <strong></strong></a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li><a href="/category/home.html">Home</a></li>
-            <li><a href="/category/bio.html">Bio</a></li>
-            <li><a href="/category/pubs.html">Pubs</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="./sampling.html" rel="bookmark"
-         title="Permalink to My big fat shoe-shopping adventure: Iterative sampling in R"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2014-07-27T14:56:00-04:00">
-      Sun 27 July 2014
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="./author/gina-schmalzle-and-craig-faunce.html">Gina Schmalzle and Craig Faunce</a>
-    </address>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy">
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="/category/home.html" role="presentation">Home</a></li>
+          <li><a href="/category/bio.html" role="presentation">Bio</a></li>
+          <li><a href="/category/pubs.html" role="presentation">Pubs</a></li>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="./" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title"><strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong></h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="./author/gina-schmalzle-and-craig-faunce.html">Gina Schmalzle And Craig Faunce</a>
+            | <time datetime="Sun 27 July 2014">Sun 27 July 2014</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <div class="post-cover cover" style="background-image: url('./theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <div class="section" id="r-helped-me-figure-out-how-many-shoes-i-can-buy">
 <h2><strong>R helped me figure out how many shoes I can buy</strong></h2>
 <p>One of the things I love about coding and data science is that I get to work on a lot of interesting problems.  One of my good friends Craig Faunce <a class="reference external" href="https://www.linkedin.com/pub/craig-h-faunce/66/789/1ba">Craig Faunce</a> approached me over a beer with a problem.  It seems he had been asked to determine how many items he could buy given a certain budget.  Ok, if each and every item costs the same this is simple math, which has me puzzled.  Of course it’s not that easy, since each and every item has a different cost. Ok, still not that difficult.  It only becomes something that I think you would be interested in when he gets to the next part, where he says: &quot;I'm asked to sample one population of items at a given rate, and then with my left-over money, determine at what rate I can afford to sample a second, totally different population of items with totally different costs per item.&quot;</p>
 <p>Ok!  We have an interesting little sampling project.  Since Craig works for a large employer, he can't really divulge every gory detail about this issue, and obviously getting the real data isn't going to happen here.  Besides, it sounded pretty boring to me, so I thought about something that I can relate to - shoes!</p>
@@ -196,13 +307,74 @@ Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 <p>Interested in getting your hands on the code?  Check it out in my <a class="reference external" href="https://github.com/ginaschmalzle/MyShoes">Github Repo</a>.</p>
 </div>
 
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=<strong>My big fat shoe-shopping adventure: Iterative sampling in R</strong>&amp;url=./sampling.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=./sampling.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=./sampling.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="./tag/r.html">R</a><a href="./tag/simulations.html">simulations</a><a href="./tag/sampling.html">sampling</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+                <script type="text/javascript">
+                    var disqus = 'geodesygina';
+                    var disqus_shortname = 'geodesygina';
+                    var disqus_identifier = '/sampling.html';
+                    var disqus_url = './sampling.html';
+                </script>
+                <noscript>Please enable JavaScript to view the comments.</noscript>
+                <section class="post-comments">
+                        <a id="show-disqus" class="post-comments-activate" data-disqus-identifier="/sampling.html" >Show Comments</a>
+                    <div id="disqus_thread"></div>
+                </section>
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="./theme/js/script.js"></script>
+
+<script type="text/javascript">
+    var disqus_shortname = 'geodesygina';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>

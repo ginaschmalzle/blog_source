@@ -1,44 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-          <title>Gina Schmalzle</title>
-        <meta charset="utf-8" />
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="./" rel="canonical" />
+
+  <!-- Feed -->
         <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Full Atom Feed" />
 
+  <link href="./theme/css/style.css" type="text/css" rel="stylesheet" />
 
-    <meta name="tags" content="Fibonacci" />
-    <meta name="tags" content="python" />
-    <meta name="tags" content="iterative" />
-    <meta name="tags" content="recursion" />
+  <!-- Code highlight color scheme -->
+      <link href="./theme/css/code_blocks/github.css" rel="stylesheet">
 
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="./Fibo.html" rel="canonical" />
+
+        <meta name="description" content="Iteration vs. Recursion in Python">
+
+        <meta name="author" content="Gina Schmalzle">
+
+        <meta name="tags" content="Fibonacci">
+        <meta name="tags" content="python">
+        <meta name="tags" content="iterative">
+        <meta name="tags" content="recursion">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Gina Schmalzle"/>
+<meta property="og:title" content="Iteration and Recursion in Python"/>
+<meta property="og:description" content="Iteration vs. Recursion in Python"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="./Fibo.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-04-10 14:56:00-04:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="./author/gina-schmalzle.html">
+  <meta property="article:publisher" content="https://www.facebook.com/gschmalzle" />
+<meta property="article:section" content="Home"/>
+<meta property="article:tag" content="Fibonacci"/>
+<meta property="article:tag" content="python"/>
+<meta property="article:tag" content="iterative"/>
+<meta property="article:tag" content="recursion"/>
+<meta property="og:image" content="./theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@GinaSchmalzle">
+    <meta name="twitter:title" content="<strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong>">
+    <meta name="twitter:url" content="./Fibo.html">
+
+        <meta name="twitter:image:src" content="./theme/images/post-bg.jpg">
+
+      <meta name="twitter:description" content="Iteration vs. Recursion in Python">
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "Iteration and Recursion in Python",
+  "headline": "Iteration and Recursion in Python",
+  "datePublished": "2014-04-10 14:56:00-04:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Gina Schmalzle",
+    "url": "./author/gina-schmalzle.html"
+  },
+  "image": "./theme/images/post-bg.jpg",
+  "url": "./Fibo.html",
+  "description": "Iteration vs. Recursion in Python"
+}
+</script>
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="./">Gina Schmalzle <strong></strong></a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li><a href="/category/home.html">Home</a></li>
-            <li><a href="/category/bio.html">Bio</a></li>
-            <li><a href="/category/pubs.html">Pubs</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="./Fibo.html" rel="bookmark"
-         title="Permalink to Iteration and Recursion in Python"><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2014-04-10T14:56:00-04:00">
-      Thu 10 April 2014
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="./author/gina-schmalzle.html">Gina Schmalzle</a>
-    </address>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <div class="section" id="iteration-vs-recursion-in-python">
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="/category/home.html" role="presentation">Home</a></li>
+          <li><a href="/category/bio.html" role="presentation">Bio</a></li>
+          <li><a href="/category/pubs.html" role="presentation">Pubs</a></li>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="./" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title"><strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong></h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="./author/gina-schmalzle.html">Gina Schmalzle</a>
+            | <time datetime="Thu 10 April 2014">Thu 10 April 2014</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <div class="post-cover cover" style="background-image: url('./theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <div class="section" id="iteration-vs-recursion-in-python">
 <h2><strong>Iteration vs. Recursion in Python</strong></h2>
 <p>For the past week at Hacker School, I took a step back from making a cool and awesome projects like the <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Vector Projector</a>  or the <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Japan Earthquake</a> projects and looked at some good, old-fashioned computer science concepts. Much of what I did was repetive; I found a really simple problem, solved it using some method, and then tried solving it again using a variety of other methods.  One project I worked on was programming the  n'th <strong>Fibonacci</strong> number using <strong>python</strong>. In this blog I will describe <strong>iterative</strong> and <strong>recursive</strong> methods for solving this problem in Python.</p>
 <p>What are <strong>Fibonacci</strong> numbers (or series or sequence)?  From <a class="reference external" href="http://en.wikipedia.org/wiki/Fibonacci_number">the Fibonacci Wiki Page</a>, the Fibonacci sequence is defined to start at either 0 or 1, and the next number in the sequence is one.  Each subsequent number in the sequence is simply the sum of the prior two.  Hence the Fibonacci sequence looks like:</p>
@@ -242,13 +354,74 @@ if(typeof(mpld3) !== "undefined"){
 <p>Hope you liked my blog!  'Till next time!</p>
 </div>
 
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=<strong>Iteration</strong> and <strong>Recursion</strong> in <strong>Python</strong>&amp;url=./Fibo.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=./Fibo.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=./Fibo.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="./tag/fibonacci.html">Fibonacci</a><a href="./tag/python.html">python</a><a href="./tag/iterative.html">iterative</a><a href="./tag/recursion.html">recursion</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+                <script type="text/javascript">
+                    var disqus = 'geodesygina';
+                    var disqus_shortname = 'geodesygina';
+                    var disqus_identifier = '/Fibo.html';
+                    var disqus_url = './Fibo.html';
+                </script>
+                <noscript>Please enable JavaScript to view the comments.</noscript>
+                <section class="post-comments">
+                        <a id="show-disqus" class="post-comments-activate" data-disqus-identifier="/Fibo.html" >Show Comments</a>
+                    <div id="disqus_thread"></div>
+                </section>
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="./theme/js/script.js"></script>
+
+<script type="text/javascript">
+    var disqus_shortname = 'geodesygina';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>

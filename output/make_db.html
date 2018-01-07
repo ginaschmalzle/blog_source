@@ -1,42 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-          <title>Gina Schmalzle</title>
-        <meta charset="utf-8" />
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+
+  <title><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong></title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="./" rel="canonical" />
+
+  <!-- Feed -->
         <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Full Atom Feed" />
 
+  <link href="./theme/css/style.css" type="text/css" rel="stylesheet" />
 
-    <meta name="tags" content="SQLite" />
-    <meta name="tags" content="relational database" />
+  <!-- Code highlight color scheme -->
+      <link href="./theme/css/code_blocks/github.css" rel="stylesheet">
 
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+    <link href="./make_db.html" rel="canonical" />
+
+        <meta name="description" content="Creating a Database">
+
+        <meta name="author" content="Gina Schmalzle">
+
+        <meta name="tags" content="SQLite">
+        <meta name="tags" content="relational database">
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Gina Schmalzle"/>
+<meta property="og:title" content="SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1"/>
+<meta property="og:description" content="Creating a Database"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="./make_db.html"/>
+<meta property="og:type" content="article"/>
+<meta property="article:published_time" content="2014-07-04 14:56:00-04:00"/>
+<meta property="article:modified_time" content=""/>
+<meta property="article:author" content="./author/gina-schmalzle.html">
+  <meta property="article:publisher" content="https://www.facebook.com/gschmalzle" />
+<meta property="article:section" content="Home"/>
+<meta property="article:tag" content="SQLite"/>
+<meta property="article:tag" content="relational database"/>
+<meta property="og:image" content="./theme/images/post-bg.jpg">
+
+<!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@GinaSchmalzle">
+    <meta name="twitter:title" content="<strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong>">
+    <meta name="twitter:url" content="./make_db.html">
+
+        <meta name="twitter:image:src" content="./theme/images/post-bg.jpg">
+
+      <meta name="twitter:description" content="Creating a Database">
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Article",
+  "name": "SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1",
+  "headline": "SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1",
+  "datePublished": "2014-07-04 14:56:00-04:00",
+  "dateModified": "",
+  "author": {
+    "@type": "Person",
+    "name": "Gina Schmalzle",
+    "url": "./author/gina-schmalzle.html"
+  },
+  "image": "./theme/images/post-bg.jpg",
+  "url": "./make_db.html",
+  "description": "Creating a Database"
+}
+</script>
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="./">Gina Schmalzle <strong></strong></a></h1>
-        </header><!-- /#banner -->
-        <nav id="menu"><ul>
-            <li><a href="/category/home.html">Home</a></li>
-            <li><a href="/category/bio.html">Bio</a></li>
-            <li><a href="/category/pubs.html">Pubs</a></li>
-        </ul></nav><!-- /#menu -->
-<section id="content" class="body">
-  <header>
-    <h2 class="entry-title">
-      <a href="./make_db.html" rel="bookmark"
-         title="Permalink to SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong></a></h2>
- 
-  </header>
-  <footer class="post-info">
-    <time class="published" datetime="2014-07-04T14:56:00-04:00">
-      Fri 04 July 2014
-    </time>
-    <address class="vcard author">
-      By           <a class="url fn" href="./author/gina-schmalzle.html">Gina Schmalzle</a>
-    </address>
-  </footer><!-- /.post-info -->
-  <div class="entry-content">
-    <p>Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.</p>
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="/category/home.html" role="presentation">Home</a></li>
+          <li><a href="/category/bio.html" role="presentation">Bio</a></li>
+          <li><a href="/category/pubs.html" role="presentation">Pubs</a></li>
+
+
+    </ul>
+  </div>
+</nav>
+    <!-- Progressbar -->
+    <div class="progress-container">
+        <span class="progress-bar"></span>
+    </div>
+
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="post-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="./" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title"><strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong></h1>
+        <!-- TODO : Proper class for headline -->
+        <span class="post-meta">
+                <a href="./author/gina-schmalzle.html">Gina Schmalzle</a>
+            | <time datetime="Fri 04 July 2014">Fri 04 July 2014</time>
+        </span>
+        <!-- TODO : Modified check -->
+            <div class="post-cover cover" style="background-image: url('./theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+    <!-- Post content -->
+    <main class="content" role="main">
+        <article class="post">
+        <div class="inner">
+            <section class="post-content">
+                <p>Structured Query Language (SQL) is a langauge that is used to design and manage data held in a relational database. A relational database is a database that contains multiple tables that contain related values.  For example, one table may contain names of people and their ages, and another may contain names of people and their favorite color. The names of the people are the related values. SQL provides a relatively easy (and commonly used) way of extracting only the data you want from the database that can later be analyzed or visualized.</p>
 <p><a class="reference external" href="https://github.com/brannerchinese">David Branner</a>, a fabulous <strong>python</strong> coder who dabbles in creating and using <strong>SQLite</strong> databases, and knows a thing or two about the <a class="reference external" href="https://brannerchinese.com/">Chinese Language</a>, and I are working on <a class="reference external" href="https://github.com/WeatherStudy/weather_study">The Weather Project</a> where we intend to examine the accuracy of weather forecasts. In order to do that, we need to collect weather forecasts that will be analyzed.  We decided to use weather forecasts from <a class="reference external" href="http://openweathermap.org/">Open Weather Map</a>, a website that gives open access to weather forecasts through an API key. Through the API key, we are able to download JSON files that contain information on the weather forecasts at specific locations around the world. Our goal is for each day to collect weather forecasts for that day and from 1 day before to about two weeks out. We collect the maximum temperature (maxt), the minimum temperature (mint), snow and rain forecasts for each of the forecasts.  Then we subtract the predicted value from the observation to estimate how much the forecast predicts warmer/cooler temperatures or more/less snow and rain.  Hence, we need to collect a lot of information and organize it in a way that will be relatively easy and consistent to retreive. To do that, we created an SQLite3 database. This blog is the first of three, and focuses on <strong>creating a Database with SQLite3</strong>.  The next blogs will cover <strong>Populating an SQLite Database with Data using Python</strong> and <strong>Retrieving data from an SQLite Database using Python</strong>.</p>
 <div class="section" id="part-1-creating-a-database-with-sqlite3">
 <h2><strong>Part 1: Creating a Database with SQLite3</strong></h2>
@@ -170,13 +280,74 @@ SELECT * FROM sqlite_master WHERE type='table';
 <p>Congratulations!  You have now set up a database in SQLite3 that contains two tables.  Now for  <a class="reference external" href="/pop_db.html">Part 2 Populating an SQLite Database using Python</a> coming soon...</p>
 </div>
 
-  </div><!-- /.entry-content -->
-</section>
-        <footer id="contentinfo" class="body">
-                <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>,
-                which takes great advantage of <a href="http://python.org">Python</a>.
-                </address><!-- /#about -->
-        </footer><!-- /#contentinfo -->
+            </section>
+
+            <section class="post-info">
+                <div class="post-share">
+                    <a class="twitter" href="https://twitter.com/share?text=<strong>SQLite3 Databases: Creating, Populating and Retrieving Data, Part 1</strong>&amp;url=./make_db.html" onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <i class="ic ic-twitter"></i><span class="hidden">Twitter</span>
+                    </a>
+                    <a class="facebook" href="https://www.facebook.com/sharer/sharer.php?u=./make_db.html" onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <i class="ic ic-facebook"></i><span class="hidden">Facebook</span>
+                    </a>
+                    <a class="googleplus" href="https://plus.google.com/share?url=./make_db.html" onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <i class="ic ic-googleplus"></i><span class="hidden">Google+</span>
+                    </a>
+                    <div class="clear"></div>
+                </div>
+
+                <aside class="post-tags">
+<a href="./tag/sqlite.html">SQLite</a><a href="./tag/relational-database.html">relational database</a>                </aside>
+
+                <div class="clear"></div>
+
+
+                </section>
+
+                <script type="text/javascript">
+                    var disqus = 'geodesygina';
+                    var disqus_shortname = 'geodesygina';
+                    var disqus_identifier = '/make_db.html';
+                    var disqus_url = './make_db.html';
+                </script>
+                <noscript>Please enable JavaScript to view the comments.</noscript>
+                <section class="post-comments">
+                        <a id="show-disqus" class="post-comments-activate" data-disqus-identifier="/make_db.html" >Show Comments</a>
+                    <div id="disqus_thread"></div>
+                </section>
+
+                <aside class="post-nav">
+                    <div class="clear"></div>
+                </aside>
+
+            </div>
+        </article>
+    </main>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
+
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="./theme/js/script.js"></script>
+
+<script type="text/javascript">
+    var disqus_shortname = 'geodesygina';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
 </body>
 </html>

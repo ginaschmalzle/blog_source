@@ -39,7 +39,7 @@ SOCIAL = (('Twitter', 'https://twitter.com/GinaSchmalzle'),
 DEFAULT_PAGINATION = 10
 
 #THEME = '/Users/ginaschmalzle/pelican-themes/blueidea'
-THEME = '/home/fauns/pelican-themes/attila'
+THEME = '/home/fauns/attila'
 
 STATIC_PATHS = (['images','vectorprojector'])
 
