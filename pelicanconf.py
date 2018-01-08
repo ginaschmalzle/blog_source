@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
+import os
 
 AUTHOR = u'Gina Schmalzle'
 SITENAME = u'Gina Schmalzle'
@@ -39,7 +40,8 @@ SOCIAL = (('Twitter', 'https://twitter.com/GinaSchmalzle'),
 DEFAULT_PAGINATION = 10
 
 #THEME = '/Users/ginaschmalzle/pelican-themes/blueidea'
-THEME = '/home/fauns/attila'
+THEME = os.environ['HOME'] + '/blog_source/attila'
+
 
 STATIC_PATHS = (['images','vectorprojector'])
 

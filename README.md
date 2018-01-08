@@ -17,7 +17,7 @@ This code is used to build the [Geodesy Gina Website](http://geodesygina.com/) u
 ### To view the new content on your local machine:
 1. Change to content directory:
 
-        cd content/
+        cd output/
 
 2. Start your local server:
 
