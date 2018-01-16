@@ -1,4 +1,4 @@
-**The Million Song Database and Recommendation Systems**
+The Million Song Database and Recommendation Systems
 ################################################################
 
 :date: 2014-07-27 15:56

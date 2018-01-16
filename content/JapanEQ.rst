@@ -1,4 +1,4 @@
-**Movie of March 11, 2011 Japan Earthquake and its aftershocks**
+Movie of March 11, 2011 Japan Earthquake and its aftershocks
 ###################################################################
 
 :date: 2014-04-18 16:56

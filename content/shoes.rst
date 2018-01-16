@@ -1,4 +1,4 @@
-**My big fat shoe-shopping adventure: Iterative sampling in R**
+My big fat shoe-shopping adventure: Iterative sampling in R
 ################################################################
 
 :date: 2014-07-27 14:56
@@ -197,4 +197,4 @@ And you get:
 
 And that's our shoe-shopping adventure:  Sampling with the built-in function of sample in R, where we determined the size of a single sample through our rate, and secondly with the supplied function where we sample individual elements in a population and evaluate each outcome against a set threshold.  Sampling forwards and backwards- have fun, and good shopping!
 
-Interested in getting your hands on the code?  Check it out in my `Github Repo <https://github.com/ginaschmalzle/MyShoes>`_.  
+Interested in getting your hands on the code?  Check it out in my `Github Repo <https://github.com/ginaschmalzle/MyShoes>`_.

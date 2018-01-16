@@ -1,4 +1,4 @@
-**SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3**
+SQLite3 Databases: Creating, Populating and Retrieving Data, Part 3
 #####################################################################################
 
 :date: 2014-07-27 13:56
@@ -11,7 +11,7 @@
 
 In `Part 1 Creating a Database with SQLite3 <http://geodesygina.com/make_db.html>`_  we built a database. In `Part 2 Populating an SQLite Database using Python <http://geodesygina.com/pop_db.html>`_ we inserted values into TABLES within our database using Python 3.4 and SQLite3. Here we continue using the functionality of Python 3.4 to retrieve and visualize forecasts contained within our database.  Again, I cannot thank enough `David Branner <https://github.com/brannerchinese>`_, for his efforts with this project!
 
-Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day. 
+Our desired end-product will be to produce the map below of the differences between forecasts that were made for a specific calendar day and the forecast for that day.
 
 .. image:: /images/weather_diff.png
 	:height: 500
@@ -134,7 +134,7 @@ The keys are the location's latitude and longitude, and the values are the forec
 
 Fabulous.  In *Figure 1* we focus only on the maximum temperature (maxt) forecasts. We visualize the absolute differences between the maximum forecasted values for the day of and the forecasted value for that day at some time in the past.  The differenced values are presented on a map of the United States using warm colors to reflect that the forecast the day of was warmer and cooler colors to reflect cooler temperatures (pun intended). With our data extracted, we need only to calculate the differences and we will plot the data using python's matplotlib with the basemap toolkit.
 
-This visualization will include six subplots- one for each successive day leading up to our target date.  Thinking about this another way, if our target date is April 22, 2014 (20140422), and we assign that the letter t, then we are making a subplot for differences between t, the day of forecast, and the forecast made at t-1, t-2, t-…n days.  
+This visualization will include six subplots- one for each successive day leading up to our target date.  Thinking about this another way, if our target date is April 22, 2014 (20140422), and we assign that the letter t, then we are making a subplot for differences between t, the day of forecast, and the forecast made at t-1, t-2, t-…n days.
 
 To collect the data for our target date we run the function below, which makes lists containing the latitude, longitude and differences, and sends them off to be processed by our next function::
 
@@ -201,7 +201,6 @@ The second function we have named "make_basemap”, and does the mapping work::
 			plt.suptitle("Differenced Max Temperatures (degrees C) for day "+str(target_date), fontsize=18)
 			plt.title("Forecast Day 0 - Day "+str(day))
 
-Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.  
+Executing make_map() we get the Figure 1. Note that a subplot is created for each differenced forecast through a for loop which also defines the subplot being created.
 
 Like what you see?  Stay tuned, the next step on my agenda is making an interactive website that will allow users to play with the data!  Thanks for reading!
-

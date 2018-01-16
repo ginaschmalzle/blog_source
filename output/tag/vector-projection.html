@@ -1,122 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  ga('create', 'UA-49087945-1', 'geodesygina.com');
-  ga('send', 'pageview');
 
+  <title>Gina Schmalzle - Tag vector projection</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="../" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Full Atom Feed" />
+
+  <link href="../theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="../theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Gina Schmalzle"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="Gina Schmalzle"/>
+<meta property="og:description" content="View the blog."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="../"/>
+<meta property="og:image" content="../theme/images/home-bg.jpg">
+
+<!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@GinaSchmalzle">
+  <meta name="twitter:title" content="Gina Schmalzle">
+  <meta name="twitter:description" content="View the blog.">
+  <meta name="twitter:url" content="../">
+  <meta name="twitter:image:src" content="../theme/images/home-bg.jpg">
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Website",
+  "name": " Gina Schmalzle ",
+  "url" : "../",
+  "image": "../theme/images/home-bg.jpg",
+  "description": "View the blog."
+}
 </script>
-        <meta charset="utf-8" />
-        <title>Gina Schmalzle - vector projection</title>
-        <link rel="stylesheet" href="../theme/css/main.css" />
-        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Atom Feed" />
-
-        <!--[if IE]>
-            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="../">Gina Schmalzle </a></h1>
-                <nav><ul>
-                    <li  >  <a href="/category/home.html">Home</a></li>
-                    <li  >  <a href="/category/bio.html">Bio</a></li>
-                    <li  >  <a href="/category/pubs.html">Pubs</a></li>
-                    <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
-                    <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
-                    <li><a href="/BreathingEarth/index.html">Breathing Earth</a></li>
-                    <li><a href="/index.html#moreblogs">Past Blogs</a></li>
-                </ul>
-                </nav>
-        </header><!-- /#banner -->
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="/category/home.html" role="presentation">Home</a></li>
+          <li><a href="/category/bio.html" role="presentation">Bio</a></li>
+          <li><a href="/category/pubs.html" role="presentation">Pubs</a></li>
 
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="../VectorProj.html">Projecting GPS velocity vectors onto a profile</a></h1>
-<footer class="post-info">
-        <span>Wed 19 March 2014</span>
-<span>| tags: <a href="../tag/gps.html">GPS</a><a href="../tag/vector-projection.html">vector projection</a></span>
-</footer><!-- /.post-info --><div class="section" id="global-positioning-systems">
-<h2><strong>Global Positioning Systems</strong></h2>
-<p><strong>Global Positioning Systems</strong> (<strong>GPS</strong>) are used to measure the three dimensional position of a point over time. High precision GPS are used to measure tectonic plate motion by measuring the position of a permanently installed geodetic monument over time.  The GPS instruments are either permanently installed over the monument and continuously recording its position over time, or the GPS monuments are perodically measured. With either method, three dimensional position estimates are made over time.</p>
-<p>This is an image of a high precision GPS antenna, whose image I took from the <a class="reference external" href="http://www.unavco.org/projects/major-projects/pbo/pbo.html">UNAVCO website</a>:</p>
-<img alt="UNAVCO GPS antenna" class="align-right" src="/images/gps_site.jpg" style="width: 400.0px; height: 200.0px;" />
-<p>And this is an example of the GPS site BEMT position 3D time series taken from UNAVCO:</p>
-<img alt="UNAVCO GPS antenna" class="align-right" src="http://cws.unavco.org:8080/cws/modules/GPStimeseriesCA/versions/version2011may/BEMT_2011.png" style="width: 400.0px; height: 400.0px;" />
-<p>Blue dots are daily position estimates in the north (top), east (middle) and vertical (bottom) components.  This site experienced an offset due to an earthquake in 2010.  For more information on how GPS works, please visit:  <a class="reference external" href="http://www.unavco.org/edu_outreach/teachers/teachers.html">http://www.unavco.org/edu_outreach/teachers/teachers.html</a></p>
-</div>
-<div class="section" id="gps-velocities">
-<h2><strong>GPS Velocities</strong></h2>
-<p>The rate at which a geodetic monument moves can be estimated by taking the slope of the time series for each component.  Take for example the time series shown above.  This is going to be a rough estimate, but between 2004 and 2010, the monument north component position moved from -15 mm to +15 mm, totalling 30 mm of displacement over 6 yrs, indicating that it is moving at 5 mm/yr in the north position.</p>
-<img alt="North Component" class="align-right" src="/images/NGPS.png" style="width: 200.0px; height: 200.0px;" />
-<p>Using the same logic, the east component moved ~-50 mm over about 6 years, giving the east component a rate of 8.3 mm/yr to the west.</p>
-<img alt="East Component" class="align-right" src="/images/EGPS.png" style="width: 200.0px; height: 200.0px;" />
-<p>The Magnitude and direction of the horizontal GPS velocity vector can now be calculated:</p>
-<img alt="Horizontal Components" class="align-right" src="/images/ENGPS.png" style="width: 400.0px; height: 400.0px;" />
-</div>
-<div class="section" id="vector-projection">
-<h2><strong>Vector Projection</strong></h2>
-<p>In map view small variations in GPS velocities may be difficult to see, hence it is sometimes useful to plot GPS velocities along a profile. The profile line can follow a fault line, and, if it does, one can calculate the fault parallel and perpendicular components of motion.  Fault parallel motion will give you an idea of lateral motion across the fault (as in strike-slip fault systems), and fault perpendicular motion will tell you if the two sides of the fault are separating or converging.  In this section, we will talk about deriving the profile parallel and perpendicular components of the GPS vectors using <strong>vector projection</strong>.</p>
-<img alt="Horizontal Components" class="align-right" src="/images/vector_projection.png" style="width: 400.0px; height: 200.0px;" />
-<p>Here the fault perpendicular velocity is: R perp= R*sin(t)
-and the fault parallel velocity is: R par= R*cos(t)</p>
-</div>
-<div class="section" id="the-vector-projector">
-<h2><strong>The Vector Projector</strong></h2>
-<p><strong>Stuart Sandine</strong>, <strong>Andrea Fey</strong> and <strong>Thomas Ballinger</strong> and I created a web app called <strong>The Vector Projector</strong> that calculates the magnitude, transect parallel and transect perpendicular components of GPS velocities along a profile.  In this app, you are given the option of several GPS velocity fields, calculated with respect to stable North America.  For now you can choose your profile width and you can filter what data you would like to use by their uncertainties (i.e., uncertainties that are more than the value specified are not used).  This beta version does not plot uncertainties, which we plan to change in the future.  Give it a try! <a class="reference external" href="http://geodesygina.com/vectorprojector/vectorprojector.html">Go to the Vector Projector</a>.</p>
-</div>
-<p><a href="../VectorProj.html#disqus_thread">comments</a></p>                </article>
-<p class="paginator">
-    Page 1 / 1
+    </ul>
+  </div>
+</nav>
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="blog-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="../" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Tag vector projection</h1>
+        <span class="blog-description">Posts: 1</span>
+            <div class="post-cover cover" style="background-image: url('../theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+<div id="index" class="container">
+  <main class="content" role="main">
+    <div class="extra-pagination">
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+    </div>
+
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="../VectorProj.html" rel="bookmark" title="Permalink to Projecting GPS velocity vectors onto a profile">Projecting GPS velocity vectors onto a profile</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="../author/gina-schmalzle.html">Gina Schmalzle</a>
+                     | <time datetime="Wed 19 March 2014">Wed 19 March 2014</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        GPS velocity projection
+                    </p>
+                </section>
+<p>
+  <a data-disqus-identifier="/VectorProj.html" href="../VectorProj.html#disqus_thread">comments</a>
 </p>
-            </aside><!-- /#featured -->
-            </ol><!-- /#posts-list -->
-            </section><!-- /#content -->
-        <section id="extras" class="body">
-                <div class="blogroll">
-                        <h2>blogroll</h2>
-                        <ul>
-                            <li><a href="http://getpelican.com/">Pelican</a></li>
-                            <li><a href="http://python.org/">Python.org</a></li>
-                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
-                            <li><a href="http://hackerschool.com">Hacker School</a></li>
-                            <li><a href="http://bostechnologies.com">BOS Technologies</a></li>
-                            <li><a href="http://osmanoglu.org/">Batu Osmanoglu</a></li>
-                        </ul>
-                </div><!-- /.blogroll -->
-                <div class="social">
-                        <h2>social</h2>
-                        <ul>
-                            <li><a href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+            </div>
+        </article>
 
-                            <li><a href="https://twitter.com/GinaSchmalzle">Twitter</a></li>
-                            <li><a href="https://www.facebook.com/gschmalzle">Facebook</a></li>
-                            <li><a href="http://www.linkedin.com/pub/gina-schmalzle/13/8a/234">LinkedIn</a></li>
-                            <li><a href="https://github.com/ginaschmalzle">github</a></li>
-			<li>
-			   <img src="/images/email.png" alt="email" width="20" height="20" align="left" ><address><a href="mailto:ginaschmalzle@gmail.com">Contact Me!</a></address>
-			</li>
-                        </ul>
-                </div><!-- /.social -->
-        </section><!-- /#extras -->
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+  </main>
+</div>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
 
-        <footer id="contentinfo" class="body">
-                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
-        </footer><!-- /#contentinfo -->
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="../theme/js/script.js"></script>
 
 <script type="text/javascript">
     var disqus_shortname = 'geodesygina';
     (function () {
         var s = document.createElement('script'); s.async = true;
         s.type = 'text/javascript';
-        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
         (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
     }());
 </script>

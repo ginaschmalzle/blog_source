@@ -1,153 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-  ga('create', 'UA-49087945-1', 'geodesygina.com');
-  ga('send', 'pageview');
 
+  <title>Gina Schmalzle - Tag Recommender Systems</title>
+
+
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="origin" />
+  <meta name="generator" content="Pelican" />
+  <link href="../" rel="canonical" />
+
+  <!-- Feed -->
+        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Full Atom Feed" />
+
+  <link href="../theme/css/style.css" type="text/css" rel="stylesheet" />
+
+  <!-- Code highlight color scheme -->
+      <link href="../theme/css/code_blocks/github.css" rel="stylesheet">
+
+
+  <!-- Custom fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Montserrat:400,300' rel='stylesheet' type='text/css' />
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css" />
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+
+
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Gina Schmalzle"/>
+<meta property="og:type" content="blog"/>
+<meta property="og:title" content="Gina Schmalzle"/>
+<meta property="og:description" content="View the blog."/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:url" content="../"/>
+<meta property="og:image" content="../theme/images/home-bg.jpg">
+
+<!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@GinaSchmalzle">
+  <meta name="twitter:title" content="Gina Schmalzle">
+  <meta name="twitter:description" content="View the blog.">
+  <meta name="twitter:url" content="../">
+  <meta name="twitter:image:src" content="../theme/images/home-bg.jpg">
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Website",
+  "name": " Gina Schmalzle ",
+  "url" : "../",
+  "image": "../theme/images/home-bg.jpg",
+  "description": "View the blog."
+}
 </script>
-        <meta charset="utf-8" />
-        <title>Gina Schmalzle - Recommender Systems</title>
-        <link rel="stylesheet" href="../theme/css/main.css" />
-        <link href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Gina Schmalzle Atom Feed" />
-
-        <!--[if IE]>
-            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-        <![endif]-->
 </head>
+<!-- TODO : Body class -->
+<body class="home-template">
 
-<body id="index" class="home">
-        <header id="banner" class="body">
-                <h1><a href="../">Gina Schmalzle </a></h1>
-                <nav><ul>
-                    <li  >  <a href="/category/home.html">Home</a></li>
-                    <li  >  <a href="/category/bio.html">Bio</a></li>
-                    <li  >  <a href="/category/pubs.html">Pubs</a></li>
-                    <li><a href="/vectorprojector/vectorprojector.html">Vector Projector</a></li>
-                    <li><a href="/JapanEarthquake/index.html">Japan Earthquake</a></li>
-                    <li><a href="/BreathingEarth/index.html">Breathing Earth</a></li>
-                    <li><a href="/index.html#moreblogs">Past Blogs</a></li>
-                </ul>
-                </nav>
-        </header><!-- /#banner -->
+<nav id="menu">
+  <a class="close-button">Close</a>
+  <div class="nav-wrapper">
+    <p class="nav-label">Menu</p>
+    <ul>
+          <li><a href="/category/home.html" role="presentation">Home</a></li>
+          <li><a href="/category/bio.html" role="presentation">Bio</a></li>
+          <li><a href="/category/pubs.html" role="presentation">Pubs</a></li>
 
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="../recommender.html"><strong>The Million Song Database and Recommendation Systems</strong></a></h1>
-<footer class="post-info">
-        <span>Sun 27 July 2014</span>
-<span>| tags: <a href="../tag/recommender-systems.html">Recommender Systems</a><a href="../tag/python.html">python</a><a href="../tag/sqlite3.html">sqlite3</a><a href="../tag/million-song-database.html">Million Song Database</a></span>
-</footer><!-- /.post-info --><div class="section" id="building-recommendation-systems">
-<h2><strong>Building Recommendation Systems</strong></h2>
-<p>Recommender systems filter information to predict how much a user would like a given item.  Companies like Netflix and Tivo use these types of filtering algorithms to try to figure out what a person will want.  Unfortunately, these systems are not perfect, and sometimes can go horribly wrong, as elegantly described by Patton Oswalt on the Conan O'Brien show:</p>
-<div class="youtube youtube-16x9"><iframe src="https://www.youtube.com/embed/tdzIXkj1OfA?start=195&end=272&version=3" allowfullscreen seamless frameBorder="0"></iframe></div><p>Yes, bad Tivo.</p>
-<p>So how do we improve recommender systems?  Companies as well as academics are trying hard to figure this out. Fortunately, some groups released large datasets so the anyone can play with them and try to solves these issues.  One such publicly available dataset is the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/">The Million Song Dataset</a>  -- a perfect dataset for building recommender systems! So, I thought I would give it a try.</p>
-<p>For this project, I focused on the <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> provided by Echonest, which includes information on user play lists to build my recommenders located on my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a>. I built two recommenders; one that figures out what songs a user would like by using an input of a selected song, and another that recommends songs based on what the user has in their play list.</p>
-<p>Both recommenders use a combination of <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Collaborative filtering techniques</a> with vote counting. Collaborative filtering makes recommendations by collecting taste preferences and comparing them to other users.  Here we assume that others that have the same song in their play list have similar tastes.  Therefore, songs in the other users play lists would be good ones to recommend.  In these recommenders I ultimately get to a list of songs that were provided by other users.  I then count up how many times a song appears in other people's play lists (vote counting) and spit out the top counted songs as the top recommended songs.  In this blog I briefly describe the approach for both the simple, single song recommender and the slightly more complex user recommender for users with a play list.</p>
-</div>
-<div class="section" id="the-data">
-<h2><strong>The Data</strong></h2>
-<p>The <a class="reference external" href="http://labrosa.ee.columbia.edu/millionsong/tasteprofile">Taste Profile subset</a> contains over a million users with over 380,000 unique songs.  I only use a very small subset of data that includes:</p>
-<ol class="arabic simple">
-<li>A unique user ID</li>
-<li>All the songs in the user play list including:</li>
-</ol>
-<blockquote>
-<ul class="simple">
-<li>Song name and id</li>
-<li>Artist name and id</li>
-<li>The number of times the song was played by the user</li>
-</ul>
-</blockquote>
-</div>
-<div class="section" id="the-simple-recommender">
-<h2><strong>The Simple Recommender</strong></h2>
-<p>For my simple recommender I don't know anything about the person selecting the song.  All I know is the selected artist and song. The steps for this recommender include:</p>
-<ol class="arabic simple">
-<li>Find all users that have the song in their play list</li>
-<li>Make a list of all songs from each person's play list</li>
-<li>Count how many times a unique song appears in the list</li>
-<li>Print out the songs in the order of most counts that was not the original input song</li>
-</ol>
-<p>Easy cheesy, right?</p>
-<p>To illustrate the outcome of this recommender, here is a plot of the top 10 most counted songs from other people's play lists given the song Yeah! by Usher (keep in mind these are the counts for my much smaller subset of data):</p>
-<img alt="deforming_plates" class="align-center" src="/images/top10.jpg" style="width: 700.0px; height: 700.0px;" />
-</div>
-<div class="section" id="adding-user-play-list-into-a-recommender">
-<h2><strong>Adding User Play List into a Recommender</strong></h2>
-<p>Adding a user play list into a recommender is slightly more complex.  Here, I want to know what other users are most similar to the recommendee (for lack of a better term, I define the recommendee as the person who is going to get the recommendation), then suggest songs from the similar users' play lists. The steps for this recommender include:</p>
-<ol class="arabic simple">
-<li>For each song in the recommendee play list, make a list of all users that also have that song in their play list.</li>
-<li>Count the number of times a unique user is in the list. The user with the most counts is the most similar to the recommendee.</li>
-<li>Pick the most similar users and concatenate a list of songs that were not in the recommendee's play list.</li>
-<li>Count the number of times a song shows up in the list</li>
-<li>Print out the songs in order of most counted</li>
-</ol>
-<p>Slightly more complicated than the simple recommender, but generally the same idea.</p>
-</div>
-<div class="section" id="pitfalls">
-<h2><strong>Pitfalls</strong></h2>
-<p>There are issues with these simple approaches.  They work well for the small data set that I downloaded, but as the dataset gets larger, the lists and dictionaries that I make in my code also get larger. So, this approach will take up increasing amounts of memory to make my lists, and increasing amounts of time to sort the lists and count the number of songs.  <a class="reference external" href="http://en.wikipedia.org/wiki/Collaborative_filtering">Model-based approaches</a> help to minimize these issues. Another issue is making recommendations based on new songs, or songs that very few people have listened to.  In these cases other information about the song, such as genre, would be needed to make recommendations.</p>
-</div>
-<div class="section" id="more-info-on-my-code">
-<h2><strong>More Info on My Code</strong></h2>
-<p>Interested in using my recommenders? Check out my <a class="reference external" href="https://github.com/ginaschmalzle/million_song">Github page</a> which includes the codes, instructions on how to use them, and some more information on how the codes work. Any comments or suggestions are welcome!</p>
-</div>
-<div class="section" id="acknowledgements">
-<h2><strong>Acknowledgements</strong></h2>
-<p>Thanks to <a class="reference external" href="http://www.linkedin.com/pub/stella-rowlett/0/797/118">Stella Rowlett</a>, <a class="reference external" href="http://jasongowans.net/">Jason Gowans</a> and <a class="reference external" href="http://www.linkedin.com/in/manjudotorg">Manju Muthukumaresan</a> for suggesting this project!</p>
-</div>
-<p><a href="../recommender.html#disqus_thread">comments</a></p>                </article>
-<p class="paginator">
-    Page 1 / 1
+    </ul>
+  </div>
+</nav>
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header id="blog-header" class="has-cover">
+      <div class="inner">
+        <nav id="navigation">
+            <span id="home-button" class="nav-button">
+                <a class="home-button" href="../" title="Home"><i class="ic ic-arrow-left"></i> Home</a>
+            </span>
+          <span id="menu-button" class="nav-button">
+            <a class="menu-button"><i class="ic ic-menu"></i> Menu</a>
+          </span>
+        </nav>
+        <h1 class="post-title">Tag Recommender Systems</h1>
+        <span class="blog-description">Posts: 1</span>
+            <div class="post-cover cover" style="background-image: url('../theme/images/post-bg.jpg')">
+      </div>
+    </header>
+
+  <section id="wrapper">
+    <a class="hidden-close"></a>
+
+<div id="index" class="container">
+  <main class="content" role="main">
+    <div class="extra-pagination">
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+    </div>
+
+        <article class="post">
+        <div class="inner">
+            <header class="post-header">
+                <h2 class="post-title"><a href="../recommender.html" rel="bookmark" title="Permalink to The Million Song Database and Recommendation Systems">The Million Song Database and Recommendation Systems</a>
+                </h2>
+                <span class="post-meta">
+                        <a href="../author/gina-schmalzle.html">Gina Schmalzle</a>
+                     | <time datetime="Sun 27 July 2014">Sun 27 July 2014</time>
+                </span>
+                <div class="clear"></div>
+            </header>
+                <section class="post-excerpt">
+                    <p>
+                        Recommender System for the Million Song Database
+                    </p>
+                </section>
+<p>
+  <a data-disqus-identifier="/recommender.html" href="../recommender.html#disqus_thread">comments</a>
 </p>
-            </aside><!-- /#featured -->
-            </ol><!-- /#posts-list -->
-            </section><!-- /#content -->
-        <section id="extras" class="body">
-                <div class="blogroll">
-                        <h2>blogroll</h2>
-                        <ul>
-                            <li><a href="http://getpelican.com/">Pelican</a></li>
-                            <li><a href="http://python.org/">Python.org</a></li>
-                            <li><a href="http://jinja.pocoo.org/">Jinja2</a></li>
-                            <li><a href="http://hackerschool.com">Hacker School</a></li>
-                            <li><a href="http://bostechnologies.com">BOS Technologies</a></li>
-                            <li><a href="http://osmanoglu.org/">Batu Osmanoglu</a></li>
-                        </ul>
-                </div><!-- /.blogroll -->
-                <div class="social">
-                        <h2>social</h2>
-                        <ul>
-                            <li><a href="http://geodesygina.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+            </div>
+        </article>
 
-                            <li><a href="https://twitter.com/GinaSchmalzle">Twitter</a></li>
-                            <li><a href="https://www.facebook.com/gschmalzle">Facebook</a></li>
-                            <li><a href="http://www.linkedin.com/pub/gina-schmalzle/13/8a/234">LinkedIn</a></li>
-                            <li><a href="https://github.com/ginaschmalzle">github</a></li>
-			<li>
-			   <img src="/images/email.png" alt="email" width="20" height="20" align="left" ><address><a href="mailto:ginaschmalzle@gmail.com">Contact Me!</a></address>
-			</li>
-                        </ul>
-                </div><!-- /.social -->
-        </section><!-- /#extras -->
+<nav class="pagination" role="pagination">
+  <div class="inner">
+    <span class="pagination-info">Page 1 / 1</span>
+    <div class="clear"></div>
+  </div>
+</nav>
+  </main>
+</div>
+      <!-- TODO : Body class -->
+    <div id="body-class" style="display: none;" class=""></div>
 
-        <footer id="contentinfo" class="body">
-                <p>Powered by <a href="http://getpelican.com/">Pelican</a>. Theme <a href="https://github.com/blueicefield/pelican-blueidea/">blueidea</a>, inspired by the default theme.</p>
-        </footer><!-- /#contentinfo -->
+    <footer id="footer">
+      <div class="inner">
+        <section class="credits">
+
+
+          <span class="credits-theme">Theme <a href="https://github.com/arulrajnet/attila" rel="nofollow">Attila</a></span>
+          <span class="credits-software">Published with <a href="https://github.com/getpelican/pelican" rel="nofollow">Pelican</a></span>
+        </section>
+      </div>
+    </footer>
+  </section>
+
+  <script type="text/javascript" src="../theme/js/script.js"></script>
 
 <script type="text/javascript">
     var disqus_shortname = 'geodesygina';
     (function () {
         var s = document.createElement('script'); s.async = true;
         s.type = 'text/javascript';
-        s.src = 'http://' + disqus_shortname + '.disqus.com/count.js';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
         (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
     }());
 </script>

@@ -1,4 +1,4 @@
-**The Dictionary Data structure**
+The Dictionary Data structure
 ################################################################################
 
 :date: 2014-07-01 14:56
@@ -12,7 +12,7 @@
 **Dictionaries**
 ======================================
 
-This page briefly reviews a **dictionary**, also known as an **associative array**, a **map** or a **symbol table**. A dictionary is composed of a collection of keys and values, and each key appears only once in a collection.  JSON files, human-readable files that are commonly used for web applications, contains data objects in the form of a dictionary. 
+This page briefly reviews a **dictionary**, also known as an **associative array**, a **map** or a **symbol table**. A dictionary is composed of a collection of keys and values, and each key appears only once in a collection.  JSON files, human-readable files that are commonly used for web applications, contains data objects in the form of a dictionary.
 
 Let's demonstrate how a dictionary is defined in **python**.  Open a **python** repl by typing on the command line: python.  Once in your repl type::
 
@@ -50,15 +50,15 @@ returns 'Hello'.  Making sense?  OK, let's add one more layer of abstraction whi
 
  a = { 'Hello': 'How are you?', 'Goodbye': {'a':'See you Later!','b':'Later Gator' }}
 
-into the python repl.  Notice that the key 'Goodbye' now points to a dictionary.  If you type into the python repl:: 
+into the python repl.  Notice that the key 'Goodbye' now points to a dictionary.  If you type into the python repl::
 
  a ['Goodbye']
 
 you now get the dictionary {'a': 'See you Later!', 'b': 'Later Gator'}.  You can choose a particular value of this sub-dictionary by specifying::
- 
+
  a ['Goodbye']['b']
 
-which returns 'Later Gator'.  
+which returns 'Later Gator'.
 
 
 `Return to Populating a Database </pop_db.html>`_!

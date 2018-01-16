@@ -1,4 +1,4 @@
-**Mapping and Plotting data with Generic Mapping Tools (GMT)**
+Mapping and Plotting data with Generic Mapping Tools (GMT)
 ################################################################
 
 :date: 2014-04-14 14:56

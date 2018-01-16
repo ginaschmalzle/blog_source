@@ -13,25 +13,25 @@ Projecting GPS velocity vectors onto a profile
 ===============================
 **Global Positioning Systems** (**GPS**) are used to measure the three dimensional position of a point over time. High precision GPS are used to measure tectonic plate motion by measuring the position of a permanently installed geodetic monument over time.  The GPS instruments are either permanently installed over the monument and continuously recording its position over time, or the GPS monuments are perodically measured. With either method, three dimensional position estimates are made over time.
 
-This is an image of a high precision GPS antenna, whose image I took from the `UNAVCO website <http://www.unavco.org/projects/major-projects/pbo/pbo.html>`_:   
+This is an image of a high precision GPS antenna, whose image I took from the `UNAVCO website <http://www.unavco.org/projects/major-projects/pbo/pbo.html>`_:
 
 .. image:: /images/gps_site.jpg
    :height: 200
    :width: 400
-   :scale: 100
+   :scale: 150
    :alt: UNAVCO GPS antenna
    :align: right
 
 And this is an example of the GPS site BEMT position 3D time series taken from UNAVCO:
 
-.. image:: http://cws.unavco.org:8080/cws/modules/GPStimeseriesCA/versions/version2011may/BEMT_2011.png
+.. image:: /images/BEMT.png
    :height: 400
    :width: 400
-   :scale: 100
+   :scale: 150
    :alt: UNAVCO GPS antenna
    :align: right
 
-Blue dots are daily position estimates in the north (top), east (middle) and vertical (bottom) components.  This site experienced an offset due to an earthquake in 2010.  For more information on how GPS works, please visit:  http://www.unavco.org/edu_outreach/teachers/teachers.html 
+Blue dots are daily position estimates in the north (top), east (middle) and vertical (bottom) components.  This site experienced an offset due to an earthquake in 2010.  For more information on how GPS works, please visit:  http://www.unavco.org/edu_outreach/teachers/teachers.html
 
 **GPS Velocities**
 ==================
@@ -44,7 +44,7 @@ The rate at which a geodetic monument moves can be estimated by taking the slope
    :alt: North Component
    :align: right
 
-Using the same logic, the east component moved ~-50 mm over about 6 years, giving the east component a rate of 8.3 mm/yr to the west.  
+Using the same logic, the east component moved ~-50 mm over about 6 years, giving the east component a rate of 8.3 mm/yr to the west.
 
 .. image:: /images/EGPS.png
    :height: 200
@@ -74,13 +74,9 @@ In map view small variations in GPS velocities may be difficult to see, hence it
    :alt: Horizontal Components
    :align: right
 
-Here the fault perpendicular velocity is: R perp= R*sin(t)  
-and the fault parallel velocity is: R par= R*cos(t)  
+Here the fault perpendicular velocity is: R perp= R*sin(t)
+and the fault parallel velocity is: R par= R*cos(t)
 
 **The Vector Projector**
 =========================
 **Stuart Sandine**, **Andrea Fey** and **Thomas Ballinger** and I created a web app called **The Vector Projector** that calculates the magnitude, transect parallel and transect perpendicular components of GPS velocities along a profile.  In this app, you are given the option of several GPS velocity fields, calculated with respect to stable North America.  For now you can choose your profile width and you can filter what data you would like to use by their uncertainties (i.e., uncertainties that are more than the value specified are not used).  This beta version does not plot uncertainties, which we plan to change in the future.  Give it a try! `Go to the Vector Projector <http://geodesygina.com/vectorprojector/vectorprojector.html>`_.
-
- 
-
-

@@ -1,4 +1,4 @@
-**Elastic half space model of a vertical strike slip fault**
+Elastic half space model of a vertical strike slip fault
 ################################################################
 
 :date: 2014-04-18 14:56
@@ -12,7 +12,7 @@
 **Elastic Half Space Model of a Vertical Strike Slip Fault**
 ==============================================================
 
-In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an "S".  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced. 
+In between major earthquakes, the ground deforms due to movement of tectonic plates.  For strike-slip faults, such as the San Andreas Fault, the ground deforms in an 'S' shape that can be modeled as an arctangent.  To better understand what is observed at the surface, imagine a fence built perpendicularly across a strike-slip fault.  When the fault is first built it is nice and straight, but over time it starts to deform and look kind of like an "S".  When the earthquake occurs the ground (and the fence) will snap, and the two sides of the fence will become straight again at some time after the earthquake, although displaced.
 
 .. image:: /images/elastichs.jpg
    :height: 250
@@ -27,7 +27,7 @@ A simple model of this movement for vertical strike slip faults in a homogenous 
 
  V(x) = (vo/pi)arctan(x/D)
 
-where V(x) is the velocity of points estimated along a perpendicular profile across the fault, v is the far field velocity, x is the distance from the fault, and D is the dislocation depth.  
+where V(x) is the velocity of points estimated along a perpendicular profile across the fault, v is the far field velocity, x is the distance from the fault, and D is the dislocation depth.
 
 High precision GPS can be used to observe the deformation around fault systems.  The velocity, position and uncertainty estimates can be compared directly to the model to estimate the goodness of fit of the model.  The chi2 statistic is give by::
 
@@ -103,9 +103,9 @@ I collect the information from the param file and computed the surface velocitie
      print >> f, x, Vel
      listx.append(x)
      listVel.append(Vel)
-     x = x + param.int 
+     x = x + param.int
 
-This calculates the predicted velocity for a defined increment along a profile of a strike slip fault. 
+This calculates the predicted velocity for a defined increment along a profile of a strike slip fault.
 I keep the x's and calculated velocities in lists that will be used later in the program for plotting purposes.
 
 Now let's open the GPS file and read its contents::
@@ -120,7 +120,7 @@ Now calculate the expected velocity or at each GPS position::
  VelC = -((param.Vo / np.pi) * np.arctan ([ gx/param.d ]))
 
 and calculate the chi2 and reduced chi2 ::
- 
+
  chi = ((gVel - VelC)/ (gsig))**2
  chi2 = sum(chi.T)
  redchi = chi2/(len(gVel)-3)
@@ -134,7 +134,7 @@ Now you have the model fit to the data for a modeled fault rate and locking dept
    :alt: gridsearch
    :align: right
 
-*Figure 2.  Modeled velocities across a vertical strike slip fault (solid lines) compared to GPS velocities (triangles) with velocity uncertainty error bars. Both gridsearch estimated and inversion estimated low misfit rates are shown for a locking depth of 15km.  The reduced chi2 is given.* 
+*Figure 2.  Modeled velocities across a vertical strike slip fault (solid lines) compared to GPS velocities (triangles) with velocity uncertainty error bars. Both gridsearch estimated and inversion estimated low misfit rates are shown for a locking depth of 15km.  The reduced chi2 is given.*
 
 
 But suppose you want to know which combination of modeled fault rate and locking depth give you the best fit to the data.   One way you can do this is by running a whole suite of models that include different combinations of fault rate and locking depth values.  This is called a gridsearch approach, and is perhaps the simplest (although most time consuming) method.  The param.py files contains user input values for a range of modeled parameters.  Grabbing those values we can then perform a while loop to loop through those ranges::
@@ -174,10 +174,10 @@ By performing the gridsearch, you can contour the estimated chi2 value with the 
 
 *Figure 3. Contour plot of the chi2 statistic (colors, cooler colors indicate lower misfit) given modeled values of fault rate and locking depth.  The white star marks the low misfit model.*
 
-Performing a gridsearch can take a long time, but it has the advantage that it is a straightforward method to estimate the low misfit model.  By imaging our chi2 distribution, like in *Figure 3* we can also easily see if there are other minima that could provide an alternative model that fits the data just as well for our given parameter ranges.  The down side, however, is that this method is really slow, especially for more complicated models that require longer computation times.  
+Performing a gridsearch can take a long time, but it has the advantage that it is a straightforward method to estimate the low misfit model.  By imaging our chi2 distribution, like in *Figure 3* we can also easily see if there are other minima that could provide an alternative model that fits the data just as well for our given parameter ranges.  The down side, however, is that this method is really slow, especially for more complicated models that require longer computation times.
 
 An alternative method is to linearly invert the data with a little bit of matrix algebra. A great book that clearly describes this technique is:
 
 Aster, R., Borchers, B., Thurber, C., Parameter Estimation and Inverse Problems, 301 pp, Elsevier Academic Press, 2004.
 
-I highly recommend this book for further reading on this subject.  I am not going to go over these concepts in this blog, but these methods are used in the scripts in my `github repo <https://github.com/ginaschmalzle/elastichalfspace>`_.  I use a linear inverse approach which is only valid for linear parameters, hence I can use it to estimate the best fitting rate, but not the locking depth.  Using this method, the model is run for a locking depth of 15 km to find the best fit model in *Figure 2*.  
+I highly recommend this book for further reading on this subject.  I am not going to go over these concepts in this blog, but these methods are used in the scripts in my `github repo <https://github.com/ginaschmalzle/elastichalfspace>`_.  I use a linear inverse approach which is only valid for linear parameters, hence I can use it to estimate the best fitting rate, but not the locking depth.  Using this method, the model is run for a locking depth of 15 km to find the best fit model in *Figure 2*.

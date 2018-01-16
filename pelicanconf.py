@@ -38,7 +38,7 @@ SOCIAL = (('Twitter', 'https://twitter.com/GinaSchmalzle'),
 
 DEFAULT_PAGINATION = 10
 
-THEME = '/Users/ginaschmalzle/pelican-themes/blueidea'
+THEME = 'attila'
 
 STATIC_PATHS = (['images','vectorprojector'])
 

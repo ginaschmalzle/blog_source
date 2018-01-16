@@ -1,4 +1,4 @@
-**An Introduction to Plotting and Mapping in Python**
+An Introduction to Plotting and Mapping in Python
 ################################################################
 
 :date: 2015-04-14 15:57
