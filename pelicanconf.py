@@ -5,6 +5,9 @@ from __future__ import unicode_literals
 AUTHOR = u'Gina Schmalzle'
 SITENAME = u'Geodesy Gina'
 SITEURL = 'http://geodesygina.com'
+VPURL = 'http://geodesygina.com/vectorprojector/vectorprojector.html'
+JEURL = 'http://geodesygina.com/JapanEarthquake/index.html'
+BEURL = 'http://geodesygina.com/BreathingEarth/index.html'
 
 REVERSE_CATEGORY_ORDER = True
 TIMEZONE = 'America/New_York'
@@ -47,9 +50,11 @@ READERS = {'html': None}
 #PAGE_ORDER_BY = 'page-order'
 
 MENUITEMS = [('Home', SITEURL),
-             # ('Bio', '/category/bio.html'),
-             ('Bio', 'MyBio.html'),
-             ('Pubs', 'MyPubs.html')]
+             ('Bio', '/output/MyBio.html'),
+             ('Pubs', '/output/MyPubs.html'),
+             ('Vector Projector', VPURL),
+             ('Japan Earthquake Movie', JEURL),
+             ('Breathing Earth', BEURL)]
 
 DISPLAY_PAGES_ON_MENU = False
 
