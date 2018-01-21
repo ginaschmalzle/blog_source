@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Gina Schmalzle'
-SITENAME = u'Gina Schmalzle'
+SITENAME = u'Geodesy Gina'
 SITEURL = 'http://geodesygina.com'
 
 REVERSE_CATEGORY_ORDER = True
@@ -46,7 +46,10 @@ READERS = {'html': None}
 
 #PAGE_ORDER_BY = 'page-order'
 
-MENUITEMS = [('Home', '/category/home.html'),('Bio', '/category/bio.html'),('Pubs', '/category/pubs.html')]
+MENUITEMS = [('Home', SITEURL),
+             # ('Bio', '/category/bio.html'),
+             ('Bio', 'MyBio.html'),
+             ('Pubs', 'MyPubs.html')]
 
 DISPLAY_PAGES_ON_MENU = False
 
