@@ -9,6 +9,8 @@ VPURL = 'http://geodesygina.com/vectorprojector/vectorprojector.html'
 JEURL = 'http://geodesygina.com/JapanEarthquake/index.html'
 BEURL = 'http://geodesygina.com/BreathingEarth/index.html'
 
+# COLOR_SCHEME_CSS = 'monokai.css'
+
 REVERSE_CATEGORY_ORDER = True
 TIMEZONE = 'America/New_York'
 
@@ -25,33 +27,45 @@ FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
+AUTHORS_BIO = {
+  "Gina Schmalzle": {
+    "name": "Gina Schmalzle",
+    "cover": "images/Gina.jpg",
+    "image": "images/Gina.jpg",
+    "website": SITEURL,
+    "location": "Seattle, WA",
+    "bio": "This is the place for a small biography with max 200 characters. Well, now 100 are left. Cool, hugh?"
+  }
+}
+
 # Blogroll
 LINKS =  (('Pelican', 'http://getpelican.com/'),
           ('Python.org', 'http://python.org/'),
           ('Jinja2', 'http://jinja.pocoo.org/'),
           ('Hacker School', 'http://hackerschool.com'),
           ('BOS Technologies', 'http://bostechnologies.com'),
-	  ('Batu Osmanoglu', 'http://osmanoglu.org/'),)
+	      ('Batu Osmanoglu', 'http://osmanoglu.org/'),)
 
 # Social widget
-SOCIAL = (('Twitter', 'https://twitter.com/GinaSchmalzle'),
-          ('Facebook', 'https://www.facebook.com/gschmalzle'),
-          ('LinkedIn', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),
-	  ('github', 'https://github.com/ginaschmalzle'),)
+
+SOCIAL = (('twitter', 'https://twitter.com/GinaSchmalzle'),
+          ('facebook', 'https://www.facebook.com/gschmalzle'),
+          ('linkedin', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),
+	      ('github', 'https://github.com/ginaschmalzle'),)
 
 DEFAULT_PAGINATION = 10
 
 THEME = 'attila'
 
-STATIC_PATHS = (['images','vectorprojector'])
+# STATIC_PATHS = (['images','vectorprojector'])
 
 READERS = {'html': None}
 
 #PAGE_ORDER_BY = 'page-order'
 
 MENUITEMS = [('Home', SITEURL),
-             ('Bio', '/output/MyBio.html'),
-             ('Pubs', '/output/MyPubs.html'),
+             ('Bio', 'MyBio.html'),
+             ('Pubs', 'MyPubs.html'),
              ('Vector Projector', VPURL),
              ('Japan Earthquake Movie', JEURL),
              ('Breathing Earth', BEURL)]
