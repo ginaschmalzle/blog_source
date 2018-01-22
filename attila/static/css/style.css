@@ -32,8 +32,8 @@ video {
     display: inline-block;
     vertical-align: baseline
 }
-
-audio:not([controls]) {
+p
+audio:not([controls]) {p
     display: none;
     height: 0
 }
@@ -1440,9 +1440,14 @@ img {
     overflow: hidden
 }
 
+.follow-me {
+    max-width: 50%;
+    float: left
+}
+
 .post-share {
     max-width: 25%;
-    float: right
+    float: center
 }
 
 .post-share a {

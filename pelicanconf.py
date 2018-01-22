@@ -27,31 +27,42 @@ FEED_ALL_ATOM = 'feeds/all.atom.xml'
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
 
+
+
+# Author
+AUTHOR_URL = 'author/{slug}'
+AUTHOR_SAVE_AS = 'author/{slug}/index.html'
+AUTHORS_SAVE_AS = 'authors.html'
+
 AUTHORS_BIO = {
-  "Gina Schmalzle": {
-    "name": "Gina Schmalzle",
-    "cover": "images/Gina.jpg",
-    "image": "images/Gina.jpg",
-    "website": SITEURL,
-    "location": "Seattle, WA",
+  "zutrinken": {
+    "name": "Zutrinken",
+    "cover": "https://arulrajnet.github.io/attila-demo/assets/images/avatar.png",
+    "image": "https://arulrajnet.github.io/attila-demo/assets/images/avatar.png",
+    "website": "http://blog.arulraj.net",
+    "location": "Chennai",
     "bio": "This is the place for a small biography with max 200 characters. Well, now 100 are left. Cool, hugh?"
   }
 }
 
 # Blogroll
-LINKS =  (('Pelican', 'http://getpelican.com/'),
-          ('Python.org', 'http://python.org/'),
-          ('Jinja2', 'http://jinja.pocoo.org/'),
-          ('Hacker School', 'http://hackerschool.com'),
-          ('BOS Technologies', 'http://bostechnologies.com'),
-	      ('Batu Osmanoglu', 'http://osmanoglu.org/'),)
+LINKS =  (
+              ('Pelican', 'http://getpelican.com/'),
+              ('Python.org', 'http://python.org/'),
+              ('Jinja2', 'http://jinja.pocoo.org/'),
+              ('Hacker School', 'http://hackerschool.com'),
+              ('BOS Technologies', 'http://bostechnologies.com'),
+    	      ('Batu Osmanoglu', 'http://osmanoglu.org/')
+          )
 
 # Social widget
 
-SOCIAL = (('twitter', 'https://twitter.com/GinaSchmalzle'),
-          ('facebook', 'https://www.facebook.com/gschmalzle'),
-          ('linkedin', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),
-	      ('github', 'https://github.com/ginaschmalzle'),)
+SOCIAL = (
+              ('twitter', 'https://twitter.com/GinaSchmalzle'),
+              ('facebook', 'https://www.facebook.com/gschmalzle'),
+              ('linkedin', 'http://www.linkedin.com/pub/gina-schmalzle/13/8a/234'),
+    	      ('github', 'https://github.com/ginaschmalzle')
+          )
 
 DEFAULT_PAGINATION = 10
 
@@ -63,12 +74,15 @@ READERS = {'html': None}
 
 #PAGE_ORDER_BY = 'page-order'
 
-MENUITEMS = [('Home', SITEURL),
-             ('Bio', 'MyBio.html'),
-             ('Pubs', 'MyPubs.html'),
-             ('Vector Projector', VPURL),
-             ('Japan Earthquake Movie', JEURL),
-             ('Breathing Earth', BEURL)]
+MENUITEMS = [
+                 ('Home', SITEURL),
+                 ('Vector Projector', VPURL),
+                 ('Japan Earthquake Movie', JEURL),
+                 ('Breathing Earth', BEURL),
+                 ('Bio', 'MyBio.html'),
+                 ('Pubs', 'MyPubs.html'),
+                 ('Follow Me', 'follow.html')
+             ]
 
 DISPLAY_PAGES_ON_MENU = False
 

@@ -1,7 +1,7 @@
-My Publications
-######################
+Publications by Gina Schmalzle
+###############################
 
-:date: 2014-03-10 2:45
+:date: 2014-01-01 2:45
 :tags: **Schmalzle**, Publications
 :category: Pubs
 :slug: MyPubs
@@ -13,7 +13,7 @@ My Publications
 
 Karimzadeh, S., Cakir, Z., Osmanoglu, B., **Schmalzle, G. M.**, Miyajima, M., Amiraslanzadeh, R., and Djamour, Y., `Interseismic strain accumulation across the North Tabriz Fault (NW Iran) deduced from InSAR time series <https://www.researchgate.net/publication/235926502_Interseismic_strain_accumulation_across_the_North_Tabriz_Fault_(NW_Iran)_deduced_from_InSAR_time_series>`_, Journal of Geodynamics, 66, doi: 10.1016/j.jog2013.02.003, 2013.
 
-Gourmelen, N., Dixon, T.H., Amelung, F., **Schmalzle, G. M.**, `Acceleration and Evolution of Faults: An Example from the Hunter Mountain-Panamint Valley Fault Zone, Eastern California <http://www.sciencedirect.com/science/article/pii/S0012821X10007119>`_, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.11.016, 2010. 
+Gourmelen, N., Dixon, T.H., Amelung, F., **Schmalzle, G. M.**, `Acceleration and Evolution of Faults: An Example from the Hunter Mountain-Panamint Valley Fault Zone, Eastern California <http://www.sciencedirect.com/science/article/pii/S0012821X10007119>`_, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.11.016, 2010.
 
 Fulton, P., **Schmalzle, G. M.**, Harris, R., Dixon, T. H., `Reconciling patterns of interseismic strain accumulation with thermal observations across the Carrizo segment of the San Andreas Fault <http://www.sciencedirect.com/science/article/pii/S0012821X10006679>`_, Earth and Planetary Science Letters, 10.1016/j.epsl.2010.10.024, 2010.
 
@@ -32,6 +32,3 @@ REFERENCE MANUALS
 **Schmalzle, G. M.** (2005), `Survival Guide for the Geodesy Lab </papers/Survival_Guide_Schmalzle.pdf>`_, edited, p. 30, University of Miami, Rosenstiel School of Marine and Atmospheric Sciences Miami, FL.
 
 Thomas, T., and **Schmalzle, G. M.** (2000), `The Site Operator's Standard Operating Procedure for the Brewer Spectrophotometer <http://www.esrl.noaa.gov/gmd/grad/neubrew/docs/uga/Site_Operator_Procedure34100.pdf>`_, edited, NOAA.
-
-
-
