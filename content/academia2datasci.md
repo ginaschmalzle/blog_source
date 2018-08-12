@@ -17,15 +17,21 @@ Compounding the issue for all academics, was the number of new phd's given compa
 
 ![Phds vs. Academic Positions](/images/phdsvsjobs.tif)
 
-*Figure 1. Number of faculty positions available vs. the number of phds awarded from 1982 to 2011.  Figure taken from:
+<img alt="phds vs jobs" src="images/phdsvsjobs.tif">
 
-The missing piece to changing the university culture, Maximiliaan Schillebeeckx, Brett Maricque Cory Lewis
+
+*Figure 1. Number of faculty positions available vs. the number of phds awarded from 1982 to 2011.  Figure taken from:*
+
+*The missing piece to changing the university culture, Maximiliaan Schillebeeckx, Brett Maricque Cory Lewis
 Nature Biotechnology 31, 938–941 (2013) doi:10.1038/nbt.2706*
 
 From 1982 to 2011, approximately 800,000 STEM PhDs were awarded, however only 100,000 academic faculty positions were available (Figure 1).  In addition, the number of STEM PhDs awarded per year since 1982 has increased year over year, from ~19,000 to ~36,000 in 2011. The number of new faculty positions year over year remained about the same, at about 3,000 per year (Figure 1).
 
-![Phds vs. Academic Positions](/images/phdcomics.tif)
+<!-- ![Phds vs. Academic Positions](/images/phdcomics.tif) -->
+<img alt="phd comics" src="/images/phdcomics.tif">
+
 *Figure 2:  Thank you PhD comics for keeping me sane during my academic pursuits.*
+
 It took me years to realize that continuing in my field was actually not going to work for me, and it terrified me that I could potentially be starting over again in a new field, especially since I spent so much time as a geophysicist, and I was no longer a spring chicken.
 
 ## The Day(s) of Reckoning
